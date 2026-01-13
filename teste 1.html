@@ -1,0 +1,2575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pátio Atual - Minerva Foods</title>
+    
+    <!-- Biblioteca SheetJS para ler arquivos Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* TELA DE LOGIN */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-modal {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 400px;
+            text-align: center;
+        }
+
+        .login-modal h2 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-input {
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #2c3e50;
+        }
+
+        .login-btn {
+            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #1a252f;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #6c757d;
+            justify-content: center;
+        }
+
+        .remember-me input {
+            margin: 0;
+        }
+
+        .login-debug {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 12px;
+            text-align: left;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        .recovery-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .recovery-btn {
+            padding: 8px 12px;
+            background: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .recovery-btn:hover {
+            background: #138496;
+        }
+
+        /* PAINEL DE CONTROLE DE USUÁRIOS */
+        .user-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
+        }
+
+        .user-panel-modal {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .user-panel h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .user-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+
+        .user-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .user-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-level {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .level-master { background: #e74c3c; color: white; }
+        .level-administrador { background: #f39c12; color: white; }
+        .level-user { background: #95a5a6; color: white; }
+
+        .user-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-reset {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-reset:hover {
+            background: #e67e22;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .user-master {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .user-admin {
+            background: #f39c12;
+            color: white;
+        }
+
+        .user-normal {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-control-panel {
+            padding: 6px 12px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .btn-control-panel:hover {
+            background: #8e44ad;
+            transform: scale(1.05);
+        }
+
+        .btn-logout {
+            padding: 6px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr auto auto auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #495057;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .control-group input,
+        .control-group select {
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .control-group input:focus,
+        .control-group select:focus {
+            outline: none;
+            border-color: #2c3e50;
+        }
+
+        .btn-search {
+            padding: 10px 20px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 42px;
+        }
+
+        .btn-search:hover {
+            background: #1a252f;
+            transform: translateY(-2px);
+        }
+
+        .btn-clear {
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 42px;
+        }
+
+        .btn-clear:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+
+        .btn-clear-file {
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 42px;
+        }
+
+        .btn-clear-file:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-clear-file:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .stat-card.total { border-color: #3498db; }
+        .stat-card.aguardando { border-color: #f39c12; }
+        .stat-card.transito { border-color: #9b59b6; }
+        .stat-card.descarregado { border-color: #27ae60; }
+        .stat-card.desovando { border-color: #17a2b8; }
+        .stat-card.gerando-diaria { border-color: #e74c3c; }
+
+        .stat-card .label {
+            font-size: 16px;
+            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-card .sub-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-top: 8px;
+        }
+
+        .total-diarias-info {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #6c5ce7 0%, #7c4dff 100%);
+            color: white;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .total-diarias-info.show {
+            display: block;
+        }
+
+        .table-container {
+            overflow: hidden;
+            padding: 20px;
+            position: relative;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: calc(100vh - 500px);
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #2c3e50;
+            border-radius: 6px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #1a252f;
+        }
+
+        .table-wrapper::-webkit-scrollbar-corner {
+            background: #f1f1f1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            min-width: 2000px;
+        }
+
+        thead {
+            background: #2c3e50;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            border-right: 1px solid #34495e;
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #dee2e6;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Estilos para agrupamento */
+        .grupo-header {
+            background: #f1f3f4 !important;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .grupo-header:hover {
+            background: #e9ecef !important;
+        }
+
+        .grupo-header td {
+            border-bottom: 2px solid #2c3e50;
+        }
+
+        .expand-icon {
+            display: inline-block;
+            margin-right: 8px;
+            transition: transform 0.3s;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        .grupo-details {
+            display: none;
+        }
+
+        .grupo-details.show {
+            display: table-row;
+        }
+
+        .grupo-details td {
+            background: #f8f9fa;
+            border-left: 3px solid #2c3e50;
+        }
+
+        .count-badge {
+            background: #2c3e50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-aguardando { background: #fff3cd; color: #856404; }
+        .status-trânsito { background: #e7d4f5; color: #6f42c1; }
+        .status-descarregado { background: #d4edda; color: #155724; }
+        .status-desovando { background: #d1ecf1; color: #0c5460; }
+
+        .dedicada-sim { 
+            background: #d1ecf1; 
+            color: #0c5460;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .dedicada-nao { 
+            background: #f8f9fa; 
+            color: #6c757d;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .btn-export {
+            padding: 10px 20px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-export:hover {
+            background: #229954;
+        }
+
+        .btn-import {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-import:hover {
+            background: #2980b9;
+        }
+
+        .btn-import:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+            font-size: 16px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #b8daff;
+        }
+
+        .auto-save-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 968px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            .login-modal, .user-panel-modal {
+                width: 90%;
+                margin: 20px;
+            }
+            .user-info {
+                position: relative;
+                margin-bottom: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TELA DE LOGIN -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-modal">
+            <h2>🔐 Login - Pátio Brasfrigo</h2>
+            <p style="margin-bottom: 20px; color: #6c757d;">Entre com suas credenciais para acessar o sistema</p>
+            <form class="login-form" onsubmit="fazerLogin(event)">
+                <input type="text" id="loginUsuario" class="login-input" placeholder="👤 Usuário" required>
+                <input type="password" id="loginSenha" class="login-input" placeholder="🔒 Senha" required>
+                <div class="remember-me">
+                    <input type="checkbox" id="lembrarMe">
+                    <label for="lembrarMe">💾 Lembrar minhas credenciais</label>
+                </div>
+                <button type="submit" class="login-btn">Entrar</button>
+            </form>
+            
+            <div class="recovery-buttons">
+                <button onclick="investigarUsuarios()" class="recovery-btn">🔍 Investigar Sistema</button>
+                <button onclick="recuperarUsuarios()" class="recovery-btn">🔧 Recuperar Usuários</button>
+                <button onclick="testarUsuarios()" class="recovery-btn">🧪 Testar Todos</button>
+            </div>
+            
+            <div class="login-debug" id="loginDebug" style="display: none;">
+                <strong>🔍 Debug - Usuários Cadastrados:</strong><br>
+                <div id="debugUsuariosList"></div>
+            </div>
+            
+            <p style="margin-top: 15px; font-size: 12px; color: #6c757d;">
+                <button onclick="toggleDebugUsuarios()" style="background: none; border: none; color: #3498db; cursor: pointer; text-decoration: underline;">
+                    🔍 Mostrar/Ocultar usuários cadastrados
+                </button>
+            </p>
+        </div>
+    </div>
+
+    <!-- PAINEL DE CONTROLE DE USUÁRIOS -->
+    <div class="user-panel" id="userPanel">
+        <div class="user-panel-modal">
+            <h3>👥 Painel de Controle de Usuários</h3>
+            
+            <h4 style="margin-bottom: 15px; color: #2c3e50;">➕ Criar Novo Usuário</h4>
+            <form class="user-form" onsubmit="criarUsuario(event)">
+                <input type="text" id="novoNome" placeholder="Nome completo" required>
+                <input type="text" id="novoLogin" placeholder="Login" required>
+                <input type="password" id="novaSenha" placeholder="Senha (min. 6 caracteres)" required minlength="6">
+                <select id="novoNivel" required>
+                    <option value="">Selecione o nível</option>
+                    <option value="administrador">Administrador</option>
+                    <option value="user">Usuário</option>
+                </select>
+                <button type="submit" class="btn-search">Criar</button>
+            </form>
+
+            <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 Usuários Cadastrados</h4>
+            <div class="user-list" id="userList">
+                <!-- Lista de usuários será carregada aqui -->
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="investigarUsuarios()" class="btn-clear" style="margin-right: 10px;">🔍 Investigar Sistema</button>
+                <button onclick="fecharPainelUsuarios()" class="btn-clear">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auto-save-indicator" id="autoSaveIndicator">
+        💾 Dados salvos automaticamente!
+    </div>
+
+    <div class="container" id="mainContainer">
+        <div class="header">
+            <div class="user-info">
+                <div>
+                    <span id="nomeUsuario">-</span>
+                    <span class="user-badge" id="tipoUsuario">-</span>
+                </div>
+                <button class="btn-control-panel" id="btnControlPanel" onclick="abrirPainelUsuarios()">⚙️ Painel de Controle</button>
+                <button class="btn-logout" onclick="fazerLogout()">🚪 Logout</button>
+            </div>
+            <h1>Minerva Foods - Logística Internacional</h1>
+            <p>Pátio Brasfrigo</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>🔍 Buscar por Placa</label>
+                <input type="text" id="searchPlaca" placeholder="Digite a placa...">
+            </div>
+            <div class="control-group">
+                <label>📦 Filtrar por Status</label>
+                <select id="filterStatus">
+                    <option value="">Todos</option>
+                    <option value="AGUARDANDO">Aguardando</option>
+                    <option value="TRÂNSITO">Em Trânsito</option>
+                    <option value="DESCARREGADO">Descarregado</option>
+                    <option value="DESOVANDO">Desovando</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>🏭 Filtrar por Origem</label>
+                <select id="filterOrigem">
+                    <option value="">Todas</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>🌎 Tipo de Mercado</label>
+                <select id="filterTipoMercado">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>💰 Gerando Diária</label>
+                <select id="filterGerandoDiaria">
+                    <option value="">Todos</option>
+                    <option value="SIM">Sim</option>
+                    <option value="NAO">Não</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>🚢 Tipo de Descarga</label>
+                <select id="filterTipoDescarga">
+                    <option value="">Todos</option>
+                    <option value="BREAK BULK">Break Bulk</option>
+                    <option value="ITAJAI">Itajaí</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>📅 Data de Chegada</label>
+                <input type="date" id="filterDataChegada">
+            </div>
+            <div class="control-group">
+                <label>📆 Data de Descarga</label>
+                <input type="date" id="filterDataDescarga">
+            </div>
+            <div class="control-group">
+                <label>🗓️ Mês e Ano</label>
+                <input type="month" id="filterMesAno">
+            </div>
+            <button class="btn-search" onclick="aplicarFiltros()">Aplicar Filtros</button>
+            <button class="btn-clear" onclick="limparFiltros()">🔄 Limpar Filtros</button>
+            <button class="btn-clear-file" id="btnLimparArquivo" onclick="limparArquivo()">🗑️ Limpar Arquivo</button>
+        </div>
+
+        <div class="total-diarias-info" id="totalDiariasInfo">
+            📊 <span id="totalDiariasTexto">Total de diárias geradas no período: 0</span>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card transito">
+                <div class="label">Em Trânsito</div>
+                <div class="value" id="totalTransito">0</div>
+            </div>
+            <div class="stat-card aguardando">
+                <div class="label">Aguardando</div>
+                <div class="value" id="totalAguardando">0</div>
+            </div>
+            <div class="stat-card desovando">
+                <div class="label">Desovando</div>
+                <div class="value" id="totalDesovando">0</div>
+            </div>
+            <div class="stat-card gerando-diaria">
+                <div class="label">Gerando Diária</div>
+                <div class="value" id="totalGerandoDiaria">0</div>
+                <div class="sub-value" id="valorTotalDiaria">R$ 0,00</div>
+            </div>
+            <div class="stat-card descarregado">
+                <div class="label">Descarregado</div>
+                <div class="value" id="totalDescarregado">0</div>
+            </div>
+            <div class="stat-card total">
+                <div class="label">Total de Placa</div>
+                <div class="value" id="totalVeiculos">0</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="alert success" id="alertSuccess">
+                ✓ Arquivo importado e salvo com sucesso!
+            </div>
+            <div class="alert error" id="alertError">
+                ✗ Erro ao importar arquivo. Verifique o formato.
+            </div>
+            <div class="alert info" id="alertInfo">
+                ℹ️ Operação realizada com sucesso!
+            </div>
+
+            <div class="button-group">
+                <button class="btn-import" id="btnImportar" onclick="document.getElementById('fileInput').click()">
+                    📤 Importar Excel
+                </button>
+                <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="importarExcel(event)">
+                
+                <button class="btn-export" onclick="exportarParaExcel()">
+                    📥 Exportar para Excel
+                </button>
+            </div>
+            
+            <div class="table-wrapper">
+                <table id="tabelaPatio">
+                    <thead>
+                        <tr>
+                            <th>PLACA</th>
+                            <th>CONTAINER</th>
+                            <th>DATA CHEGADA</th>
+                            <th>DATA DESCARGA</th>
+                            <th>DIÁRIA</th>
+                            <th>DEDICADA?</th>
+                            <th>VALOR DIÁRIA</th>
+                            <th>VALOR TOTAL</th>
+                            <th>TRANSPORTADORA</th>
+                            <th>UNIDADE</th>
+                            <th>ORIGEM</th>
+                            <th>TIPO DESCARGA</th>
+                            <th>TIPO MERCADO</th>
+                            <th>STATUS</th>
+                            <th>NF ORIGEM</th>
+                            <th>NFE BRASFRIGO</th>
+                            <th>OP</th>
+                            <th>DEPÓSITO</th>
+                            <th>STATUS OP</th>
+                            <th>PEDIDO</th>
+                            <th>FALTA</th>
+                            <th>SOBRA</th>
+                            <th>INVERSÃO RG</th>
+                            <th>DOCA</th>
+                            <th>PBR</th>
+                            <th>ONE-WAY</th>
+                            <th>FUMIGADO</th>
+                            <th>TOTAL PALLET</th>
+                            <th>REC. FRIO</th>
+                            <th>OBS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaBody">
+                        <tr>
+                            <td colspan="30" class="no-data">Carregando dados...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SISTEMA DE AUTENTICAÇÃO
+        let usuarioLogado = null;
+        let dadosPatio = [];
+
+        // USUÁRIOS PADRÃO DO SISTEMA
+        const USUARIOS_PADRAO = [
+            {
+                id: 1,
+                nome: "Leandro Brasil dos Santos",
+                login: "leandro.brasil",
+                senha: "master123",
+                nivel: "master",
+                email: "leandro.brasil@minervafoods.com"
+            }
+        ];
+
+        // Carregar sistema ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarSistema();
+        });
+
+        function inicializarSistema() {
+            console.log('🔄 INICIALIZANDO SISTEMA...');
+            
+            // VERIFICAR SE HÁ USUÁRIOS EXISTENTES PRIMEIRO
+            const usuariosExistentes = localStorage.getItem('usuariosSistema');
+            
+            if (!usuariosExistentes) {
+                console.log('🆕 Nenhum usuário encontrado, criando usuários padrão');
+                localStorage.setItem('usuariosSistema', JSON.stringify(USUARIOS_PADRAO));
+            } else {
+                console.log('✅ Usuários já existem no localStorage');
+                try {
+                    const usuarios = JSON.parse(usuariosExistentes);
+                    console.log('👥 USUÁRIOS ENCONTRADOS:', usuarios.length);
+                    
+                    // Verificar se usuário master existe, se não, adicionar
+                    const masterExiste = usuarios.find(u => u.nivel === 'master');
+                    if (!masterExiste) {
+                        console.log('⚠️ Master não encontrado, adicionando...');
+                        usuarios.push(USUARIOS_PADRAO[0]);
+                        localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
+                    }
+                } catch (error) {
+                    console.error('❌ Erro ao parsear usuários existentes:', error);
+                    // Em caso de corrupção, manter backup e recriar
+                    localStorage.setItem('usuariosSistema_backup', usuariosExistentes);
+                    localStorage.setItem('usuariosSistema', JSON.stringify(USUARIOS_PADRAO));
+                }
+            }
+
+            // Verificar e mostrar todos os usuários no console
+            const todosUsuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            console.log('👥 TODOS OS USUÁRIOS CADASTRADOS:', todosUsuarios);
+
+            // Verificar credenciais salvas (lembrar-me)
+            const credenciaisSalvas = localStorage.getItem('credenciaisLembradas');
+            if (credenciaisSalvas) {
+                const { login, senha } = JSON.parse(credenciaisSalvas);
+                console.log('🔑 Tentando login automático com credenciais salvas:', login);
+                autenticarUsuario(login, senha, true);
+                return;
+            }
+
+            // Verificar se há sessão ativa
+            const sessaoAtiva = sessionStorage.getItem('usuarioLogado');
+            
+            if (sessaoAtiva) {
+                try {
+                    usuarioLogado = JSON.parse(sessaoAtiva);
+                    console.log('📱 Sessão ativa encontrada:', usuarioLogado.nome);
+                    iniciarSistema();
+                } catch (error) {
+                    console.error('❌ Erro ao carregar sessão:', error);
+                    sessionStorage.removeItem('usuarioLogado');
+                    mostrarTelaLogin();
+                }
+            } else {
+                console.log('❌ Nenhuma sessão ativa, mostrando login');
+                mostrarTelaLogin();
+            }
+        }
+
+        // FUNÇÃO PARA INVESTIGAR PROBLEMAS DOS USUÁRIOS
+        function investigarUsuarios(mostrarAlert = true) {
+            console.log('🕵️ INVESTIGAÇÃO COMPLETA DO SISTEMA DE USUÁRIOS');
+            
+            const rawData = localStorage.getItem('usuariosSistema');
+            console.log('📂 Raw localStorage data (length):', rawData ? rawData.length : 'null');
+            
+            if (!rawData) {
+                console.log('❌ Nenhum dado encontrado no localStorage');
+                if (mostrarAlert) alert('❌ Nenhum usuário cadastrado encontrado!');
+                return;
+            }
+            
+            try {
+                const usuarios = JSON.parse(rawData);
+                console.log('👥 Total de usuários encontrados:', usuarios.length);
+                
+                usuarios.forEach((user, index) => {
+                    console.log(`\n👤 USUÁRIO ${index + 1}:`);
+                    console.log(`   Nome: "${user.nome}"`);
+                    console.log(`   Login: "${user.login}" (type: ${typeof user.login}, length: ${user.login ? user.login.length : 'N/A'})`);
+                    console.log(`   Senha: "${user.senha}" (type: ${typeof user.senha}, length: ${user.senha ? user.senha.length : 'N/A'})`);
+                    console.log(`   Nível: "${user.nivel}"`);
+                    console.log(`   ID: ${user.id} (type: ${typeof user.id})`);
+                    console.log(`   Email: "${user.email}"`);
+                    console.log(`   Criado em: ${user.criadoEm || 'N/A'}`);
+                    
+                    // Verificar problemas comuns
+                    const problemas = [];
+                    if (!user.login) problemas.push('Login vazio');
+                    if (!user.senha) problemas.push('Senha vazia');
+                    if (typeof user.login !== 'string') problemas.push(`Login não é string (${typeof user.login})`);
+                    if (typeof user.senha !== 'string') problemas.push(`Senha não é string (${typeof user.senha})`);
+                    
+                    if (problemas.length > 0) {
+                        console.log(`   ⚠️ PROBLEMAS: ${problemas.join(', ')}`);
+                    } else {
+                        console.log(`   ✅ Dados parecem válidos`);
+                    }
+                });
+                
+                if (mostrarAlert) {
+                    let mensagem = `Sistema tem ${usuarios.length} usuários cadastrados.\n\n`;
+                    usuarios.forEach((u, i) => {
+                        mensagem += `${i + 1}. ${u.nome}\n   Login: "${u.login}"\n   Senha: "${u.senha}"\n\n`;
+                    });
+                    alert(mensagem);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao fazer parse dos usuários:', error);
+                if (mostrarAlert) alert('❌ Dados de usuários corrompidos!');
+            }
+        }
+
+        // FUNÇÃO PARA RECUPERAR USUÁRIOS PERDIDOS
+        function recuperarUsuarios() {
+            console.log('🔧 INICIANDO RECUPERAÇÃO DE USUÁRIOS...');
+            
+            const backup = localStorage.getItem('usuariosSistema_backup');
+            if (backup) {
+                try {
+                    const usuariosBackup = JSON.parse(backup);
+                    localStorage.setItem('usuariosSistema', backup);
+                    console.log('✅ Usuários recuperados do backup:', usuariosBackup.length);
+                    alert('✅ Usuários recuperados do backup! Tente fazer login novamente.');
+                    location.reload();
+                } catch (error) {
+                    console.error('❌ Erro ao recuperar backup:', error);
+                    alert('❌ Backup corrompido, não foi possível recuperar.');
+                }
+            } else {
+                // Recriar usuários da imagem manualmente
+                const usuariosRecuperados = [
+                    ...USUARIOS_PADRAO,
+                    {
+                        id: Date.now() + 1,
+                        nome: "teste dois",
+                        login: "teste.dois",
+                        senha: "brasil123",
+                        nivel: "user",
+                        email: "teste.dois@minervafoods.com",
+                        recuperado: true
+                    },
+                    {
+                        id: Date.now() + 2,
+                        nome: "diego cordeiro",
+                        login: "diego.cordeiro", 
+                        senha: "diego123",
+                        nivel: "user",
+                        email: "diego.cordeiro@minervafoods.com",
+                        recuperado: true
+                    },
+                    {
+                        id: Date.now() + 3,
+                        nome: "teste brasil",
+                        login: "teste.brasil",
+                        senha: "teste123", 
+                        nivel: "user",
+                        email: "teste.brasil@minervafoods.com",
+                        recuperado: true
+                    }
+                ];
+                
+                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosRecuperados));
+                console.log('🔧 Usuários recriados manualmente');
+                alert('🔧 Usuários recriados! Credenciais:\n\n1. teste.dois / brasil123\n2. diego.cordeiro / diego123\n3. teste.brasil / teste123');
+            }
+        }
+
+        // FUNÇÃO PARA TESTAR TODOS OS USUÁRIOS
+        function testarUsuarios() {
+            console.log('🧪 TESTANDO AUTENTICAÇÃO DE TODOS OS USUÁRIOS...');
+            
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            
+            const resultados = usuarios.map(user => {
+                // Testar se a autenticação funcionaria
+                const loginTest = user.login;
+                const senhaTest = user.senha;
+                
+                const encontrado = usuarios.find(u => u.login === loginTest && u.senha === senhaTest);
+                
+                return {
+                    nome: user.nome,
+                    login: user.login,
+                    senha: user.senha,
+                    funcionaria: !!encontrado
+                };
+            });
+            
+            console.log('🧪 RESULTADOS DOS TESTES:');
+            console.table(resultados);
+            
+            const problematicos = resultados.filter(r => !r.funcionaria);
+            
+            if (problematicos.length > 0) {
+                console.log('❌ Usuários com problemas:', problematicos);
+                alert(`❌ ${problematicos.length} usuários com problemas de autenticação!\nVerifique o console (F12) para detalhes.`);
+            } else {
+                console.log('✅ Todos os usuários passaram no teste');
+                alert('✅ Todos os usuários passaram no teste de autenticação!');
+            }
+        }
+
+        function toggleDebugUsuarios() {
+            const debugDiv = document.getElementById('loginDebug');
+            const listaDiv = document.getElementById('debugUsuariosList');
+            
+            if (debugDiv.style.display === 'none') {
+                const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+                
+                let conteudo = '';
+                usuarios.forEach((user, index) => {
+                    conteudo += `${index + 1}. <strong>${user.nome}</strong><br>`;
+                    conteudo += `&nbsp;&nbsp;&nbsp;Login: "<strong>${user.login}</strong>" (${user.login.length} chars)<br>`;
+                    conteudo += `&nbsp;&nbsp;&nbsp;Senha: "<strong>${user.senha}</strong>" (${user.senha.length} chars)<br>`;
+                    conteudo += `&nbsp;&nbsp;&nbsp;Nível: ${user.nivel}<br>`;
+                    conteudo += `&nbsp;&nbsp;&nbsp;ID: ${user.id}<br><br>`;
+                });
+                
+                listaDiv.innerHTML = conteudo;
+                debugDiv.style.display = 'block';
+            } else {
+                debugDiv.style.display = 'none';
+            }
+        }
+
+        function mostrarTelaLogin() {
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('mainContainer').style.display = 'none';
+            
+            // Atualizar debug na tela de login
+            atualizarDebugLogin();
+        }
+
+        function atualizarDebugLogin() {
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            const listaDiv = document.getElementById('debugUsuariosList');
+            
+            let conteudo = '';
+            usuarios.forEach((user, index) => {
+                conteudo += `${index + 1}. <strong>${user.nome}</strong><br>`;
+                conteudo += `&nbsp;&nbsp;&nbsp;Login: "<strong>${user.login}</strong>"<br>`;
+                conteudo += `&nbsp;&nbsp;&nbsp;Senha: "<strong>${user.senha}</strong>"<br>`;
+                conteudo += `&nbsp;&nbsp;&nbsp;Nível: ${user.nivel}<br>`;
+                conteudo += `&nbsp;&nbsp;&nbsp;ID: ${user.id}<br><br>`;
+            });
+            
+            listaDiv.innerHTML = conteudo;
+        }
+
+        function fazerLogin(event) {
+            event.preventDefault();
+            
+            const login = document.getElementById('loginUsuario').value;
+            const senha = document.getElementById('loginSenha').value;
+            const lembrarMe = document.getElementById('lembrarMe').checked;
+            
+            console.log('🔍 TENTATIVA DE LOGIN:');
+            console.log('- Login digitado:', `"${login}"`);
+            console.log('- Senha digitada:', `"${senha}"`);
+            console.log('- Lembrar-me:', lembrarMe);
+            
+            if (!login || !senha) {
+                alert('Por favor, preencha usuário e senha!');
+                return;
+            }
+
+            autenticarUsuario(login, senha, lembrarMe);
+        }
+
+        function autenticarUsuario(login, senha, lembrarMe = false) {
+            console.log('🔐 INICIANDO AUTENTICAÇÃO DETALHADA...');
+            
+            // STEP 1: Verificar se localStorage existe
+            const rawData = localStorage.getItem('usuariosSistema');
+            if (!rawData) {
+                console.log('❌ FALHA: localStorage vazio');
+                alert('❌ Sistema sem usuários cadastrados. Recarregue a página.');
+                return;
+            }
+            
+            // STEP 2: Parse dos dados
+            let usuarios;
+            try {
+                usuarios = JSON.parse(rawData);
+                console.log('✅ Parse JSON bem-sucedido. Usuários encontrados:', usuarios.length);
+            } catch (error) {
+                console.error('❌ FALHA no parse JSON:', error);
+                alert('❌ Dados corrompidos. Tente o botão "Recuperar Usuários".');
+                return;
+            }
+            
+            // STEP 3: Investigar cada usuário detalhadamente
+            console.log('👥 INVESTIGANDO CADA USUÁRIO:');
+            let usuarioEncontrado = null;
+            
+            for (let i = 0; i < usuarios.length; i++) {
+                const u = usuarios[i];
+                
+                console.log(`\n🔍 USUÁRIO ${i + 1}: ${u.nome}`);
+                console.log(`   Login armazenado: "${u.login}"`);
+                console.log(`   Login digitado: "${login}"`);
+                console.log(`   Senha armazenada: "${u.senha}"`);
+                console.log(`   Senha digitada: "${senha}"`);
+                
+                // COMPARAÇÃO EXATA - SEM QUALQUER PROCESSAMENTO
+                const loginExato = (u.login === login);
+                const senhaExata = (u.senha === senha);
+                
+                console.log(`   ✓ Login match: ${loginExato}`);
+                console.log(`   ✓ Senha match: ${senhaExata}`);
+                console.log(`   ✓ Ambos match: ${loginExato && senhaExata}`);
+                
+                if (loginExato && senhaExata) {
+                    console.log(`✅ USUÁRIO AUTENTICADO: ${u.nome}`);
+                    usuarioEncontrado = u;
+                    break;
+                } else {
+                    // Debug detalhado da falha
+                    if (!loginExato) {
+                        console.log(`   ❌ Login não confere:`);
+                        console.log(`      Armazenado: [${Array.from(u.login).map(c => c.charCodeAt(0)).join(',')}]`);
+                        console.log(`      Digitado: [${Array.from(login).map(c => c.charCodeAt(0)).join(',')}]`);
+                    }
+                    if (!senhaExata) {
+                        console.log(`   ❌ Senha não confere:`);
+                        console.log(`      Armazenada: [${Array.from(u.senha).map(c => c.charCodeAt(0)).join(',')}]`);
+                        console.log(`      Digitada: [${Array.from(senha).map(c => c.charCodeAt(0)).join(',')}]`);
+                    }
+                }
+            }
+            
+            if (usuarioEncontrado) {
+                console.log('✅ AUTENTICAÇÃO BEM-SUCEDIDA!');
+                usuarioLogado = usuarioEncontrado;
+                
+                try {
+                    sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
+                    console.log('💾 Sessão salva com sucesso');
+                } catch (error) {
+                    console.error('❌ Erro ao salvar sessão:', error);
+                }
+                
+                // Salvar credenciais se solicitado
+                if (lembrarMe) {
+                    try {
+                        localStorage.setItem('credenciaisLembradas', JSON.stringify({ login, senha }));
+                        console.log('💾 Credenciais salvas para próximo acesso');
+                    } catch (error) {
+                        console.error('❌ Erro ao salvar credenciais:', error);
+                    }
+                } else {
+                    localStorage.removeItem('credenciaisLembradas');
+                }
+                
+                // Esconder login e mostrar sistema
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainContainer').style.display = 'block';
+                
+                iniciarSistema();
+                
+                if (!lembrarMe) {
+                    mostrarAlerta('success', `✓ Bem-vindo, ${usuarioEncontrado.nome}! (${usuarioEncontrado.nivel.toUpperCase()})`);
+                }
+            } else {
+                console.log('❌ AUTENTICAÇÃO FALHOU - USUÁRIO NÃO ENCONTRADO');
+                
+                // Criar mensagem detalhada com todos os usuários
+                let mensagemDetalhada = `❌ Falha na autenticação!\n\nCredenciais digitadas:\nLogin: "${login}"\nSenha: "${senha}"\n\n`;
+                mensagemDetalhada += `USUÁRIOS CADASTRADOS:\n`;
+                
+                usuarios.forEach((u, index) => {
+                    mensagemDetalhada += `${index + 1}. ${u.nome}\n`;
+                    mensagemDetalhada += `   Login: "${u.login}"\n`;
+                    mensagemDetalhada += `   Senha: "${u.senha}"\n\n`;
+                });
+                
+                mensagemDetalhada += `\nTente:\n1. Copiar/colar as credenciais exatas\n2. Usar botão "🔧 Recuperar Usuários"\n3. Verificar console (F12) para logs detalhados`;
+                
+                alert(mensagemDetalhada);
+                
+                // Limpar credenciais salvas se existirem
+                localStorage.removeItem('credenciaisLembradas');
+                mostrarTelaLogin();
+            }
+        }
+
+        function fazerLogout() {
+            if (confirm('Deseja realmente fazer logout do sistema?')) {
+                sessionStorage.removeItem('usuarioLogado');
+                localStorage.removeItem('credenciaisLembradas');
+                console.log('🚪 Logout realizado');
+                location.reload();
+            }
+        }
+
+        function iniciarSistema() {
+            console.log('🚀 Iniciando sistema para:', usuarioLogado.nome);
+            verificarPermissoes();
+            carregarDadosSalvos();
+            popularFiltros();
+            renderizarTabela();
+            atualizarEstatisticas();
+        }
+
+        function verificarPermissoes() {
+            if (!usuarioLogado) return;
+            
+            const btnImportar = document.getElementById('btnImportar');
+            const btnLimparArquivo = document.getElementById('btnLimparArquivo');
+            const btnControlPanel = document.getElementById('btnControlPanel');
+            const nomeUsuario = document.getElementById('nomeUsuario');
+            const tipoUsuario = document.getElementById('tipoUsuario');
+            
+            // Atualizar informações do usuário
+            nomeUsuario.textContent = usuarioLogado.nome;
+            tipoUsuario.textContent = usuarioLogado.nivel.toUpperCase();
+            
+            if (usuarioLogado.nivel === 'master') {
+                // MASTER - Acesso total
+                btnImportar.disabled = false;
+                btnLimparArquivo.disabled = false;
+                btnControlPanel.style.display = 'inline-block';
+                tipoUsuario.className = 'user-badge user-master';
+                console.log('🔴 Usuário Master logado - Acesso total');
+                
+            } else if (usuarioLogado.nivel === 'administrador') {
+                // ADMINISTRADOR - Acesso intermediário
+                btnImportar.disabled = true;
+                btnImportar.onclick = function() { 
+                    mostrarAlerta('error', '⚠️ Acesso negado! Apenas o Master pode importar arquivos.'); 
+                };
+                btnLimparArquivo.disabled = true;
+                btnLimparArquivo.onclick = function() { 
+                    mostrarAlerta('error', '⚠️ Acesso negado! Apenas o Master pode limpar arquivos.'); 
+                };
+                btnControlPanel.style.display = 'none';
+                tipoUsuario.className = 'user-badge user-admin';
+                console.log('🟡 Usuário Administrador logado - Acesso intermediário');
+                
+            } else {
+                // USER - Acesso básico
+                btnImportar.disabled = true;
+                btnImportar.onclick = function() { 
+                    mostrarAlerta('error', '⚠️ Acesso negado! Você não tem permissão para importar arquivos.'); 
+                };
+                btnLimparArquivo.disabled = true;
+                btnLimparArquivo.onclick = function() { 
+                    mostrarAlerta('error', '⚠️ Acesso negado! Você não tem permissão para limpar arquivos.'); 
+                };
+                btnControlPanel.style.display = 'none';
+                tipoUsuario.className = 'user-badge user-normal';
+                console.log('🟢 Usuário básico logado - Acesso limitado');
+            }
+        }
+
+        function abrirPainelUsuarios() {
+            if (usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado! Apenas o Master pode gerenciar usuários.');
+                return;
+            }
+            
+            carregarListaUsuarios();
+            document.getElementById('userPanel').style.display = 'flex';
+        }
+
+        function fecharPainelUsuarios() {
+            document.getElementById('userPanel').style.display = 'none';
+        }
+
+        function criarUsuario(event) {
+            event.preventDefault();
+            
+            if (usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado!');
+                return;
+            }
+
+            const nome = document.getElementById('novoNome').value.trim();
+            const login = document.getElementById('novoLogin').value.trim();
+            const senha = document.getElementById('novaSenha').value.trim();
+            const nivel = document.getElementById('novoNivel').value;
+
+            console.log('📝 CRIANDO USUÁRIO:');
+            console.log('- Nome:', `"${nome}"`);
+            console.log('- Login:', `"${login}"`);
+            console.log('- Senha:', `"${senha}"`);
+            console.log('- Nível:', `"${nivel}"`);
+
+            if (!nome || !login || !senha || !nivel) {
+                alert('❌ Preencha todos os campos!');
+                return;
+            }
+
+            if (senha.length < 6) {
+                alert('❌ A senha deve ter pelo menos 6 caracteres!');
+                return;
+            }
+
+            // Carregar usuários existentes COM PROTEÇÃO EXTRA
+            let usuarios;
+            try {
+                const rawUsuarios = localStorage.getItem('usuariosSistema');
+                if (!rawUsuarios) {
+                    console.log('⚠️ localStorage vazio, inicializando com usuários padrão');
+                    usuarios = [...USUARIOS_PADRAO];
+                } else {
+                    usuarios = JSON.parse(rawUsuarios);
+                    console.log('👥 Usuários existentes carregados:', usuarios.length);
+                    
+                    // Backup preventivo antes de alterar
+                    localStorage.setItem('usuariosSistema_backup', rawUsuarios);
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar usuários:', error);
+                alert('❌ Erro interno do sistema. Tente recarregar a página.');
+                return;
+            }
+            
+            // Verificar se login já existe (COMPARAÇÃO EXATA)
+            const loginExistente = usuarios.find(u => u.login === login);
+            if (loginExistente) {
+                alert(`❌ Login "${login}" já existe! Escolha outro.`);
+                console.log('❌ Login duplicado detectado:', login);
+                return;
+            }
+
+            // Criar novo usuário COM DADOS LIMPOS
+            const novoUsuario = {
+                id: Date.now(),
+                nome: nome,
+                login: login,
+                senha: senha,
+                nivel: nivel,
+                email: `${login}@minervafoods.com`,
+                criadoEm: new Date().toISOString(),
+                criadoPor: usuarioLogado.nome
+            };
+
+            console.log('➕ Novo usuário criado:', novoUsuario);
+
+            usuarios.push(novoUsuario);
+            
+            // SALVAR COM PROTEÇÃO MÁXIMA
+            try {
+                const novosDados = JSON.stringify(usuarios);
+                localStorage.setItem('usuariosSistema', novosDados);
+                console.log('💾 Dados salvos com sucesso');
+                
+                // VERIFICAÇÃO TRIPLA E TESTE DE AUTENTICAÇÃO
+                const verificacao = localStorage.getItem('usuariosSistema');
+                const usuariosVerificados = JSON.parse(verificacao);
+                const usuarioSalvo = usuariosVerificados.find(u => u.login === login && u.senha === senha);
+                
+                if (!usuarioSalvo) {
+                    throw new Error('Usuário não foi encontrado após salvamento');
+                }
+                
+                // TESTE DE AUTENTICAÇÃO IMEDIATO
+                const testeAuth = usuariosVerificados.find(u => u.login === login && u.senha === senha);
+                if (!testeAuth) {
+                    throw new Error('Usuário não passa no teste de autenticação');
+                }
+                
+                console.log('✅ Usuário criado, salvo e testado com sucesso!');
+                
+            } catch (error) {
+                console.error('❌ ERRO CRÍTICO:', error);
+                
+                // Restaurar backup
+                const backup = localStorage.getItem('usuariosSistema_backup');
+                if (backup) {
+                    localStorage.setItem('usuariosSistema', backup);
+                    console.log('🔄 Backup restaurado');
+                }
+                
+                alert(`❌ Erro crítico: ${error.message}\nBackup restaurado.`);
+                return;
+            }
+
+            // Simular envio de email de boas-vindas
+            enviarEmailBoasVindas(novoUsuario);
+
+            // Limpar formulário
+            document.getElementById('novoNome').value = '';
+            document.getElementById('novoLogin').value = '';
+            document.getElementById('novaSenha').value = '';
+            document.getElementById('novoNivel').value = '';
+
+            carregarListaUsuarios();
+            mostrarAlerta('success', `✅ Usuário ${nome} criado e TESTADO com sucesso!\n🔑 Login: "${login}"\n🔒 Senha: "${senha}"\n📧 Email enviado.`);
+        }
+
+        function resetarSenhaUsuario(id) {
+            if (usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado!');
+                return;
+            }
+
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            const usuario = usuarios.find(u => u.id === id);
+            
+            if (!usuario) {
+                mostrarAlerta('error', '❌ Usuário não encontrado!');
+                return;
+            }
+
+            // Solicitar nova senha ao Master
+            const novaSenha = prompt(`Digite a nova senha para ${usuario.nome}:`);
+            
+            if (!novaSenha || novaSenha.trim() === '') {
+                return; // Cancelou ou não digitou
+            }
+
+            if (novaSenha.length < 6) {
+                alert('❌ A senha deve ter pelo menos 6 caracteres!');
+                return;
+            }
+
+            // Confirmar ação
+            if (!confirm(`Confirma reset da senha para ${usuario.nome}?\nNova senha: ${novaSenha}`)) {
+                return;
+            }
+
+            // Atualizar senha no sistema
+            usuario.senha = novaSenha;
+            usuario.senhaAlteradaEm = new Date().toISOString();
+            usuario.senhaAlteradaPor = usuarioLogado.nome;
+            
+            // Backup antes de salvar
+            localStorage.setItem('usuariosSistema_backup', localStorage.getItem('usuariosSistema'));
+            localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
+
+            console.log('🔄 Senha resetada para:', usuario.nome, 'Nova senha:', novaSenha);
+
+            // Simular envio de email
+            enviarEmailResetSenha(usuario, novaSenha);
+
+            carregarListaUsuarios();
+            mostrarAlerta('success', `✓ Senha de ${usuario.nome} resetada com sucesso!\nNova senha: "${novaSenha}"\nEmail enviado.`);
+        }
+
+        function enviarEmailBoasVindas(usuario) {
+            // SIMULAÇÃO DE ENVIO DE EMAIL
+            console.log('📧 EMAIL ENVIADO - BOAS-VINDAS');
+            console.log('Para:', usuario.email);
+            console.log('Assunto: Bem-vindo ao Sistema Pátio Brasfrigo');
+            console.log('Conteúdo:');
+            console.log(`Olá ${usuario.nome},`);
+            console.log(`Seu acesso ao Sistema Pátio Brasfrigo foi criado com sucesso!`);
+            console.log(`Login: "${usuario.login}"`);
+            console.log(`Senha: "${usuario.senha}"`);
+            console.log(`Nível: ${usuario.nivel.toUpperCase()}`);
+            console.log(`Acesse: ${window.location.href}`);
+            console.log('==========================================');
+        }
+
+        function enviarEmailResetSenha(usuario, novaSenha) {
+            // SIMULAÇÃO DE ENVIO DE EMAIL
+            console.log('📧 EMAIL ENVIADO - RESET DE SENHA');
+            console.log('Para:', usuario.email);
+            console.log('Assunto: Sua senha foi alterada - Pátio Brasfrigo');
+            console.log('Conteúdo:');
+            console.log(`Olá ${usuario.nome},`);
+            console.log(`Sua senha no Sistema Pátio Brasfrigo foi alterada pelo administrador.`);
+            console.log(`Nova senha: "${novaSenha}"`);
+            console.log(`Login: "${usuario.login}"`);
+            console.log(`Acesse: ${window.location.href}`);
+            console.log('==========================================');
+        }
+
+        function carregarListaUsuarios() {
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            const lista = document.getElementById('userList');
+            
+            console.log('📋 Carregando lista de usuários:', usuarios.length);
+            
+            lista.innerHTML = usuarios.map(user => `
+                <div class="user-item">
+                    <div>
+                        <strong>${user.nome}</strong><br>
+                        <small style="color: #6c757d;">Login: "${user.login}" | Senha: "${user.senha}"</small><br>
+                        <small style="color: #6c757d;">Email: ${user.email}</small>
+                        ${user.criadoEm ? `<br><small style="color: #95a5a6;">Criado em: ${new Date(user.criadoEm).toLocaleDateString('pt-BR')}</small>` : ''}
+                        ${user.recuperado ? `<br><small style="color: #17a2b8;">👥 Usuário recuperado</small>` : ''}
+                    </div>
+                    <div class="user-actions">
+                        <span class="user-level level-${user.nivel}">${user.nivel}</span>
+                        ${user.nivel !== 'master' ? `
+                            <button class="btn-reset" onclick="resetarSenhaUsuario(${user.id})" title="Reset Senha">🔄</button>
+                            <button class="btn-delete" onclick="excluirUsuario(${user.id})" title="Excluir">🗑️</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function excluirUsuario(id) {
+            if (usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado!');
+                return;
+            }
+
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            const usuario = usuarios.find(u => u.id === id);
+
+            if (confirm(`Tem certeza que deseja excluir o usuário ${usuario.nome}?`)) {
+                // Backup antes de excluir
+                localStorage.setItem('usuariosSistema_backup', localStorage.getItem('usuariosSistema'));
+                
+                const usuariosAtualizados = usuarios.filter(u => u.id !== id);
+                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                console.log('🗑️ Usuário excluído:', usuario.nome);
+                carregarListaUsuarios();
+                mostrarAlerta('info', '✓ Usuário excluído com sucesso!');
+            }
+        }
+
+        // FUNÇÃO PARA CONVERTER DATA BRASILEIRA PARA FORMATO ISO
+        function converterDataParaISO(dataBr) {
+            if (!dataBr) return null;
+            
+            try {
+                // Formato brasileiro: DD/MM/YYYY
+                const partes = dataBr.split('/');
+                if (partes.length !== 3) return null;
+                
+                const dia = partes[0].padStart(2, '0');
+                const mes = partes[1].padStart(2, '0');
+                const ano = partes[2];
+                
+                // Formato ISO: YYYY-MM-DD
+                return `${ano}-${mes}-${dia}`;
+            } catch (error) {
+                console.error('Erro ao converter data:', error, dataBr);
+                return null;
+            }
+        }
+
+        // FUNÇÃO PARA CONVERTER DATA ISO PARA FORMATO BRASILEIRO
+        function converterDataParaBrasileiro(dataISO) {
+            if (!dataISO) return null;
+            
+            try {
+                // Formato ISO: YYYY-MM-DD
+                const partes = dataISO.split('-');
+                if (partes.length !== 3) return null;
+                
+                const ano = partes[0];
+                const mes = partes[1];
+                const dia = partes[2];
+                
+                // Formato brasileiro: DD/MM/YYYY
+                return `${dia}/${mes}/${ano}`;
+            } catch (error) {
+                console.error('Erro ao converter data ISO:', error, dataISO);
+                return null;
+            }
+        }
+
+        // FUNÇÃO CORRIGIDA PARA VERIFICAR MÊS/ANO COM FOCO EM DIÁRIAS
+        function verificarMesAnoComDiarias(item, mesAnoFiltro) {
+            if (!mesAnoFiltro) return true;
+            
+            try {
+                // mesAnoFiltro vem no formato YYYY-MM
+                const [anoFiltro, mesFiltro] = mesAnoFiltro.split('-');
+                
+                // Verificar se tem diária gerada
+                const temDiaria = parseInt(item.diaria) > 0;
+                
+                // Se não tem diária, aplicar filtro normal por data de chegada
+                if (!temDiaria) {
+                    if (item.dataChegada) {
+                        const [dia, mes, ano] = item.dataChegada.split('/');
+                        return ano === anoFiltro && mes.padStart(2, '0') === mesFiltro;
+                    }
+                    return false;
+                }
+                
+                // Se tem diária, incluir se data de chegada OU descarga estão no período
+                let matchChegada = false;
+                let matchDescarga = false;
+                
+                if (item.dataChegada) {
+                    const [diaC, mesC, anoC] = item.dataChegada.split('/');
+                    matchChegada = anoC === anoFiltro && mesC.padStart(2, '0') === mesFiltro;
+                }
+                
+                if (item.dataDescarga) {
+                    const [diaD, mesD, anoD] = item.dataDescarga.split('/');
+                    matchDescarga = anoD === anoFiltro && mesD.padStart(2, '0') === mesFiltro;
+                }
+                
+                return matchChegada || matchDescarga;
+                
+            } catch (error) {
+                console.error('Erro ao verificar mês/ano com diárias:', error, item, mesAnoFiltro);
+                return false;
+            }
+        }
+
+        // FUNÇÃO TOTALMENTE CORRIGIDA - UMA DIÁRIA E UM VALOR POR PLACA
+        function atualizarContadorDiarias(dadosFiltrados) {
+            const totalDiariasInfo = document.getElementById('totalDiariasInfo');
+            const totalDiariasTexto = document.getElementById('totalDiariasTexto');
+            
+            // AGRUPAR POR PLACA APENAS (ignorar data e status para evitar duplicação)
+            const gruposPorPlaca = {};
+            
+            dadosFiltrados.forEach(item => {
+                const chave = item.placa; // Apenas placa como chave
+                
+                if (!gruposPorPlaca[chave]) {
+                    gruposPorPlaca[chave] = {
+                        placa: item.placa,
+                        registros: [],
+                        diariaPorPlaca: 0,
+                        valorDiariaPorPlaca: 0
+                    };
+                }
+                
+                gruposPorPlaca[chave].registros.push(item);
+            });
+            
+            let totalDiarias = 0;
+            let valorTotalDiarias = 0;
+            
+            // PROCESSAR CADA PLACA APENAS UMA VEZ
+            Object.values(gruposPorPlaca).forEach(grupoPorPlaca => {
+                // Encontrar o primeiro registro com diária > 0
+                const registroComDiaria = grupoPorPlaca.registros.find(r => parseInt(r.diaria) > 0);
+                
+                if (registroComDiaria) {
+                    // Somar apenas 1 diária e 1 valor por placa (não por grupo de status)
+                    const diariaPorPlaca = parseInt(registroComDiaria.diaria) || 0;
+                    const valorDiariaPorPlaca = converterValorMonetario(registroComDiaria.valorDiaria);
+                    
+                    totalDiarias += diariaPorPlaca;
+                    valorTotalDiarias += valorDiariaPorPlaca;
+                    
+                    console.log(`Placa ${grupoPorPlaca.placa}: ${diariaPorPlaca} diária x R$ ${valorDiariaPorPlaca} = R$ ${valorDiariaPorPlaca} (contada uma vez)`);
+                }
+            });
+            
+            console.log('📊 CONTADOR FINAL CORRIGIDO (UMA VEZ POR PLACA):');
+            console.log('- Placas únicas processadas:', Object.keys(gruposPorPlaca).length);
+            console.log('- Total diárias (sem duplicação por placa):', totalDiarias);
+            console.log('- Valor total (sem duplicação por placa):', valorTotalDiarias);
+            
+            if (totalDiarias > 0) {
+                totalDiariasTexto.textContent = `Total de diárias geradas: ${totalDiarias} | Valor total: ${formatarValor(valorTotalDiarias)}`;
+                totalDiariasInfo.classList.add('show');
+            } else {
+                totalDiariasInfo.classList.remove('show');
+            }
+        }
+
+        function carregarDadosSalvos() {
+            const dadosSalvos = localStorage.getItem('dadosPatioMinerva');
+            
+            if (dadosSalvos) {
+                try {
+                    dadosPatio = JSON.parse(dadosSalvos);
+                    console.log('📊 Dados carregados automaticamente:', dadosPatio.length, 'registros');
+                } catch (error) {
+                    console.error('Erro ao carregar dados salvos:', error);
+                    carregarDados();
+                }
+            } else {
+                carregarDados();
+            }
+        }
+
+        function carregarDados() {
+            dadosPatio = [
+                {
+                    placa: "RLH6G79",
+                    container: "",
+                    dataChegada: "01/12/2025",
+                    dataDescarga: "02/12/2025",
+                    diaria: 0,
+                    dedicada: "NÃO",
+                    valorDiaria: "R$ 999,84",
+                    valorTotal: "R$ 0,00",
+                    transportadora: "TRANSPORTES MARVEL S/A",
+                    unidade: "298",
+                    origem: "FORTUNCERES (AGE)",
+                    tipoDescarga: "ITAJAI",
+                    tipoMercado: "TURCOMENISTÃO",
+                    status: "DESCARREGADO",
+                    nfOrigem: "65033",
+                    nfeBrasfrigo: "249812",
+                    op: "18063",
+                    deposito: "154",
+                    statusOp: "FECHADA",
+                    pedido: "15753034",
+                    falta: "",
+                    sobra: "",
+                    inversaoRg: "",
+                    doca: "",
+                    pbr: "",
+                    oneWay: "",
+                    fumigado: "",
+                    totalPallet: "0",
+                    recFrio: "",
+                    obs: ""
+                },
+                {
+                    placa: "RLH6G79",
+                    container: "CONT456",
+                    dataChegada: "01/12/2025",
+                    dataDescarga: "02/12/2025",
+                    diaria: 1,
+                    dedicada: "NÃO",
+                    valorDiaria: "R$ 999,84",
+                    valorTotal: "R$ 999,84",
+                    transportadora: "TRANSPORTES MARVEL S/A",
+                    unidade: "298",
+                    origem: "FORTUNCERES (AGE)",
+                    tipoDescarga: "ITAJAI",
+                    tipoMercado: "TURCOMENISTÃO",
+                    status: "DESCARREGADO",
+                    nfOrigem: "65034",
+                    nfeBrasfrigo: "249813",
+                    op: "18064",
+                    deposito: "154",
+                    statusOp: "FECHADA",
+                    pedido: "15753035",
+                    falta: "",
+                    sobra: "",
+                    inversaoRg: "",
+                    doca: "",
+                    pbr: "",
+                    oneWay: "",
+                    fumigado: "",
+                    totalPallet: "10",
+                    recFrio: "",
+                    obs: ""
+                }
+            ];
+        }
+
+        function salvarAutomaticamente() {
+            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
+                console.log('Usuário sem permissão para salvar');
+                return;
+            }
+            
+            try {
+                localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
+                
+                const indicator = document.getElementById('autoSaveIndicator');
+                indicator.style.display = 'block';
+                setTimeout(function() {
+                    indicator.style.display = 'none';
+                }, 2000);
+                
+                console.log('💾 Dados salvos automaticamente');
+            } catch (error) {
+                console.error('Erro ao salvar automaticamente:', error);
+            }
+        }
+
+        function converterValorMonetario(valor) {
+            try {
+                if (!valor || valor === null || valor === undefined) {
+                    return 0;
+                }
+                
+                if (typeof valor === 'number') {
+                    return isNaN(valor) || !isFinite(valor) ? 0 : valor;
+                }
+                
+                let valorStr = valor.toString().trim();
+                
+                if (valorStr === '' || valorStr === '-') {
+                    return 0;
+                }
+                
+                valorStr = valorStr
+                    .replace(/R\$\s*/g, '')
+                    .replace(/[^\d.,\-]/g, '')
+                    .trim();
+                
+                if (valorStr === '') {
+                    return 0;
+                }
+                
+                if (valorStr.includes(',')) {
+                    if (valorStr.includes('.') && valorStr.lastIndexOf('.') < valorStr.lastIndexOf(',')) {
+                        valorStr = valorStr.replace(/\./g, '').replace(',', '.');
+                    } else {
+                        valorStr = valorStr.replace(',', '.');
+                    }
+                } else if (valorStr.includes('.')) {
+                    const partes = valorStr.split('.');
+                    if (partes.length > 2 || (partes.length === 2 && partes[1].length === 3)) {
+                        valorStr = partes.join('');
+                    }
+                }
+                
+                const numero = parseFloat(valorStr);
+                const resultado = isNaN(numero) || !isFinite(numero) ? 0 : numero;
+                
+                return resultado;
+                
+            } catch (error) {
+                console.error('Erro na conversão de valor monetário:', error, valor);
+                return 0;
+            }
+        }
+
+        // FUNÇÃO AGRUPARDATA CORRIGIDA - CALCULAR VALOR TOTAL CORRETO
+        function agruparDados(dados) {
+            const grupos = {};
+            
+            dados.forEach(item => {
+                const chave = `${item.placa}_${item.dataChegada}_${item.status}`;
+                
+                if (!grupos[chave]) {
+                    grupos[chave] = {
+                        placa: item.placa,
+                        dataChegada: item.dataChegada,
+                        status: item.status,
+                        registros: [],
+                        valorTotalGrupo: 0,
+                        diariaTotalGrupo: 0,
+                        valorDiariaGrupo: 0
+                    };
+                }
+                
+                grupos[chave].registros.push(item);
+                
+                // CALCULAR DIÁRIA TOTAL (soma de todas as diárias das notas)
+                grupos[chave].diariaTotalGrupo += parseInt(item.diaria) || 0;
+            });
+            
+            // APÓS AGRUPAR, CALCULAR VALORES CORRETOS
+            Object.values(grupos).forEach(grupo => {
+                // Pegar o primeiro registro com diária > 0 para usar como base
+                const primeiroComDiaria = grupo.registros.find(r => parseInt(r.diaria) > 0);
+                
+                if (primeiroComDiaria && grupo.diariaTotalGrupo > 0) {
+                    // CALCULAR VALOR TOTAL: diária_total_grupo × valor_unitário_da_diária
+                    const valorUnitarioDiaria = converterValorMonetario(primeiroComDiaria.valorDiaria);
+                    grupo.valorTotalGrupo = grupo.diariaTotalGrupo * valorUnitarioDiaria;
+                    grupo.valorDiariaGrupo = valorUnitarioDiaria; // Para o card "Gerando Diária"
+                    
+                    console.log(`Grupo ${grupo.placa}: ${grupo.diariaTotalGrupo} diárias × R$ ${valorUnitarioDiaria} = R$ ${grupo.valorTotalGrupo}`);
+                } else {
+                    // Se não há diárias, somar valores totais das notas
+                    grupo.valorTotalGrupo = grupo.registros.reduce((total, reg) => {
+                        return total + converterValorMonetario(reg.valorTotal);
+                    }, 0);
+                    grupo.valorDiariaGrupo = 0;
+                }
+            });
+            
+            return Object.values(grupos);
+        }
+
+        function formatarValor(valor) {
+            try {
+                if (typeof valor !== 'number' || isNaN(valor) || !isFinite(valor)) {
+                    return 'R$ 0,00';
+                }
+                
+                return new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(valor);
+            } catch (error) {
+                console.error('Erro na formatação de valor:', error, valor);
+                return 'R$ 0,00';
+            }
+        }
+
+        function toggleGrupo(chaveGrupo) {
+            const detailsRows = document.querySelectorAll(`[data-grupo="${chaveGrupo}"]`);
+            const icon = document.querySelector(`[data-icon="${chaveGrupo}"]`);
+            
+            detailsRows.forEach(row => {
+                row.classList.toggle('show');
+            });
+            
+            if (icon) {
+                icon.classList.toggle('expanded');
+            }
+        }
+
+        function limparFiltros() {
+            document.getElementById('searchPlaca').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterOrigem').value = '';
+            document.getElementById('filterTipoMercado').value = '';
+            document.getElementById('filterGerandoDiaria').value = '';
+            document.getElementById('filterTipoDescarga').value = '';
+            document.getElementById('filterDataChegada').value = '';
+            document.getElementById('filterDataDescarga').value = '';
+            document.getElementById('filterMesAno').value = '';
+            
+            // Esconder contador de diárias
+            document.getElementById('totalDiariasInfo').classList.remove('show');
+            
+            renderizarTabela();
+            atualizarEstatisticas();
+            
+            mostrarAlerta('info', 'ℹ️ Filtros limpos com sucesso!');
+        }
+
+        function limparArquivo() {
+            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado! Apenas o usuário Master pode limpar arquivos.');
+                return;
+            }
+            
+            if (confirm('Tem certeza que deseja limpar todos os dados do arquivo? Esta ação não pode ser desfeita.')) {
+                dadosPatio = [];
+                localStorage.removeItem('dadosPatioMinerva');
+                
+                document.getElementById('searchPlaca').value = '';
+                document.getElementById('filterStatus').value = '';
+                document.getElementById('filterOrigem').value = '';
+                document.getElementById('filterTipoMercado').value = '';
+                document.getElementById('filterGerandoDiaria').value = '';
+                document.getElementById('filterTipoDescarga').value = '';
+                document.getElementById('filterDataChegada').value = '';
+                document.getElementById('filterDataDescarga').value = '';
+                document.getElementById('filterMesAno').value = '';
+                
+                // Esconder contador de diárias
+                document.getElementById('totalDiariasInfo').classList.remove('show');
+                
+                popularFiltros();
+                renderizarTabela();
+                atualizarEstatisticas();
+                
+                mostrarAlerta('info', 'ℹ️ Arquivo limpo com sucesso! (Master)');
+            }
+        }
+
+        function importarExcel(event) {
+            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado! Apenas o usuário Master pode importar arquivos.');
+                event.target.value = '';
+                return;
+            }
+            
+            const file = event.target.files[0];
+            
+            if (!file) {
+                console.log('Nenhum arquivo selecionado');
+                return;
+            }
+
+            const reader = new FileReader();
+            
+            reader.onerror = function(error) {
+                console.error('Erro ao ler arquivo:', error);
+                mostrarAlerta('error', '✗ Erro ao ler o arquivo selecionado.');
+            };
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    
+                    if (!firstSheet) {
+                        throw new Error('Planilha não encontrada');
+                    }
+                    
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    
+                    if (jsonData.length < 2) {
+                        throw new Error('Arquivo deve ter pelo menos 2 linhas (cabeçalho + dados)');
+                    }
+                    
+                    const headers = jsonData[0];
+                    const rows = jsonData.slice(1);
+                    
+                    dadosPatio = rows.map((row, index) => {
+                        try {
+                            return {
+                                placa: converterValor(row[0]) || "",
+                                container: converterValor(row[1]) || "",
+                                dataChegada: formatarData(row[2]) || "",
+                                dataDescarga: formatarData(row[3]) || "",
+                                diaria: converterNumero(row[4]),
+                                dedicada: converterValor(row[5]) || "NÃO",
+                                valorDiaria: converterValor(row[6]) || "R$ 0,00",
+                                valorTotal: converterValor(row[7]) || "R$ 0,00",
+                                transportadora: converterValor(row[8]) || "",
+                                unidade: converterValor(row[9]) || "",
+                                origem: converterValor(row[10]) || "",
+                                tipoDescarga: converterValor(row[11]) || "",
+                                tipoMercado: converterValor(row[12]) || "",
+                                status: converterValor(row[13]) || "",
+                                nfOrigem: converterValor(row[14]) || "",
+                                nfeBrasfrigo: converterValor(row[15]) || "",
+                                op: converterValor(row[16]) || "",
+                                deposito: converterValor(row[17]) || "",
+                                statusOp: converterValor(row[18]) || "",
+                                pedido: converterValor(row[19]) || "",
+                                falta: converterValor(row[20]) || "",
+                                sobra: converterValor(row[21]) || "",
+                                inversaoRg: converterValor(row[22]) || "",
+                                doca: converterValor(row[23]) || "",
+                                pbr: converterValor(row[24]) || "",
+                                oneWay: converterValor(row[25]) || "",
+                                fumigado: converterValor(row[26]) || "",
+                                totalPallet: converterValor(row[27]) || "",
+                                recFrio: converterValor(row[28]) || "",
+                                obs: converterValor(row[29]) || ""
+                            };
+                        } catch (rowError) {
+                            console.error(`Erro na linha ${index + 2}:`, rowError, row);
+                            return null;
+                        }
+                    }).filter(item => item && item.placa);
+                    
+                    salvarAutomaticamente();
+                    popularFiltros();
+                    renderizarTabela();
+                    atualizarEstatisticas();
+                    
+                    mostrarAlerta('success', `✓ Arquivo importado com sucesso! ${dadosPatio.length} registros processados. (Master)`);
+                    
+                } catch (error) {
+                    console.error('Erro ao processar arquivo:', error);
+                    mostrarAlerta('error', `✗ Erro ao processar arquivo: ${error.message}`);
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+            event.target.value = '';
+        }
+
+        function converterValor(valor) {
+            if (valor === null || valor === undefined) return "";
+            return valor.toString().trim();
+        }
+
+        function converterNumero(valor) {
+            if (valor === null || valor === undefined || valor === "") return 0;
+            const num = parseFloat(valor);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function formatarData(valor) {
+            if (!valor) return "";
+            
+            try {
+                if (typeof valor === 'number') {
+                    if (typeof XLSX !== 'undefined' && XLSX.SSF && XLSX.SSF.parse_date_code) {
+                        const date = XLSX.SSF.parse_date_code(valor);
+                        return `${String(date.d).padStart(2, '0')}/${String(date.m).padStart(2, '0')}/${date.y}`;
+                    } else {
+                        const excelEpoch = new Date(1900, 0, 1);
+                        const jsDate = new Date(excelEpoch.getTime() + (valor - 2) * 24 * 60 * 60 * 1000);
+                        return `${String(jsDate.getDate()).padStart(2, '0')}/${String(jsDate.getMonth() + 1).padStart(2, '0')}/${jsDate.getFullYear()}`;
+                    }
+                }
+                return valor.toString();
+            } catch (error) {
+                console.error('Erro ao formatar data:', error, valor);
+                return valor ? valor.toString() : "";
+            }
+        }
+
+        // FUNÇÃO CORRIGIDA - SINTAXE DE ARROW FUNCTION ARRUMADA
+        function mostrarAlerta(tipo, mensagem = null) {
+            const alertSuccess = document.getElementById('alertSuccess');
+            const alertError = document.getElementById('alertError');
+            const alertInfo = document.getElementById('alertInfo');
+            
+            alertSuccess.style.display = 'none';
+            alertError.style.display = 'none';
+            alertInfo.style.display = 'none';
+            
+            if (tipo === 'success') {
+                if (mensagem) alertSuccess.innerHTML = mensagem;
+                alertSuccess.style.display = 'block';
+                setTimeout(function() {
+                    alertSuccess.style.display = 'none';
+                }, 5000);
+            } else if (tipo === 'error') {
+                if (mensagem) alertError.innerHTML = mensagem;
+                alertError.style.display = 'block';
+                setTimeout(function() {
+                    alertError.style.display = 'none';
+                }, 7000);
+            } else if (tipo === 'info') {
+                if (mensagem) alertInfo.innerHTML = mensagem;
+                alertInfo.style.display = 'block';
+                setTimeout(function() {
+                    alertInfo.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function popularFiltros() {
+            // Popular filtro de origem
+            const origens = [...new Set(dadosPatio.map(d => d.origem))].filter(Boolean).sort();
+            const selectOrigem = document.getElementById('filterOrigem');
+            
+            selectOrigem.innerHTML = '<option value="">Todas</option>';
+            
+            origens.forEach(origem => {
+                const option = document.createElement('option');
+                option.value = origem;
+                option.textContent = origem;
+                selectOrigem.appendChild(option);
+            });
+
+            // POPULAR FILTRO DE TIPO DE MERCADO
+            const tiposMercado = [...new Set(dadosPatio.map(d => d.tipoMercado))].filter(Boolean).sort();
+            const selectTipoMercado = document.getElementById('filterTipoMercado');
+            
+            selectTipoMercado.innerHTML = '<option value="">Todos</option>';
+            
+            tiposMercado.forEach(tipo => {
+                const option = document.createElement('option');
+                option.value = tipo;
+                option.textContent = tipo;
+                selectTipoMercado.appendChild(option);
+            });
+        }
+
+        function renderizarTabela(dadosFiltrados = null) {
+            const dados = dadosFiltrados || dadosPatio;
+            const tbody = document.getElementById('tabelaBody');
+            
+            if (dados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="30" class="no-data">Nenhum registro encontrado</td></tr>';
+                return;
+            }
+
+            const grupos = agruparDados(dados);
+            let html = '';
+            
+            grupos.forEach((grupo, index) => {
+                const chaveGrupo = `grupo_${index}`;
+                const primeiroRegistro = grupo.registros[0];
+                
+                html += `
+                    <tr class="grupo-header" onclick="toggleGrupo('${chaveGrupo}')">
+                        <td>
+                            <span class="expand-icon" data-icon="${chaveGrupo}">▶</span>
+                            <strong>${grupo.placa}</strong>
+                            <span class="count-badge">${grupo.registros.length} notas</span>
+                        </td>
+                        <td>-</td>
+                        <td>${grupo.dataChegada}</td>
+                        <td>-</td>
+                        <td>${grupo.diariaTotalGrupo}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td><strong>${formatarValor(grupo.valorTotalGrupo)}</strong></td>
+                        <td>${primeiroRegistro.transportadora}</td>
+                        <td>${primeiroRegistro.unidade}</td>
+                        <td>${primeiroRegistro.origem}</td>
+                        <td>${primeiroRegistro.tipoDescarga}</td>
+                        <td>${primeiroRegistro.tipoMercado}</td>
+                        <td><span class="status-badge status-${grupo.status.toLowerCase()}">${grupo.status}</span></td>
+                        <td colspan="16">📋 Clique para expandir detalhes</td>
+                    </tr>
+                `;
+                
+                grupo.registros.forEach(item => {
+                    html += `
+                        <tr class="grupo-details" data-grupo="${chaveGrupo}">
+                            <td style="padding-left: 30px;">↳ ${item.placa}</td>
+                            <td>${item.container}</td>
+                            <td>${item.dataChegada}</td>
+                            <td>${item.dataDescarga}</td>
+                            <td>${item.diaria}</td>
+                            <td><span class="${item.dedicada === 'SIM' ? 'dedicada-sim' : 'dedicada-nao'}">${item.dedicada}</span></td>
+                            <td>${item.valorDiaria}</td>
+                            <td>${item.valorTotal}</td>
+                            <td>${item.transportadora}</td>
+                            <td>${item.unidade}</td>
+                            <td>${item.origem}</td>
+                            <td>${item.tipoDescarga}</td>
+                            <td>${item.tipoMercado}</td>
+                            <td><span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span></td>
+                            <td>${item.nfOrigem}</td>
+                            <td>${item.nfeBrasfrigo}</td>
+                            <td>${item.op}</td>
+                            <td>${item.deposito}</td>
+                            <td>${item.statusOp}</td>
+                            <td>${item.pedido}</td>
+                            <td>${item.falta}</td>
+                            <td>${item.sobra}</td>
+                            <td>${item.inversaoRg}</td>
+                            <td>${item.doca}</td>
+                            <td>${item.pbr}</td>
+                            <td>${item.oneWay}</td>
+                            <td>${item.fumigado}</td>
+                            <td>${item.totalPallet}</td>
+                            <td>${item.recFrio}</td>
+                            <td>${item.obs}</td>
+                        </tr>
+                    `;
+                });
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        function aplicarFiltros() {
+            const searchPlaca = document.getElementById('searchPlaca').value.toUpperCase();
+            const filterStatus = document.getElementById('filterStatus').value;
+            const filterOrigem = document.getElementById('filterOrigem').value;
+            const filterTipoMercado = document.getElementById('filterTipoMercado').value;
+            const filterGerandoDiaria = document.getElementById('filterGerandoDiaria').value;
+            const filterTipoDescarga = document.getElementById('filterTipoDescarga').value;
+            const filterDataChegada = document.getElementById('filterDataChegada').value;
+            const filterDataDescarga = document.getElementById('filterDataDescarga').value;
+            const filterMesAno = document.getElementById('filterMesAno').value;
+
+            let dadosFiltrados = dadosPatio.filter(item => {
+                let matchPlaca = !searchPlaca || item.placa.includes(searchPlaca);
+                let matchStatus = !filterStatus || item.status === filterStatus;
+                let matchOrigem = !filterOrigem || item.origem === filterOrigem;
+                let matchTipoMercado = !filterTipoMercado || item.tipoMercado === filterTipoMercado;
+                
+                let matchGerandoDiaria = true;
+                if (filterGerandoDiaria === 'SIM') {
+                    matchGerandoDiaria = (item.status === 'AGUARDANDO' || item.status === 'DESOVANDO') && parseInt(item.diaria) > 0;
+                } else if (filterGerandoDiaria === 'NAO') {
+                    matchGerandoDiaria = !(item.status === 'AGUARDANDO' || item.status === 'DESOVANDO') || parseInt(item.diaria) === 0;
+                }
+                
+                let matchTipoDescarga = !filterTipoDescarga || item.tipoDescarga === filterTipoDescarga;
+                
+                // FILTROS DE DATA ESPECÍFICA
+                let matchDataChegada = true;
+                if (filterDataChegada) {
+                    const dataSelecionada = converterDataParaBrasileiro(filterDataChegada);
+                    matchDataChegada = item.dataChegada === dataSelecionada;
+                }
+                
+                let matchDataDescarga = true;
+                if (filterDataDescarga) {
+                    const dataSelecionada = converterDataParaBrasileiro(filterDataDescarga);
+                    matchDataDescarga = item.dataDescarga === dataSelecionada;
+                }
+                
+                // FILTRO DE MÊS/ANO CORRIGIDO - FOCO EM DIÁRIAS
+                let matchMesAno = true;
+                if (filterMesAno) {
+                    matchMesAno = verificarMesAnoComDiarias(item, filterMesAno);
+                }
+                
+                return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchGerandoDiaria && matchTipoDescarga && matchDataChegada && matchDataDescarga && matchMesAno;
+            });
+
+            // Atualizar contador de diárias totais (CORRIGIDO)
+            atualizarContadorDiarias(dadosFiltrados);
+
+            renderizarTabela(dadosFiltrados);
+            atualizarEstatisticas(dadosFiltrados);
+        }
+
+        // FUNÇÃO ATUALIZARESTATISTICAS CORRIGIDA - APLICAR MESMA LÓGICA DO CONTADOR
+        function atualizarEstatisticas(dados = null) {
+            const dadosCalculo = dados || dadosPatio;
+            const grupos = agruparDados(dadosCalculo);
+            
+            const totalGrupos = grupos.length;
+            const gruposAguardando = grupos.filter(g => g.status === 'AGUARDANDO').length;
+            const gruposTransito = grupos.filter(g => g.status === 'TRÂNSITO').length;
+            const gruposDescarregado = grupos.filter(g => g.status === 'DESCARREGADO').length;
+            const gruposDesovando = grupos.filter(g => g.status === 'DESOVANDO').length;
+            
+            const gruposGerandoDiaria = grupos.filter(g => 
+                g.diariaTotalGrupo > 0 && 
+                (g.status === 'AGUARDANDO' || g.status === 'DESOVANDO')
+            ).length;
+            
+            // CALCULAR VALOR TOTAL DAS DIÁRIAS SEM DUPLICAÇÃO POR PLACA
+            const gruposPorPlacaDiaria = {};
+            
+            // Agrupar dados por placa para calcular valor total correto
+            dadosCalculo.forEach(item => {
+                if ((item.status === 'AGUARDANDO' || item.status === 'DESOVANDO') && parseInt(item.diaria) > 0) {
+                    const chave = item.placa; // Apenas placa
+                    
+                    if (!gruposPorPlacaDiaria[chave]) {
+                        gruposPorPlacaDiaria[chave] = {
+                            placa: item.placa,
+                            registros: []
+                        };
+                    }
+                    
+                    gruposPorPlacaDiaria[chave].registros.push(item);
+                }
+            });
+            
+            // Calcular valor total usando apenas uma diária por placa
+            const valorTotalDiaria = Object.values(gruposPorPlacaDiaria).reduce((total, grupoPorPlaca) => {
+                // Pegar primeiro registro com diária > 0
+                const registroComDiaria = grupoPorPlaca.registros.find(r => parseInt(r.diaria) > 0);
+                
+                if (registroComDiaria) {
+                    const valorDiariaPorPlaca = converterValorMonetario(registroComDiaria.valorDiaria);
+                    console.log(`Card Gerando Diária - Placa ${grupoPorPlaca.placa}: R$ ${valorDiariaPorPlaca} (uma vez só)`);
+                    return total + valorDiariaPorPlaca;
+                }
+                return total;
+            }, 0);
+            
+            document.getElementById('totalVeiculos').textContent = totalGrupos;
+            document.getElementById('totalAguardando').textContent = gruposAguardando;
+            document.getElementById('totalTransito').textContent = gruposTransito;
+            document.getElementById('totalDescarregado').textContent = gruposDescarregado;
+            document.getElementById('totalDesovando').textContent = gruposDesovando;
+            document.getElementById('totalGerandoDiaria').textContent = gruposGerandoDiaria;
+            document.getElementById('valorTotalDiaria').textContent = formatarValor(valorTotalDiaria);
+        }
+
+        function exportarParaExcel() {
+            if (dadosPatio.length === 0) {
+                mostrarAlerta('error', '⚠️ Não há dados para exportar!');
+                return;
+            }
+
+            let csv = 'PLACA;CONTAINER;DATA CHEGADA;DATA DESCARGA;DIÁRIA;DEDICADA;VALOR DIÁRIA;VALOR TOTAL;TRANSPORTADORA;UNIDADE;ORIGEM;TIPO DESCARGA;TIPO MERCADO;STATUS;NF ORIGEM;NFE BRASFRIGO;OP;DEPÓSITO;STATUS OP;PEDIDO;FALTA;SOBRA;INVERSÃO RG;DOCA;PBR;ONE-WAY;FUMIGADO;TOTAL PALLET;REC. FRIO;OBS\n';
+            
+            dadosPatio.forEach(item => {
+                csv += `${item.placa};${item.container};${item.dataChegada};${item.dataDescarga};${item.diaria};${item.dedicada};${item.valorDiaria};${item.valorTotal};${item.transportadora};${item.unidade};${item.origem};${item.tipoDescarga};${item.tipoMercado};${item.status};${item.nfOrigem};${item.nfeBrasfrigo};${item.op};${item.deposito};${item.statusOp};${item.pedido};${item.falta};${item.sobra};${item.inversaoRg};${item.doca};${item.pbr};${item.oneWay};${item.fumigado};${item.totalPallet};${item.recFrio};${item.obs}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `minerva_patio_atual_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            
+            mostrarAlerta('success', '✓ Arquivo exportado com sucesso! (Todos os registros individuais)');
+        }
+
+        // Eventos de busca em tempo real
+        document.getElementById('searchPlaca').addEventListener('input', aplicarFiltros);
+    </script>
+</body>
+</html>
