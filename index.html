@@ -107,21 +107,6 @@
             margin: 0;
         }
 
-        .sync-indicator {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background: #17a2b8;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            display: none;
-            z-index: 1001;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-
         /* PAINEL DE CONTROLE DE USUÁRIOS */
         .user-panel {
             position: fixed;
@@ -141,8 +126,8 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            width: 800px;
-            max-height: 80vh;
+            width: 900px;
+            max-height: 90vh;
             overflow-y: auto;
         }
 
@@ -161,7 +146,7 @@
         }
 
         .user-list {
-            max-height: 300px;
+            max-height: 250px;
             overflow-y: auto;
             border: 1px solid #dee2e6;
             border-radius: 6px;
@@ -220,6 +205,49 @@
             background: #e67e22;
         }
 
+        .code-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+
+        .code-textarea {
+            width: 100%;
+            height: 200px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: #f8f9fa;
+            resize: vertical;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+
+        .instructions-box {
+            background: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
         .recovery-buttons {
             margin-top: 15px;
             display: flex;
@@ -240,22 +268,6 @@
 
         .recovery-btn:hover {
             background: #138496;
-        }
-
-        .sync-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e8f5e9;
-            border-radius: 6px;
-            border: 1px solid #c8e6c9;
-        }
-
-        .instructions {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 6px;
-            padding: 15px;
-            margin-top: 15px;
         }
 
         .header {
@@ -762,8 +774,8 @@
                 grid-template-columns: 1fr;
             }
             .login-modal, .user-panel-modal {
-                width: 90%;
-                margin: 20px;
+                width: 95%;
+                margin: 10px;
             }
             .user-info {
                 position: relative;
@@ -775,11 +787,6 @@
     </style>
 </head>
 <body>
-    <!-- INDICADOR DE SINCRONIZAÇÃO -->
-    <div class="sync-indicator" id="syncIndicator">
-        🔄 Carregando usuários do servidor...
-    </div>
-
     <!-- TELA DE LOGIN SIMPLIFICADA -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-modal">
@@ -820,25 +827,29 @@
                 <!-- Lista de usuários será carregada aqui -->
             </div>
 
-            <div class="sync-section">
-                <h4 style="margin-bottom: 15px; color: #2c3e50;">🌐 Sincronização Global para GitHub Pages</h4>
-                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px;">
-                    <button onclick="gerarArquivoUsuarios()" class="recovery-btn">📁 Gerar users.json</button>
-                    <button onclick="carregarUsuariosDoServidor()" class="recovery-btn">🔄 Recarregar do Servidor</button>
+            <div class="code-section" id="codeSection" style="display: none;">
+                <h4 style="margin-bottom: 15px; color: #2c3e50;">🔧 Código JavaScript Atualizado</h4>
+                <textarea id="codigoGerado" class="code-textarea" readonly placeholder="O código JavaScript atualizado aparecerá aqui..."></textarea>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button onclick="copiarCodigo()" class="copy-btn">📋 Copiar Código</button>
+                    <button onclick="gerarCodigoAtual()" class="recovery-btn">🔄 Atualizar Código</button>
                 </div>
                 
-                <div class="instructions">
-                    <strong>📋 INSTRUÇÕES para GitHub Pages:</strong><br><br>
-                    <strong>1.</strong> Após criar usuários, clique em <strong>"📁 Gerar users.json"</strong><br>
-                    <strong>2.</strong> Substitua o arquivo <code>users.json</code> no seu repositório GitHub<br>
-                    <strong>3.</strong> Aguarde alguns minutos para o GitHub Pages atualizar<br>
-                    <strong>4.</strong> Todas as máquinas terão acesso aos novos usuários!<br><br>
-                    <small>💡 O arquivo users.json deve ficar na raiz do repositório junto com o HTML</small>
+                <div class="instructions-box">
+                    <strong>📋 INSTRUÇÕES - GitHub Pages:</strong><br><br>
+                    <strong>1.</strong> Copie o código acima (botão "📋 Copiar Código")<br>
+                    <strong>2.</strong> Vá ao arquivo HTML no seu GitHub<br>
+                    <strong>3.</strong> Procure pela seção "USUÁRIOS PADRÃO DO SISTEMA" (linha ~150)<br>
+                    <strong>4.</strong> Substitua a constante <code>USUARIOS_PADRAO</code> pelo código copiado<br>
+                    <strong>5.</strong> Faça commit das alterações<br>
+                    <strong>6.</strong> Aguarde 2-3 minutos para o GitHub Pages atualizar<br><br>
+                    <strong>💡 Após isso, TODAS as máquinas terão acesso aos novos usuários!</strong>
                 </div>
             </div>
 
             <h4 style="margin: 20px 0 15px 0; color: #2c3e50; border-top: 1px solid #dee2e6; padding-top: 20px;">🔧 Ferramentas do Sistema</h4>
             <div class="recovery-buttons">
+                <button onclick="gerarCodigoAtual()" class="recovery-btn">📝 Gerar Código Atual</button>
                 <button onclick="investigarUsuarios()" class="recovery-btn">🔍 Investigar Sistema</button>
                 <button onclick="recuperarUsuarios()" class="recovery-btn">🔧 Recuperar Usuários</button>
                 <button onclick="testarUsuarios()" class="recovery-btn">🧪 Testar Todos</button>
@@ -1029,12 +1040,11 @@
     </div>
 
     <script>
-        // SISTEMA DE AUTENTICAÇÃO COM CARREGAMENTO EXTERNO
+        // SISTEMA DE AUTENTICAÇÃO
         let usuarioLogado = null;
         let dadosPatio = [];
-        let usuariosGlobais = [];
 
-        // USUÁRIOS PADRÃO (FALLBACK)
+        // USUÁRIOS PADRÃO DO SISTEMA (SERÁ SUBSTITUÍDO AUTOMATICAMENTE)
         const USUARIOS_PADRAO = [
             {
                 id: 1,
@@ -1076,59 +1086,17 @@
         });
 
         function inicializarSistema() {
-            console.log('🔄 INICIALIZANDO SISTEMA COM CARREGAMENTO EXTERNO...');
+            console.log('🔄 INICIALIZANDO SISTEMA...');
             
-            // Tentar carregar usuários do arquivo externo users.json
-            carregarUsuariosDoServidor();
-        }
+            // Sempre usar os usuários do código como fonte oficial
+            localStorage.setItem('usuariosSistema', JSON.stringify(USUARIOS_PADRAO));
+            console.log('👥 Usuários carregados do código:', USUARIOS_PADRAO.length);
 
-        // FUNÇÃO PARA CARREGAR USUÁRIOS DO ARQUIVO EXTERNO
-        async function carregarUsuariosDoServidor() {
-            mostrarSyncIndicator('🔄 Carregando usuários do servidor...');
-            
-            try {
-                // Tentar carregar do arquivo users.json no mesmo diretório
-                const response = await fetch('./users.json');
-                
-                if (response.ok) {
-                    const usuariosData = await response.json();
-                    console.log('✅ Usuários carregados do arquivo externo:', usuariosData.usuarios.length);
-                    
-                    usuariosGlobais = usuariosData.usuarios;
-                    localStorage.setItem('usuariosSistema', JSON.stringify(usuariosGlobais));
-                    
-                    mostrarSyncIndicator('✅ Usuários sincronizados!');
-                    console.log('🌐 Usuários globais atualizados:', usuariosGlobais.length);
-                    
-                } else {
-                    throw new Error('Arquivo users.json não encontrado');
-                }
-                
-            } catch (error) {
-                console.log('⚠️ Erro ao carregar usuários do servidor:', error.message);
-                console.log('🔄 Usando usuários padrão como fallback');
-                
-                usuariosGlobais = USUARIOS_PADRAO;
-                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosGlobais));
-                
-                mostrarSyncIndicator('⚠️ Usando usuários padrão');
-            }
-            
-            // Esconder indicador após 2 segundos
-            setTimeout(() => {
-                document.getElementById('syncIndicator').style.display = 'none';
-            }, 2000);
-            
-            // Continuar inicialização
-            continuarInicializacao();
-        }
-
-        function continuarInicializacao() {
             // Verificar credenciais salvas (lembrar-me)
             const credenciaisSalvas = localStorage.getItem('credenciaisLembradas');
             if (credenciaisSalvas) {
                 const { login, senha } = JSON.parse(credenciaisSalvas);
-                console.log('🔑 Tentando login automático com credenciais salvas:', login);
+                console.log('🔑 Tentando login automático:', login);
                 autenticarUsuario(login, senha, true);
                 return;
             }
@@ -1139,7 +1107,7 @@
             if (sessaoAtiva) {
                 try {
                     usuarioLogado = JSON.parse(sessaoAtiva);
-                    console.log('📱 Sessão ativa encontrada:', usuarioLogado.nome);
+                    console.log('📱 Sessão ativa:', usuarioLogado.nome);
                     iniciarSistema();
                 } catch (error) {
                     console.error('❌ Erro ao carregar sessão:', error);
@@ -1152,59 +1120,87 @@
             }
         }
 
-        // FUNÇÃO PARA GERAR ARQUIVO users.json ATUALIZADO
-        function gerarArquivoUsuarios() {
-            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+        // FUNÇÃO PARA GERAR CÓDIGO JAVASCRIPT ATUALIZADO
+        function gerarCodigoJavaScript(usuarios) {
+            let codigo = `        // USUÁRIOS PADRÃO DO SISTEMA (ATUALIZADO AUTOMATICAMENTE)\n`;
+            codigo += `        const USUARIOS_PADRAO = [\n`;
             
-            const dadosParaGitHub = {
-                versao: "1.0",
-                ultimaAtualizacao: new Date().toISOString(),
-                atualizadoPor: usuarioLogado.nome,
-                totalUsuarios: usuarios.length,
-                usuarios: usuarios
-            };
-            
-            const blob = new Blob([JSON.stringify(dadosParaGitHub, null, 2)], { 
-                type: 'application/json;charset=utf-8;' 
+            usuarios.forEach((usuario, index) => {
+                codigo += `            {\n`;
+                codigo += `                id: ${usuario.id},\n`;
+                codigo += `                nome: "${usuario.nome}",\n`;
+                codigo += `                login: "${usuario.login}",\n`;
+                codigo += `                senha: "${usuario.senha}",\n`;
+                codigo += `                nivel: "${usuario.nivel}",\n`;
+                codigo += `                email: "${usuario.email}"`;
+                
+                if (usuario.criadoEm) {
+                    codigo += `,\n                criadoEm: "${usuario.criadoEm}"`;
+                }
+                if (usuario.criadoPor) {
+                    codigo += `,\n                criadoPor: "${usuario.criadoPor}"`;
+                }
+                
+                codigo += `\n            }`;
+                
+                if (index < usuarios.length - 1) {
+                    codigo += `,`;
+                }
+                codigo += `\n`;
             });
             
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'users.json';
-            link.click();
+            codigo += `        ];`;
             
-            console.log('📁 Arquivo users.json gerado com', usuarios.length, 'usuários');
-            
-            mostrarAlerta('success', `📁 Arquivo users.json gerado com sucesso!\n\n🚀 PRÓXIMOS PASSOS:\n\n1️⃣ Vá ao seu repositório GitHub\n2️⃣ Substitua o arquivo "users.json" pelo que acabou de baixar\n3️⃣ Faça commit das alterações\n4️⃣ Aguarde ~2 minutos para o GitHub Pages atualizar\n\n👥 Total de usuários: ${usuarios.length}\n🌐 Todas as máquinas terão acesso após a atualização!`);
+            return codigo;
         }
 
-        function mostrarSyncIndicator(mensagem) {
-            const indicator = document.getElementById('syncIndicator');
-            indicator.textContent = mensagem;
-            indicator.style.display = 'block';
+        // FUNÇÃO PARA MOSTRAR/ATUALIZAR O CÓDIGO GERADO
+        function gerarCodigoAtual() {
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            const codigoAtualizado = gerarCodigoJavaScript(usuarios);
+            
+            document.getElementById('codigoGerado').value = codigoAtualizado;
+            document.getElementById('codeSection').style.display = 'block';
+            
+            console.log('📝 Código JavaScript gerado com', usuarios.length, 'usuários');
+            mostrarAlerta('info', '📝 Código JavaScript atualizado! Use o botão "Copiar Código" e substitua no GitHub.');
+        }
+
+        // FUNÇÃO PARA COPIAR CÓDIGO PARA ÁREA DE TRANSFERÊNCIA
+        function copiarCodigo() {
+            const textarea = document.getElementById('codigoGerado');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // Para mobile
+            
+            try {
+                document.execCommand('copy');
+                mostrarAlerta('success', '✅ Código copiado para área de transferência!\n\n📋 Próximos passos:\n1. Vá ao GitHub\n2. Edite o arquivo HTML\n3. Procure por "USUARIOS_PADRAO"\n4. Substitua pelo código copiado\n5. Faça commit');
+                console.log('📋 Código copiado para área de transferência');
+            } catch (err) {
+                alert('❌ Erro ao copiar código. Selecione e copie manualmente (Ctrl+C).');
+                console.error('Erro ao copiar:', err);
+            }
         }
 
         // FUNÇÃO PARA INVESTIGAR PROBLEMAS DOS USUÁRIOS
         function investigarUsuarios(mostrarAlert = true) {
-            console.log('🕵️ INVESTIGAÇÃO COMPLETA DO SISTEMA DE USUÁRIOS');
+            console.log('🕵️ INVESTIGAÇÃO COMPLETA DO SISTEMA');
             
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-            console.log('👥 Total de usuários no sistema:', usuarios.length);
+            console.log('👥 Total de usuários:', usuarios.length);
             
             usuarios.forEach((user, index) => {
-                console.log(`\n👤 USUÁRIO ${index + 1}:`);
+                console.log(`👤 USUÁRIO ${index + 1}:`);
                 console.log(`   Nome: "${user.nome}"`);
                 console.log(`   Login: "${user.login}"`);
                 console.log(`   Senha: "${user.senha}"`);
                 console.log(`   Nível: "${user.nivel}"`);
-                console.log(`   Fonte: ${user.global ? 'Arquivo externo' : 'Local'}`);
             });
                 
             if (mostrarAlert) {
                 let mensagem = `Sistema tem ${usuarios.length} usuários:\n\n`;
                 usuarios.forEach((u, i) => {
-                    const fonte = u.global ? '[Servidor]' : '[Local]';
-                    mensagem += `${i + 1}. ${u.nome} ${fonte}\n   Login: "${u.login}"\n   Senha: "${u.senha}"\n\n`;
+                    mensagem += `${i + 1}. ${u.nome}\n   Login: "${u.login}"\n   Senha: "${u.senha}"\n\n`;
                 });
                 alert(mensagem);
             }
@@ -1212,27 +1208,20 @@
 
         // FUNÇÃO PARA RECUPERAR USUÁRIOS PERDIDOS
         function recuperarUsuarios() {
-            console.log('🔧 INICIANDO RECUPERAÇÃO DE USUÁRIOS...');
-            
-            // Usar usuários padrão como base
+            console.log('🔧 Restaurando usuários padrão...');
             localStorage.setItem('usuariosSistema', JSON.stringify(USUARIOS_PADRAO));
             carregarListaUsuarios();
-            
-            console.log('🔧 Usuários padrão restaurados');
-            alert('🔧 Usuários padrão restaurados!\n\n👥 Usuários disponíveis:\n• leandro.brasil / master123\n• diego.cordeiro / diego123\n• teste.brasil / teste123\n• rhemerson.rezende / teste123\n\n💡 Para sincronizar com todas as máquinas, gere um novo users.json');
+            alert('🔧 Usuários padrão restaurados!\n\n👥 Usuários disponíveis:\n• leandro.brasil / master123\n• diego.cordeiro / diego123\n• teste.brasil / teste123\n• rhemerson.rezende / teste123');
         }
 
         // FUNÇÃO PARA TESTAR TODOS OS USUÁRIOS
         function testarUsuarios() {
-            console.log('🧪 TESTANDO AUTENTICAÇÃO DE TODOS OS USUÁRIOS...');
+            console.log('🧪 TESTANDO AUTENTICAÇÃO...');
             
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
             
             const resultados = usuarios.map(user => {
-                const loginTest = user.login;
-                const senhaTest = user.senha;
-                
-                const encontrado = usuarios.find(u => u.login === loginTest && u.senha === senhaTest);
+                const encontrado = usuarios.find(u => u.login === user.login && u.senha === user.senha);
                 
                 return {
                     nome: user.nome,
@@ -1243,17 +1232,15 @@
                 };
             });
             
-            console.log('🧪 RESULTADOS DOS TESTES:');
+            console.log('🧪 RESULTADOS:');
             console.table(resultados);
             
             const problematicos = resultados.filter(r => !r.funcionaria);
             
             if (problematicos.length > 0) {
-                console.log('❌ Usuários com problemas:', problematicos);
-                alert(`❌ ${problematicos.length} usuários com problemas de autenticação!\nVerifique o console (F12) para detalhes.`);
+                alert(`❌ ${problematicos.length} usuários com problemas!`);
             } else {
-                console.log('✅ Todos os usuários passaram no teste');
-                alert('✅ Todos os usuários passaram no teste de autenticação!');
+                alert('✅ Todos os usuários passaram no teste!');
             }
         }
 
@@ -1269,9 +1256,7 @@
             const senha = document.getElementById('loginSenha').value;
             const lembrarMe = document.getElementById('lembrarMe').checked;
             
-            console.log('🔍 TENTATIVA DE LOGIN:');
-            console.log('- Login digitado:', `"${login}"`);
-            console.log('- Senha digitada:', `"${senha}"`);
+            console.log('🔍 TENTATIVA DE LOGIN:', `"${login}"`);
             
             if (!login || !senha) {
                 alert('Por favor, preencha usuário e senha!');
@@ -1282,60 +1267,35 @@
         }
 
         function autenticarUsuario(login, senha, lembrarMe = false) {
-            console.log('🔐 INICIANDO AUTENTICAÇÃO...');
+            console.log('🔐 AUTENTICAÇÃO...');
             
-            // Carregar usuários atuais
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-            console.log('👥 Total de usuários disponíveis:', usuarios.length);
-            
-            // BUSCAR USUÁRIO COM COMPARAÇÃO EXATA
             const usuarioEncontrado = usuarios.find(u => u.login === login && u.senha === senha);
             
             if (usuarioEncontrado) {
-                console.log('✅ AUTENTICAÇÃO BEM-SUCEDIDA:', usuarioEncontrado.nome);
+                console.log('✅ LOGIN BEM-SUCEDIDO:', usuarioEncontrado.nome);
                 usuarioLogado = usuarioEncontrado;
                 
-                try {
-                    sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
-                    console.log('💾 Sessão salva com sucesso');
-                } catch (error) {
-                    console.error('❌ Erro ao salvar sessão:', error);
-                }
+                sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
                 
-                // Salvar credenciais se solicitado
                 if (lembrarMe) {
-                    try {
-                        localStorage.setItem('credenciaisLembradas', JSON.stringify({ login, senha }));
-                        console.log('💾 Credenciais salvas para próximo acesso');
-                    } catch (error) {
-                        console.error('❌ Erro ao salvar credenciais:', error);
-                    }
+                    localStorage.setItem('credenciaisLembradas', JSON.stringify({ login, senha }));
                 } else {
                     localStorage.removeItem('credenciaisLembradas');
                 }
                 
-                // Esconder login e mostrar sistema
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('mainContainer').style.display = 'block';
                 
                 iniciarSistema();
                 
                 if (!lembrarMe) {
-                    mostrarAlerta('success', `✓ Bem-vindo, ${usuarioEncontrado.nome}! (${usuarioEncontrado.nivel.toUpperCase()})`);
+                    mostrarAlerta('success', `✓ Bem-vindo, ${usuarioEncontrado.nome}!`);
                 }
             } else {
-                console.log('❌ AUTENTICAÇÃO FALHOU');
-                console.log('👥 Usuários disponíveis:');
-                usuarios.forEach((u, index) => {
-                    console.log(`${index + 1}. ${u.nome} | Login: "${u.login}" | Senha: "${u.senha}"`);
-                });
-                
-                // MENSAGEM SIMPLES
+                console.log('❌ FALHA NA AUTENTICAÇÃO');
                 alert('❌ Usuário ou senha incorretos!');
-                
-                // Limpar credenciais salvas se existirem
                 localStorage.removeItem('credenciaisLembradas');
-                mostrarTelaLogin();
             }
         }
 
@@ -1343,7 +1303,6 @@
             if (confirm('Deseja realmente fazer logout do sistema?')) {
                 sessionStorage.removeItem('usuarioLogado');
                 localStorage.removeItem('credenciaisLembradas');
-                console.log('🚪 Logout realizado');
                 location.reload();
             }
         }
@@ -1357,7 +1316,6 @@
             atualizarEstatisticas();
         }
 
-        // FUNÇÃO VERIFICARPERMISSOES CORRIGIDA - OCULTAR BOTÕES EM VEZ DE DESABILITAR
         function verificarPermissoes() {
             if (!usuarioLogado) return;
             
@@ -1367,41 +1325,30 @@
             const nomeUsuario = document.getElementById('nomeUsuario');
             const tipoUsuario = document.getElementById('tipoUsuario');
             
-            // Atualizar informações do usuário
             nomeUsuario.textContent = usuarioLogado.nome;
             tipoUsuario.textContent = usuarioLogado.nivel.toUpperCase();
             
             if (usuarioLogado.nivel === 'master') {
-                // MASTER - Acesso total - MOSTRAR TODOS OS BOTÕES
                 btnImportar.style.display = 'block';
-                btnImportar.disabled = false;
                 btnLimparArquivo.style.display = 'block';
-                btnLimparArquivo.disabled = false;
                 btnControlPanel.style.display = 'inline-block';
                 tipoUsuario.className = 'user-badge user-master';
-                console.log('🔴 Usuário Master logado - Todos os botões visíveis');
-                
             } else if (usuarioLogado.nivel === 'administrador') {
-                // ADMINISTRADOR - OCULTAR BOTÕES DE IMPORTAR E LIMPAR
                 btnImportar.style.display = 'none';
                 btnLimparArquivo.style.display = 'none';
                 btnControlPanel.style.display = 'none';
                 tipoUsuario.className = 'user-badge user-admin';
-                console.log('🟡 Usuário Administrador logado - Botões administrativos ocultos');
-                
             } else {
-                // USER - OCULTAR BOTÕES DE IMPORTAR E LIMPAR
                 btnImportar.style.display = 'none';
                 btnLimparArquivo.style.display = 'none';
                 btnControlPanel.style.display = 'none';
                 tipoUsuario.className = 'user-badge user-normal';
-                console.log('🟢 Usuário básico logado - Botões administrativos ocultos');
             }
         }
 
         function abrirPainelUsuarios() {
             if (usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado! Apenas o Master pode gerenciar usuários.');
+                mostrarAlerta('error', '⚠️ Acesso negado!');
                 return;
             }
             
@@ -1426,10 +1373,9 @@
             const senha = document.getElementById('novaSenha').value.trim();
             const nivel = document.getElementById('novoNivel').value;
 
-            console.log('📝 CRIANDO USUÁRIO PARA GITHUB PAGES:');
+            console.log('📝 CRIANDO USUÁRIO GLOBAL:');
             console.log('- Nome:', `"${nome}"`);
             console.log('- Login:', `"${login}"`);
-            console.log('- Senha:', `"${senha}"`);
             console.log('- Nível:', `"${nivel}"`);
 
             if (!nome || !login || !senha || !nivel) {
@@ -1442,17 +1388,15 @@
                 return;
             }
 
-            // Carregar usuários existentes
             let usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
             
-            // Verificar se login já existe
             const loginExistente = usuarios.find(u => u.login === login);
             if (loginExistente) {
-                alert(`❌ Login "${login}" já existe! Escolha outro.`);
+                alert(`❌ Login "${login}" já existe!`);
                 return;
             }
 
-            // Criar novo usuário
+            // CRIAR USUÁRIO GLOBAL
             const novoUsuario = {
                 id: Date.now(),
                 nome: nome,
@@ -1461,19 +1405,18 @@
                 nivel: nivel,
                 email: `${login}@minervafoods.com`,
                 criadoEm: new Date().toISOString(),
-                criadoPor: usuarioLogado.nome,
-                global: true // Marcado como global para sincronização
+                criadoPor: usuarioLogado.nome
             };
 
-            console.log('➕ Novo usuário criado para GitHub Pages:', novoUsuario);
+            console.log('➕ NOVO USUÁRIO GLOBAL CRIADO:', novoUsuario);
 
             usuarios.push(novoUsuario);
-            
-            // Salvar localmente
             localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
 
-            // Simular envio de email de boas-vindas
-            enviarEmailBoasVindas(novoUsuario);
+            // GERAR CÓDIGO JAVASCRIPT AUTOMATICAMENTE
+            const codigoAtualizado = gerarCodigoJavaScript(usuarios);
+            document.getElementById('codigoGerado').value = codigoAtualizado;
+            document.getElementById('codeSection').style.display = 'block';
 
             // Limpar formulário
             document.getElementById('novoNome').value = '';
@@ -1482,13 +1425,10 @@
             document.getElementById('novoNivel').value = '';
 
             carregarListaUsuarios();
+
+            mostrarAlerta('success', `✅ Usuário ${nome} criado!\n\n🔑 Login: "${login}" | Senha: "${senha}"\n\n🚀 CÓDIGO JAVASCRIPT GERADO AUTOMATICAMENTE!\n📋 Use o botão "Copiar Código" e substitua no GitHub\n\n⏱️ Após atualizar no GitHub, todas as máquinas terão acesso!`);
             
-            // GERAR AUTOMATICAMENTE O ARQUIVO ATUALIZADO
-            setTimeout(() => {
-                gerarArquivoUsuarios();
-            }, 500);
-            
-            mostrarAlerta('success', `✅ Usuário ${nome} criado com sucesso!\n\n🔑 Credenciais:\n• Login: "${login}"\n• Senha: "${senha}"\n\n🌐 PRÓXIMO PASSO IMPORTANTE:\nO arquivo users.json foi gerado automaticamente!\nSubstitua-o no GitHub para sincronizar com todas as máquinas.`);
+            console.log('🔧 Código JavaScript gerado automaticamente');
         }
 
         function resetarSenhaUsuario(id) {
@@ -1505,81 +1445,56 @@
                 return;
             }
 
-            // Solicitar nova senha ao Master
             const novaSenha = prompt(`Digite a nova senha para ${usuario.nome}:`);
             
-            if (!novaSenha || novaSenha.trim() === '') {
-                return;
-            }
+            if (!novaSenha || novaSenha.trim() === '') return;
 
             if (novaSenha.length < 6) {
                 alert('❌ A senha deve ter pelo menos 6 caracteres!');
                 return;
             }
 
-            // Confirmar ação
             if (!confirm(`Confirma reset da senha para ${usuario.nome}?\nNova senha: ${novaSenha}`)) {
                 return;
             }
 
-            // Atualizar senha no sistema
             usuario.senha = novaSenha;
             usuario.senhaAlteradaEm = new Date().toISOString();
             usuario.senhaAlteradaPor = usuarioLogado.nome;
             
             localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
 
-            console.log('🔄 Senha resetada para:', usuario.nome);
-
-            // Simular envio de email
-            enviarEmailResetSenha(usuario, novaSenha);
+            // GERAR CÓDIGO ATUALIZADO AUTOMATICAMENTE
+            const codigoAtualizado = gerarCodigoJavaScript(usuarios);
+            document.getElementById('codigoGerado').value = codigoAtualizado;
+            document.getElementById('codeSection').style.display = 'block';
 
             carregarListaUsuarios();
             
-            mostrarAlerta('success', `✓ Senha de ${usuario.nome} resetada!\nNova senha: "${novaSenha}"\n\n🌐 Para sincronizar com outras máquinas:\n📁 Gere um novo users.json e atualize no GitHub`);
-        }
-
-        function enviarEmailBoasVindas(usuario) {
-            console.log('📧 EMAIL ENVIADO - BOAS-VINDAS');
-            console.log('Para:', usuario.email);
-            console.log('Login:', `"${usuario.login}"`);
-            console.log('Senha:', `"${usuario.senha}"`);
-        }
-
-        function enviarEmailResetSenha(usuario, novaSenha) {
-            console.log('📧 EMAIL ENVIADO - RESET DE SENHA');
-            console.log('Para:', usuario.email);
-            console.log('Nova senha:', `"${novaSenha}"`);
-            console.log('Login:', `"${usuario.login}"`);
+            mostrarAlerta('success', `✓ Senha resetada: "${novaSenha}"\n\n🔧 Código JavaScript atualizado automaticamente!\n📋 Copie e atualize no GitHub para sincronizar.`);
         }
 
         function carregarListaUsuarios() {
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
             const lista = document.getElementById('userList');
             
-            console.log('📋 Carregando lista de usuários:', usuarios.length);
-            
-            lista.innerHTML = usuarios.map(user => {
-                const tipoUsuario = user.global ? '🌐 Global' : '💻 Local';
-                
-                return `
-                    <div class="user-item">
-                        <div>
-                            <strong>${user.nome}</strong> ${tipoUsuario}<br>
-                            <small style="color: #6c757d;">Login: "${user.login}" | Senha: "${user.senha}"</small><br>
-                            <small style="color: #6c757d;">Email: ${user.email}</small>
-                            ${user.criadoEm ? `<br><small style="color: #95a5a6;">Criado em: ${new Date(user.criadoEm).toLocaleDateString('pt-BR')}</small>` : ''}
-                        </div>
-                        <div class="user-actions">
-                            <span class="user-level level-${user.nivel}">${user.nivel}</span>
-                            ${user.nivel !== 'master' ? `
-                                <button class="btn-reset" onclick="resetarSenhaUsuario(${user.id})" title="Reset Senha">🔄</button>
-                                <button class="btn-delete" onclick="excluirUsuario(${user.id})" title="Excluir">🗑️</button>
-                            ` : ''}
-                        </div>
+            lista.innerHTML = usuarios.map(user => `
+                <div class="user-item">
+                    <div>
+                        <strong>${user.nome}</strong><br>
+                        <small style="color: #6c757d;">Login: "${user.login}" | Senha: "${user.senha}"</small><br>
+                        <small style="color: #6c757d;">Email: ${user.email}</small>
+                        ${user.criadoEm ? `<br><small style="color: #95a5a6;">Criado em: ${new Date(user.criadoEm).toLocaleDateString('pt-BR')}</small>` : ''}
                     </div>
-                `;
-            }).join('');
+                    <div class="user-actions">
+                        <span class="user-level level-${user.nivel}">${user.nivel}</span>
+                        ${user.nivel !== 'master' ? `
+                            <button class="btn-reset" onclick="resetarSenhaUsuario(${user.id})" title="Reset Senha">🔄</button>
+                            <button class="btn-delete" onclick="excluirUsuario(${user.id})" title="Excluir">🗑️</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
         }
 
         function excluirUsuario(id) {
@@ -1594,9 +1509,14 @@
             if (confirm(`Tem certeza que deseja excluir o usuário ${usuario.nome}?`)) {
                 const usuariosAtualizados = usuarios.filter(u => u.id !== id);
                 localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
-                console.log('🗑️ Usuário excluído:', usuario.nome);
+                
+                // GERAR CÓDIGO ATUALIZADO AUTOMATICAMENTE
+                const codigoAtualizado = gerarCodigoJavaScript(usuariosAtualizados);
+                document.getElementById('codigoGerado').value = codigoAtualizado;
+                document.getElementById('codeSection').style.display = 'block';
+                
                 carregarListaUsuarios();
-                mostrarAlerta('info', `✓ Usuário excluído!\n\n🌐 Para sincronizar:\n📁 Gere um novo users.json e atualize no GitHub`);
+                mostrarAlerta('info', `✓ Usuário ${usuario.nome} excluído!\n\n🔧 Código JavaScript atualizado!\n📋 Atualize no GitHub para sincronizar.`);
             }
         }
 
@@ -1723,7 +1643,7 @@
             if (dadosSalvos) {
                 try {
                     dadosPatio = JSON.parse(dadosSalvos);
-                    console.log('📊 Dados carregados automaticamente:', dadosPatio.length, 'registros');
+                    console.log('📊 Dados carregados:', dadosPatio.length);
                 } catch (error) {
                     console.error('Erro ao carregar dados salvos:', error);
                     carregarDados();
@@ -1803,9 +1723,7 @@
         }
 
         function salvarAutomaticamente() {
-            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
-                return;
-            }
+            if (!usuarioLogado || usuarioLogado.nivel !== 'master') return;
             
             try {
                 localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
@@ -1959,11 +1877,11 @@
 
         function limparArquivo() {
             if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado! Apenas o usuário Master pode limpar arquivos.');
+                mostrarAlerta('error', '⚠️ Acesso negado!');
                 return;
             }
             
-            if (confirm('Tem certeza que deseja limpar todos os dados do arquivo? Esta ação não pode ser desfeita.')) {
+            if (confirm('Tem certeza que deseja limpar todos os dados do arquivo?')) {
                 dadosPatio = [];
                 localStorage.removeItem('dadosPatioMinerva');
                 
@@ -1983,13 +1901,13 @@
                 renderizarTabela();
                 atualizarEstatisticas();
                 
-                mostrarAlerta('info', 'ℹ️ Arquivo limpo com sucesso! (Master)');
+                mostrarAlerta('info', 'ℹ️ Arquivo limpo com sucesso!');
             }
         }
 
         function importarExcel(event) {
             if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado! Apenas o usuário Master pode importar arquivos.');
+                mostrarAlerta('error', '⚠️ Acesso negado!');
                 event.target.value = '';
                 return;
             }
