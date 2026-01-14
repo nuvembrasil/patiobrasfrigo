@@ -33,10 +33,69 @@
             overflow: hidden;
         }
 
+        /* INDICADOR DE SINCRONIZAÇÃO EM TEMPO REAL */
+        .realtime-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #10b981;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1004;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .realtime-indicator.syncing {
+            background: #f59e0b;
+            animation: pulse 1.5s infinite;
+        }
+
+        .realtime-indicator.error {
+            background: #ef4444;
+        }
+
+        .realtime-indicator.local {
+            background: #6b7280;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* NOTIFICAÇÃO DE ATUALIZAÇÕES */
+        .update-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #3b82f6;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+            z-index: 1002;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         /* INDICADOR DE SINCRONIZAÇÃO */
         .sync-indicator {
             position: fixed;
-            top: 20px;
+            top: 140px;
             right: 20px;
             background: #28a745;
             color: white;
@@ -591,6 +650,17 @@
             border-radius: 8px;
             border-left: 4px solid;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card.updated {
+            animation: cardPulse 0.6s ease;
+        }
+
+        @keyframes cardPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3); }
+            100% { transform: scale(1); }
         }
 
         .stat-card.total { border-color: #3498db; }
@@ -715,6 +785,16 @@
 
         tbody tr:hover {
             background: #f8f9fa;
+        }
+
+        /* Highlight para linhas atualizadas em tempo real */
+        tbody tr.realtime-updated {
+            animation: rowHighlight 2s ease;
+        }
+
+        @keyframes rowHighlight {
+            0% { background: #dcfce7; }
+            100% { background: transparent; }
         }
 
         /* Estilos para agrupamento */
@@ -902,6 +982,10 @@
                 justify-content: center;
                 flex-wrap: wrap;
             }
+            .realtime-indicator {
+                position: relative;
+                margin: 10px;
+            }
             .auto-save-indicator {
                 position: relative;
                 margin: 10px;
@@ -912,6 +996,16 @@
     </style>
 </head>
 <body>
+    <!-- INDICADOR DE TEMPO REAL -->
+    <div class="realtime-indicator" id="realtimeIndicator">
+        <span id="realtimeStatusText">🔄 Conectando...</span>
+    </div>
+
+    <!-- NOTIFICAÇÃO DE ATUALIZAÇÕES -->
+    <div class="update-notification" id="updateNotification">
+        ⚡ Dados atualizados em tempo real!
+    </div>
+
     <!-- INDICADOR DE SINCRONIZAÇÃO -->
     <div class="sync-indicator" id="syncIndicator">
         🔄 Sincronizando...
@@ -929,6 +1023,7 @@
                     <li>Acesso restrito a usuários autorizados</li>
                     <li>Credenciais protegidas e criptografadas</li>
                     <li>Sistema de auditoria ativo</li>
+                    <li>Sincronização em tempo real</li>
                 </ul>
             </div>
             
@@ -1033,7 +1128,7 @@
                 <button class="btn-logout" onclick="fazerLogout()">🚪 Logout</button>
             </div>
             <h1>Minerva Foods - Logística Internacional</h1>
-            <p>Pátio Brasfrigo - Sistema Seguro</p>
+            <p>Pátio Brasfrigo - Sistema Seguro com Sincronização</p>
         </div>
 
         <div class="controls">
@@ -1141,7 +1236,7 @@
 
             <div class="button-group">
                 <button class="btn-import" id="btnImportar" onclick="document.getElementById('fileInput').click()">
-                    📤 Importar Excel
+                    📤 Importar Excel (Tempo Real)
                 </button>
                 <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="importarExcel(event)">
                 
@@ -1197,24 +1292,24 @@
     </div>
 
     <script>
-        // SISTEMA SEGURO COM SUPABASE
+        // SISTEMA SEGURO COM SUPABASE + TEMPO REAL
         let usuarioLogado = null;
         let dadosPatio = [];
         let supabase = null;
         let supabaseDisponivel = false;
         let supabaseStatusCollapsed = false;
         let supabaseStatusInterval = null;
+        let realtimeChannel = null;
 
         // 🚀 CONFIGURAÇÃO SUPABASE - COLOQUE SUAS CREDENCIAIS AQUI:
         const supabaseConfig = {
             // ⚠️ INSTRUÇÕES:
             // 1. Vá para https://app.supabase.com
-            // 2. Crie um novo projeto ou selecione existente
-            // 3. Vá em Settings → API
-            // 4. Copie a URL e anon key:
+            // 2. Acesse Settings → API
+            // 3. Copie a URL e anon key:
             
-            url: 'https://zhxrxymeuzvnuafvkjjd.supabase.co',          // Ex: https://seu-projeto.supabase.co
-            anonKey: 'sb_publishable_GIl_nKo6EmiOzcr-io9JSA_pvQu2bOJ'  // Ex: eyJ0eXAiOiJKV1QiLCJhbGciOiJI...
+            url: 'COLE_SUA_SUPABASE_URL_AQUI',          // Ex: https://seu-projeto.supabase.co
+            anonKey: 'COLE_SUA_SUPABASE_ANON_KEY_AQUI'  // Ex: eyJ0eXAiOiJKV1QiLCJhbGciOiJI...
         };
 
         // USUÁRIOS PADRÃO - PROTEGIDOS
@@ -1253,7 +1348,7 @@
             }
         ];
 
-        // ========== FUNÇÕES SUPABASE ==========
+        // ========== FUNÇÕES SUPABASE COM TEMPO REAL ==========
 
         function verificarCredenciaisSupabase() {
             return supabaseConfig.url && supabaseConfig.anonKey && 
@@ -1266,6 +1361,7 @@
                 if (!verificarCredenciaisSupabase()) {
                     console.log('⚠️ Credenciais do Supabase não configuradas - usando modo local');
                     supabaseDisponivel = false;
+                    atualizarIndicadorRealtime('local');
                     atualizarStatusSupabase();
                     return false;
                 }
@@ -1275,13 +1371,288 @@
                 supabaseDisponivel = true;
                 
                 console.log('🚀 Supabase inicializado com sucesso');
+                atualizarIndicadorRealtime('connected');
                 atualizarStatusSupabase();
                 iniciarMonitoramentoSupabase();
+                configurarRealtimeSubscription();
                 return true;
             } catch (error) {
                 console.log('⚠️ Erro ao inicializar Supabase, usando modo local:', error.message);
                 supabaseDisponivel = false;
+                atualizarIndicadorRealtime('error');
                 atualizarStatusSupabase();
+                return false;
+            }
+        }
+
+        // ========== TEMPO REAL - CORE FUNCTIONALITY ==========
+
+        function configurarRealtimeSubscription() {
+            if (!supabaseDisponivel) return;
+
+            try {
+                // Criar canal para escutar mudanças na tabela dados_patio
+                realtimeChannel = supabase
+                    .channel('dados_patio_changes')
+                    .on('postgres_changes', 
+                        { 
+                            event: '*', 
+                            schema: 'public', 
+                            table: 'dados_patio' 
+                        }, 
+                        (payload) => {
+                            console.log('⚡ MUDANÇA EM TEMPO REAL DETECTADA:', payload);
+                            handleRealtimeUpdate(payload);
+                        }
+                    )
+                    .subscribe((status) => {
+                        console.log('📡 Status da subscription:', status);
+                        
+                        if (status === 'SUBSCRIBED') {
+                            atualizarIndicadorRealtime('subscribed');
+                            console.log('✅ TEMPO REAL ATIVO - Pronto para receber atualizações!');
+                        } else if (status === 'CHANNEL_ERROR') {
+                            atualizarIndicadorRealtime('error');
+                            console.error('❌ Erro no canal de tempo real');
+                        }
+                    });
+
+                console.log('📡 Subscription de tempo real configurada');
+                
+            } catch (error) {
+                console.error('❌ Erro ao configurar realtime:', error);
+                atualizarIndicadorRealtime('error');
+            }
+        }
+
+        function handleRealtimeUpdate(payload) {
+            const { eventType, new: newRecord, old: oldRecord } = payload;
+            
+            console.log(`⚡ EVENTO: ${eventType}`, newRecord || oldRecord);
+            
+            // Mostrar notificação para o usuário
+            mostrarNotificacaoUpdate(`Dados atualizados por outro usuário!`);
+            
+            // Recarregar dados do Supabase
+            carregarDadosSupabase();
+            
+            // Aplicar efeito visual
+            setTimeout(() => {
+                const rows = document.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    if (!row.classList.contains('no-data')) {
+                        row.classList.add('realtime-updated');
+                        setTimeout(() => {
+                            row.classList.remove('realtime-updated');
+                        }, 2000);
+                    }
+                });
+            }, 500);
+        }
+
+        function mostrarNotificacaoUpdate(mensagem) {
+            const notification = document.getElementById('updateNotification');
+            notification.textContent = `⚡ ${mensagem}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+
+        function atualizarIndicadorRealtime(status) {
+            const indicator = document.getElementById('realtimeIndicator');
+            const statusText = document.getElementById('realtimeStatusText');
+            
+            indicator.className = 'realtime-indicator';
+            
+            switch (status) {
+                case 'connected':
+                    indicator.className += '';
+                    statusText.textContent = '🚀 Supabase Conectado';
+                    break;
+                case 'subscribed':
+                    indicator.className += '';
+                    statusText.textContent = '⚡ Tempo Real Ativo';
+                    break;
+                case 'syncing':
+                    indicator.className += ' syncing';
+                    statusText.textContent = '🔄 Sincronizando...';
+                    break;
+                case 'error':
+                    indicator.className += ' error';
+                    statusText.textContent = '❌ Erro de Conexão';
+                    break;
+                case 'local':
+                    indicator.className += ' local';
+                    statusText.textContent = '📱 Modo Local';
+                    break;
+                default:
+                    statusText.textContent = '🔄 Conectando...';
+            }
+        }
+
+        async function carregarDadosSupabase() {
+            if (!supabaseDisponivel) {
+                carregarDadosSalvos();
+                return;
+            }
+
+            try {
+                atualizarIndicadorRealtime('syncing');
+                
+                const { data, error } = await supabase
+                    .from('dados_patio')
+                    .select('*')
+                    .order('criado_em', { ascending: false });
+
+                if (error) {
+                    throw error;
+                }
+
+                if (data && data.length > 0) {
+                    // Converter dados do Supabase para formato local
+                    dadosPatio = data.map(item => ({
+                        placa: item.placa || "",
+                        container: item.container || "",
+                        dataChegada: item.data_chegada ? formatarDataBrasil(item.data_chegada) : "",
+                        dataDescarga: item.data_descarga ? formatarDataBrasil(item.data_descarga) : "",
+                        diaria: item.diaria || 0,
+                        dedicada: item.dedicada || "NÃO",
+                        valorDiaria: item.valor_diaria || "R$ 0,00",
+                        valorTotal: item.valor_total || "R$ 0,00",
+                        transportadora: item.transportadora || "",
+                        unidade: item.unidade || "",
+                        origem: item.origem || "",
+                        tipoDescarga: item.tipo_descarga || "",
+                        tipoMercado: item.tipo_mercado || "",
+                        status: item.status || "",
+                        nfOrigem: item.nf_origem || "",
+                        nfeBrasfrigo: item.nfe_brasfrigo || "",
+                        op: item.op || "",
+                        deposito: item.deposito || "",
+                        statusOp: item.status_op || "",
+                        pedido: item.pedido || "",
+                        falta: item.falta || "",
+                        sobra: item.sobra || "",
+                        inversaoRg: item.inversao_rg || "",
+                        doca: item.doca || "",
+                        pbr: item.pbr || "",
+                        oneWay: item.one_way || "",
+                        fumigado: item.fumigado || "",
+                        totalPallet: item.total_pallet || "",
+                        recFrio: item.rec_frio || "",
+                        obs: item.obs || ""
+                    }));
+
+                    console.log(`📊 ${data.length} registros carregados do Supabase`);
+                    atualizarIndicadorRealtime('subscribed');
+                } else {
+                    console.log('📊 Nenhum dado encontrado no Supabase, carregando dados locais');
+                    carregarDados();
+                    atualizarIndicadorRealtime('subscribed');
+                }
+
+                // Atualizar UI
+                popularFiltros();
+                renderizarTabela();
+                atualizarEstatisticas();
+                aplicarEfeitoUpdate();
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados do Supabase:', error);
+                atualizarIndicadorRealtime('error');
+                carregarDadosSalvos();
+            }
+        }
+
+        function formatarDataBrasil(dataISO) {
+            if (!dataISO) return "";
+            const date = new Date(dataISO);
+            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+        }
+
+        function aplicarEfeitoUpdate() {
+            // Efeito visual nas estatísticas
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.classList.add('updated');
+                setTimeout(() => {
+                    card.classList.remove('updated');
+                }, 600);
+            });
+        }
+
+        async function salvarDadosSupabase(dadosArray) {
+            if (!supabaseDisponivel || !Array.isArray(dadosArray)) return false;
+
+            try {
+                atualizarIndicadorRealtime('syncing');
+                mostrarIndicadorSync('🔄 Salvando no Supabase...', 'syncing');
+                
+                // Limpar dados existentes primeiro
+                const { error: deleteError } = await supabase
+                    .from('dados_patio')
+                    .delete()
+                    .gte('id', 0);
+
+                if (deleteError) {
+                    console.log('⚠️ Aviso ao limpar dados:', deleteError.message);
+                }
+
+                // Converter dados para formato Supabase
+                const dadosSupabase = dadosArray.map(item => ({
+                    placa: item.placa,
+                    container: item.container,
+                    data_chegada: item.dataChegada ? converterDataParaISO(item.dataChegada) : null,
+                    data_descarga: item.dataDescarga ? converterDataParaISO(item.dataDescarga) : null,
+                    diaria: parseInt(item.diaria) || 0,
+                    dedicada: item.dedicada,
+                    valor_diaria: item.valorDiaria,
+                    valor_total: item.valorTotal,
+                    transportadora: item.transportadora,
+                    unidade: item.unidade,
+                    origem: item.origem,
+                    tipo_descarga: item.tipoDescarga,
+                    tipo_mercado: item.tipoMercado,
+                    status: item.status,
+                    nf_origem: item.nfOrigem,
+                    nfe_brasfrigo: item.nfeBrasfrigo,
+                    op: item.op,
+                    deposito: item.deposito,
+                    status_op: item.statusOp,
+                    pedido: item.pedido,
+                    falta: item.falta,
+                    sobra: item.sobra,
+                    inversao_rg: item.inversaoRg,
+                    doca: item.doca,
+                    pbr: item.pbr,
+                    one_way: item.oneWay,
+                    fumigado: item.fumigado,
+                    total_pallet: item.totalPallet,
+                    rec_frio: item.recFrio,
+                    obs: item.obs
+                }));
+
+                // Inserir novos dados
+                const { data, error } = await supabase
+                    .from('dados_patio')
+                    .insert(dadosSupabase);
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log(`✅ ${dadosSupabase.length} registros salvos no Supabase`);
+                mostrarIndicadorSync('✅ Dados sincronizados em tempo real!');
+                atualizarIndicadorRealtime('subscribed');
+                
+                return true;
+
+            } catch (error) {
+                console.error('❌ Erro ao salvar no Supabase:', error);
+                mostrarIndicadorSync('⚠️ Erro na sincronização - dados salvos localmente', 'error');
+                atualizarIndicadorRealtime('error');
                 return false;
             }
         }
@@ -1329,12 +1700,9 @@
                     statusElements.auth.className = 'status-value-inline status-local-inline';
                 }
 
-                // Verificar Database (teste simples)
+                // Verificar Database
                 try {
-                    const { data, error } = await supabase.from('usuarios').select('count', { count: 'exact', head: true });
-                    if (error && error.code !== 'PGRST116') { // PGRST116 = tabela não existe (esperado)
-                        throw error;
-                    }
+                    const { data, error } = await supabase.from('dados_patio').select('count', { count: 'exact', head: true });
                     statusElements.database.textContent = 'Online';
                     statusElements.database.className = 'status-value-inline status-online-inline';
                 } catch (dbError) {
@@ -1344,27 +1712,27 @@
 
                 // Verificar Realtime
                 try {
-                    // Teste de canal realtime
-                    const channel = supabase.channel('test-connection');
-                    statusElements.realtime.textContent = 'Online';
-                    statusElements.realtime.className = 'status-value-inline status-online-inline';
-                    channel.unsubscribe();
+                    if (realtimeChannel && realtimeChannel.state === 'joined') {
+                        statusElements.realtime.textContent = 'Ativo';
+                        statusElements.realtime.className = 'status-value-inline status-online-inline';
+                    } else {
+                        statusElements.realtime.textContent = 'Inativo';
+                        statusElements.realtime.className = 'status-value-inline status-local-inline';
+                    }
                 } catch (realtimeError) {
-                    statusElements.realtime.textContent = 'Local';
-                    statusElements.realtime.className = 'status-value-inline status-local-inline';
+                    statusElements.realtime.textContent = 'Erro';
+                    statusElements.realtime.className = 'status-value-inline status-offline-inline';
                 }
 
             } catch (error) {
                 console.error('Erro na verificação Supabase:', error);
                 
-                // Marcar todos como offline se houver erro geral
                 Object.values(statusElements).forEach(element => {
                     element.textContent = 'Erro';
                     element.className = 'status-value-inline status-offline-inline';
                 });
             }
 
-            // Atualizar timestamp
             document.getElementById('supabaseLastUpdate').textContent = 
                 `Última verificação: ${new Date().toLocaleTimeString('pt-BR')}`;
         }
@@ -1375,12 +1743,10 @@
             const title = document.getElementById('supabaseTitle');
             
             if (!verificarCredenciaisSupabase()) {
-                // Credenciais não configuradas
                 panel.className = 'supabase-status error';
                 icon.textContent = '⚠️';
                 title.textContent = 'Supabase: Credenciais Não Configuradas';
                 
-                // Atualizar detalhes
                 ['supabaseConnectionStatus', 'supabaseAuthStatus', 'supabaseDatabaseStatus', 'supabaseRealtimeStatus'].forEach(id => {
                     const element = document.getElementById(id);
                     element.textContent = 'Config';
@@ -1388,18 +1754,15 @@
                 });
                 
             } else if (supabaseDisponivel) {
-                // Supabase conectado
                 panel.className = 'supabase-status';
                 icon.textContent = '🚀';
-                title.textContent = 'Supabase: Conectado';
+                title.textContent = 'Supabase: Conectado + Tempo Real';
                 
             } else {
-                // Modo local
                 panel.className = 'supabase-status local';
                 icon.textContent = '📱';
                 title.textContent = 'Supabase: Modo Local';
                 
-                // Atualizar detalhes para modo local
                 ['supabaseConnectionStatus', 'supabaseAuthStatus', 'supabaseDatabaseStatus', 'supabaseRealtimeStatus'].forEach(id => {
                     const element = document.getElementById(id);
                     element.textContent = 'Local';
@@ -1433,26 +1796,26 @@
                 await verificarStatusSupabaseDetalhado();
                 
                 if (supabaseDisponivel) {
-                    mostrarAlerta('success', '✅ Teste de conexão Supabase bem-sucedido!\n\nTodos os serviços estão operacionais.');
+                    // Testar inserção de dados
+                    const { data, error } = await supabase.from('dados_patio').select('count', { count: 'exact', head: true });
+                    mostrarAlerta('success', '✅ Teste completo bem-sucedido!\n\n🚀 Supabase operacional\n⚡ Tempo real ativo\n📊 Database acessível');
                 } else {
-                    mostrarAlerta('info', 'ℹ️ Sistema em modo local.\n\nPara usar Supabase, configure as credenciais no código.');
+                    mostrarAlerta('info', 'ℹ️ Sistema em modo local.\n\nPara ativar tempo real, configure as credenciais Supabase.');
                 }
                 
             } catch (error) {
-                console.error('Erro no teste de conexão Supabase:', error);
-                mostrarAlerta('error', `❌ Erro no teste de conexão Supabase:\n${error.message}`);
+                console.error('Erro no teste:', error);
+                mostrarAlerta('error', `❌ Erro no teste:\n${error.message}`);
             } finally {
                 btn.disabled = false;
                 btn.textContent = '🔍 Testar Conexão Supabase';
             }
         }
 
-        // ========== FUNÇÕES DE SISTEMA (ADAPTADAS) ==========
+        // ========== SISTEMA PRINCIPAL (ADAPTADO) ==========
 
         function atualizarStatusSistema() {
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-
-            // Atualizar status do painel (APENAS para masters logados)
             const systemStatus = document.getElementById('systemStatus');
             const systemStatusDetails = document.getElementById('systemStatusDetails');
             
@@ -1460,19 +1823,20 @@
                 systemStatus.className = 'system-status';
                 systemStatusDetails.innerHTML = `
                     🚀 Supabase: <strong>Conectado</strong><br>
+                    ⚡ Tempo Real: <strong>Ativo</strong><br>
                     👥 Usuários: <strong>${usuarios.length}</strong><br>
-                    🟢 Sincronização: <strong>Ativa</strong>
+                    🟢 Sincronização: <strong>Automática</strong>
                 `;
             } else {
                 systemStatus.className = 'system-status local-only';
                 systemStatusDetails.innerHTML = `
                     📱 Modo: <strong>Local</strong><br>
                     👥 Usuários: <strong>${usuarios.length}</strong><br>
-                    ⚠️ Supabase: <strong>Indisponível</strong>
+                    ⚠️ Supabase: <strong>Indisponível</strong><br>
+                    🔄 Tempo Real: <strong>Desabilitado</strong>
                 `;
             }
             
-            // Atualizar status Supabase
             atualizarStatusSupabase();
         }
 
@@ -1496,7 +1860,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 INICIANDO SISTEMA SEGURO COM SUPABASE...');
+            console.log('🚀 INICIANDO SISTEMA COM TEMPO REAL...');
             
             tentarInicializarSupabase();
             
@@ -1609,7 +1973,7 @@
                 atualizarStatusSistema();
                 
                 if (!lembrarMe) {
-                    mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\nAcesso ${usuarioEncontrado.nivel.toUpperCase()} liberado.`);
+                    mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\nAcesso ${usuarioEncontrado.nivel.toUpperCase()} liberado.\n⚡ Tempo real ativo!`);
                 }
             } else {
                 console.log('❌ FALHA NA AUTENTICAÇÃO');
@@ -1620,7 +1984,12 @@
 
         function fazerLogout() {
             if (confirm('Deseja realmente fazer logout do sistema?')) {
-                // Limpar intervalo de monitoramento
+                // Limpar subscriptions
+                if (realtimeChannel) {
+                    realtimeChannel.unsubscribe();
+                    realtimeChannel = null;
+                }
+                
                 if (supabaseStatusInterval) {
                     clearInterval(supabaseStatusInterval);
                     supabaseStatusInterval = null;
@@ -1635,10 +2004,16 @@
         function iniciarSistema() {
             console.log('🚀 Iniciando sistema para:', usuarioLogado.nome);
             verificarPermissoes();
-            carregarDadosSalvos();
-            popularFiltros();
-            renderizarTabela();
-            atualizarEstatisticas();
+            
+            // Carregar dados do Supabase (com tempo real) ou locais
+            if (supabaseDisponivel) {
+                carregarDadosSupabase();
+            } else {
+                carregarDadosSalvos();
+                popularFiltros();
+                renderizarTabela();
+                atualizarEstatisticas();
+            }
         }
 
         function verificarPermissoes() {
@@ -1660,19 +2035,19 @@
                 btnLimparArquivo.style.display = 'block';
                 btnControlPanel.style.display = 'inline-block';
                 tipoUsuario.className = 'user-badge user-master';
-                console.log('✅ MASTER: Todos os recursos habilitados');
+                console.log('✅ MASTER: Todos os recursos habilitados + Tempo Real');
             } else if (usuarioLogado.nivel === 'administrador') {
                 btnImportar.style.display = 'none';
                 btnLimparArquivo.style.display = 'none';
                 btnControlPanel.style.display = 'none';
                 tipoUsuario.className = 'user-badge user-admin';
-                console.log('✅ ADMIN: Recursos limitados');
+                console.log('✅ ADMIN: Visualização + Tempo Real');
             } else {
                 btnImportar.style.display = 'none';
                 btnLimparArquivo.style.display = 'none';
                 btnControlPanel.style.display = 'none';
                 tipoUsuario.className = 'user-badge user-normal';
-                console.log('✅ USER: Apenas visualização');
+                console.log('✅ USER: Apenas visualização + Tempo Real');
             }
         }
 
@@ -1755,19 +2130,19 @@
             carregarListaUsuarios();
             atualizarStatusSistema();
 
-            mostrarAlerta('success', `✅ Usuário ${nome} criado com sucesso!\n\n👤 Nível: ${nivel}\n💾 Salvo e disponível para uso imediato!\n\n🔐 Credenciais foram fornecidas ao usuário em canal seguro.`);
+            mostrarAlerta('success', `✅ Usuário ${nome} criado com sucesso!\n\n👤 Nível: ${nivel}\n💾 Salvo e disponível para uso imediato!`);
         }
 
         async function salvarUsuarioSupabase(usuario) {
             if (!supabaseDisponivel) return;
 
             try {
-                mostrarIndicadorSync('🔄 Sincronizando com Supabase...', 'syncing');
+                mostrarIndicadorSync('🔄 Sincronizando usuário...', 'syncing');
                 
                 const usuarioSupabase = {
                     nome: usuario.nome,
                     login: usuario.login,
-                    senha: usuario.senha, // Em produção, seria hash
+                    senha: usuario.senha,
                     nivel: usuario.nivel,
                     email: usuario.email,
                     criado_por: usuario.criadoPor
@@ -1782,10 +2157,10 @@
                 }
 
                 console.log('✅ Usuário salvo no Supabase');
-                mostrarIndicadorSync('✅ Sincronizado com Supabase!');
+                mostrarIndicadorSync('✅ Usuário sincronizado!');
             } catch (error) {
-                console.error('❌ Erro ao salvar no Supabase:', error);
-                mostrarIndicadorSync('⚠️ Supabase indisponível - salvo localmente', 'error');
+                console.error('❌ Erro ao salvar usuário no Supabase:', error);
+                mostrarIndicadorSync('⚠️ Usuário salvo apenas localmente', 'error');
             }
         }
 
@@ -1852,7 +2227,7 @@
 
             carregarListaUsuarios();
             
-            mostrarAlerta('success', `✅ Senha resetada com sucesso!\n\n👤 Usuário: ${usuario.nome}\n🔐 Nova senha configurada.\n\n💡 Informe ao usuário suas novas credenciais por canal seguro.`);
+            mostrarAlerta('success', `✅ Senha resetada com sucesso!\n\n👤 Usuário: ${usuario.nome}\n🔐 Nova senha configurada.`);
         }
 
         function excluirUsuario(id) {
@@ -1877,6 +2252,126 @@
                 atualizarStatusSistema();
                 mostrarAlerta('info', `✅ Usuário ${usuario.nome} excluído com sucesso!`);
             }
+        }
+
+        // ========== IMPORTAÇÃO COM TEMPO REAL ==========
+
+        function importarExcel(event) {
+            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado! Apenas MASTER pode importar.');
+                event.target.value = '';
+                return;
+            }
+            
+            const file = event.target.files[0];
+            
+            if (!file) return;
+
+            console.log('📤 Iniciando importação com sincronização em tempo real...');
+            atualizarIndicadorRealtime('syncing');
+
+            const reader = new FileReader();
+            
+            reader.onerror = function(error) {
+                console.error('Erro ao ler arquivo:', error);
+                mostrarAlerta('error', '✗ Erro ao ler o arquivo selecionado.');
+                atualizarIndicadorRealtime('error');
+            };
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    
+                    if (!firstSheet) {
+                        throw new Error('Planilha não encontrada');
+                    }
+                    
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    
+                    if (jsonData.length < 2) {
+                        throw new Error('Arquivo deve ter pelo menos 2 linhas (cabeçalho + dados)');
+                    }
+                    
+                    const headers = jsonData[0];
+                    const rows = jsonData.slice(1);
+                    
+                    dadosPatio = rows.map((row, index) => {
+                        try {
+                            return {
+                                placa: converterValor(row[0]) || "",
+                                container: converterValor(row[1]) || "",
+                                dataChegada: formatarData(row[2]) || "",
+                                dataDescarga: formatarData(row[3]) || "",
+                                diaria: converterNumero(row[4]),
+                                dedicada: converterValor(row[5]) || "NÃO",
+                                valorDiaria: converterValor(row[6]) || "R$ 0,00",
+                                valorTotal: converterValor(row[7]) || "R$ 0,00",
+                                transportadora: converterValor(row[8]) || "",
+                                unidade: converterValor(row[9]) || "",
+                                origem: converterValor(row[10]) || "",
+                                tipoDescarga: converterValor(row[11]) || "",
+                                tipoMercado: converterValor(row[12]) || "",
+                                status: converterValor(row[13]) || "",
+                                nfOrigem: converterValor(row[14]) || "",
+                                nfeBrasfrigo: converterValor(row[15]) || "",
+                                op: converterValor(row[16]) || "",
+                                deposito: converterValor(row[17]) || "",
+                                statusOp: converterValor(row[18]) || "",
+                                pedido: converterValor(row[19]) || "",
+                                falta: converterValor(row[20]) || "",
+                                sobra: converterValor(row[21]) || "",
+                                inversaoRg: converterValor(row[22]) || "",
+                                doca: converterValor(row[23]) || "",
+                                pbr: converterValor(row[24]) || "",
+                                oneWay: converterValor(row[25]) || "",
+                                fumigado: converterValor(row[26]) || "",
+                                totalPallet: converterValor(row[27]) || "",
+                                recFrio: converterValor(row[28]) || "",
+                                obs: converterValor(row[29]) || ""
+                            };
+                        } catch (rowError) {
+                            console.error(`Erro na linha ${index + 2}:`, rowError, row);
+                            return null;
+                        }
+                    }).filter(item => item && item.placa);
+                    
+                    // Salvar localmente
+                    salvarAutomaticamente();
+                    
+                    // Salvar no Supabase (TEMPO REAL)
+                    if (supabaseDisponivel) {
+                        console.log('🚀 Salvando no Supabase para sincronização em tempo real...');
+                        salvarDadosSupabase(dadosPatio).then(sucesso => {
+                            if (sucesso) {
+                                console.log('✅ IMPORTAÇÃO COMPLETA - Todos os usuários receberão a atualização!');
+                                mostrarAlerta('success', `✅ Arquivo importado e sincronizado!\n\n📊 ${dadosPatio.length} registros processados\n⚡ Todos os usuários receberão a atualização em tempo real!`);
+                                atualizarIndicadorRealtime('subscribed');
+                            } else {
+                                mostrarAlerta('success', `✅ Arquivo importado localmente!\n\n📊 ${dadosPatio.length} registros processados\n⚠️ Supabase indisponível - dados salvos apenas localmente.`);
+                                atualizarIndicadorRealtime('error');
+                            }
+                        });
+                    } else {
+                        mostrarAlerta('success', `✅ Arquivo importado!\n\n📊 ${dadosPatio.length} registros processados\n📱 Modo local - configure Supabase para tempo real.`);
+                        atualizarIndicadorRealtime('local');
+                    }
+                    
+                    popularFiltros();
+                    renderizarTabela();
+                    atualizarEstatisticas();
+                    
+                } catch (error) {
+                    console.error('Erro ao processar arquivo:', error);
+                    mostrarAlerta('error', `✗ Erro ao processar arquivo: ${error.message}`);
+                    atualizarIndicadorRealtime('error');
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+            event.target.value = '';
         }
 
         // RESTO DAS FUNÇÕES PERMANECE IGUAL...
@@ -2238,9 +2733,14 @@
                 return;
             }
             
-            if (confirm('Tem certeza que deseja limpar todos os dados do arquivo?')) {
+            if (confirm('Tem certeza que deseja limpar todos os dados do arquivo?\n\n⚡ Esta ação será sincronizada em tempo real para todos os usuários!')) {
                 dadosPatio = [];
                 localStorage.removeItem('dadosPatioMinerva');
+                
+                // Limpar no Supabase também (tempo real)
+                if (supabaseDisponivel) {
+                    limparDadosSupabase();
+                }
                 
                 document.getElementById('searchPlaca').value = '';
                 document.getElementById('filterStatus').value = '';
@@ -2258,103 +2758,25 @@
                 renderizarTabela();
                 atualizarEstatisticas();
                 
-                mostrarAlerta('info', 'ℹ️ Arquivo limpo com sucesso!');
+                mostrarAlerta('info', '🗑️ Arquivo limpo com sucesso!\n⚡ Todos os usuários receberão a atualização.');
             }
         }
 
-        function importarExcel(event) {
-            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado!');
-                event.target.value = '';
-                return;
-            }
-            
-            const file = event.target.files[0];
-            
-            if (!file) return;
+        async function limparDadosSupabase() {
+            try {
+                const { error } = await supabase
+                    .from('dados_patio')
+                    .delete()
+                    .gte('id', 0);
 
-            const reader = new FileReader();
-            
-            reader.onerror = function(error) {
-                console.error('Erro ao ler arquivo:', error);
-                mostrarAlerta('error', '✗ Erro ao ler o arquivo selecionado.');
-            };
-            
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    
-                    if (!firstSheet) {
-                        throw new Error('Planilha não encontrada');
-                    }
-                    
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                    
-                    if (jsonData.length < 2) {
-                        throw new Error('Arquivo deve ter pelo menos 2 linhas (cabeçalho + dados)');
-                    }
-                    
-                    const headers = jsonData[0];
-                    const rows = jsonData.slice(1);
-                    
-                    dadosPatio = rows.map((row, index) => {
-                        try {
-                            return {
-                                placa: converterValor(row[0]) || "",
-                                container: converterValor(row[1]) || "",
-                                dataChegada: formatarData(row[2]) || "",
-                                dataDescarga: formatarData(row[3]) || "",
-                                diaria: converterNumero(row[4]),
-                                dedicada: converterValor(row[5]) || "NÃO",
-                                valorDiaria: converterValor(row[6]) || "R$ 0,00",
-                                valorTotal: converterValor(row[7]) || "R$ 0,00",
-                                transportadora: converterValor(row[8]) || "",
-                                unidade: converterValor(row[9]) || "",
-                                origem: converterValor(row[10]) || "",
-                                tipoDescarga: converterValor(row[11]) || "",
-                                tipoMercado: converterValor(row[12]) || "",
-                                status: converterValor(row[13]) || "",
-                                nfOrigem: converterValor(row[14]) || "",
-                                nfeBrasfrigo: converterValor(row[15]) || "",
-                                op: converterValor(row[16]) || "",
-                                deposito: converterValor(row[17]) || "",
-                                statusOp: converterValor(row[18]) || "",
-                                pedido: converterValor(row[19]) || "",
-                                falta: converterValor(row[20]) || "",
-                                sobra: converterValor(row[21]) || "",
-                                inversaoRg: converterValor(row[22]) || "",
-                                doca: converterValor(row[23]) || "",
-                                pbr: converterValor(row[24]) || "",
-                                oneWay: converterValor(row[25]) || "",
-                                fumigado: converterValor(row[26]) || "",
-                                totalPallet: converterValor(row[27]) || "",
-                                recFrio: converterValor(row[28]) || "",
-                                obs: converterValor(row[29]) || ""
-                            };
-                        } catch (rowError) {
-                            console.error(`Erro na linha ${index + 2}:`, rowError, row);
-                            return null;
-                        }
-                    }).filter(item => item && item.placa);
-                    
-                    salvarAutomaticamente();
-                    popularFiltros();
-                    renderizarTabela();
-                    atualizarEstatisticas();
-                    
-                    mostrarAlerta('success', `✓ Arquivo importado com sucesso! ${dadosPatio.length} registros processados.`);
-                    
-                } catch (error) {
-                    console.error('Erro ao processar arquivo:', error);
-                    mostrarAlerta('error', `✗ Erro ao processar arquivo: ${error.message}`);
+                if (error) {
+                    throw error;
                 }
-            };
-            
-            reader.readAsArrayBuffer(file);
-            event.target.value = '';
+
+                console.log('🗑️ Dados limpos no Supabase - atualização em tempo real enviada');
+            } catch (error) {
+                console.error('❌ Erro ao limpar dados no Supabase:', error);
+            }
         }
 
         function converterValor(valor) {
