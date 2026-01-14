@@ -33,8 +33,8 @@
             overflow: hidden;
         }
 
-        /* INDICADOR DE SINCRONIZAÇÃO EM TEMPO REAL */
-        .realtime-indicator {
+        /* INDICADOR DE POLLING EM TEMPO REAL */
+        .polling-indicator {
             position: fixed;
             top: 20px;
             left: 20px;
@@ -53,32 +53,54 @@
             cursor: pointer;
         }
 
-        .realtime-indicator.syncing {
-            background: #f59e0b;
-            animation: pulse 1.5s infinite;
+        .polling-indicator.polling {
+            background: #3b82f6;
+            animation: pollingPulse 2s infinite;
         }
 
-        .realtime-indicator.error {
+        .polling-indicator.error {
             background: #ef4444;
         }
 
-        .realtime-indicator.local {
+        .polling-indicator.local {
             background: #6b7280;
         }
 
-        .realtime-indicator.broadcast {
-            background: #3b82f6;
+        .polling-indicator.updating {
+            background: #f59e0b;
+            animation: updatePulse 1s infinite;
         }
 
-        @keyframes pulse {
+        @keyframes pollingPulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+
+        @keyframes updatePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        /* CONTADOR DE POLLING */
+        .polling-counter {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: rgba(255,255,255,0.95);
+            border: 2px solid #3b82f6;
+            color: #1e40af;
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 1003;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         /* NOTIFICAÇÃO DE ATUALIZAÇÕES */
         .update-notification {
             position: fixed;
-            top: 80px;
+            top: 130px;
             left: 20px;
             background: #059669;
             color: white;
@@ -95,23 +117,6 @@
         @keyframes slideIn {
             from { transform: translateX(-100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* CONTADOR DE USUÁRIOS ONLINE */
-        .online-users {
-            position: fixed;
-            top: 140px;
-            left: 20px;
-            background: rgba(255,255,255,0.95);
-            border: 2px solid #10b981;
-            color: #065f46;
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            z-index: 1003;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            cursor: pointer;
         }
 
         /* INDICADOR DE SINCRONIZAÇÃO */
@@ -676,12 +681,12 @@
         }
 
         .stat-card.updated {
-            animation: cardPulse 0.6s ease;
+            animation: cardPulse 0.8s ease;
         }
 
         @keyframes cardPulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.02); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3); }
+            50% { transform: scale(1.03); box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4); }
             100% { transform: scale(1); }
         }
 
@@ -811,12 +816,12 @@
 
         /* Highlight para linhas atualizadas em tempo real */
         tbody tr.realtime-updated {
-            animation: rowHighlight 2s ease;
+            animation: rowHighlight 3s ease;
         }
 
         @keyframes rowHighlight {
-            0% { background: #dcfce7; }
-            100% { background: transparent; }
+            0% { background: #dbeafe; border-left: 4px solid #3b82f6; }
+            100% { background: transparent; border-left: none; }
         }
 
         /* Estilos para agrupamento */
@@ -1004,7 +1009,7 @@
                 justify-content: center;
                 flex-wrap: wrap;
             }
-            .realtime-indicator, .update-notification, .online-users {
+            .polling-indicator, .update-notification, .polling-counter {
                 position: relative;
                 margin: 10px;
             }
@@ -1018,19 +1023,19 @@
     </style>
 </head>
 <body>
-    <!-- INDICADOR DE TEMPO REAL -->
-    <div class="realtime-indicator" id="realtimeIndicator" onclick="mostrarDetalhesConexao()">
-        <span id="realtimeStatusText">🔄 Iniciando...</span>
+    <!-- INDICADOR DE POLLING -->
+    <div class="polling-indicator" id="pollingIndicator" onclick="mostrarDetalhesPolling()">
+        <span id="pollingStatusText">🔄 Iniciando polling...</span>
     </div>
 
-    <!-- CONTADOR DE USUÁRIOS ONLINE -->
-    <div class="online-users" id="onlineUsers" onclick="mostrarUsuariosOnline()">
-        👥 Detectando usuários...
+    <!-- CONTADOR DE POLLING -->
+    <div class="polling-counter" id="pollingCounter">
+        🔄 Próxima verificação: --
     </div>
 
     <!-- NOTIFICAÇÃO DE ATUALIZAÇÕES -->
     <div class="update-notification" id="updateNotification">
-        ⚡ Dados atualizados em tempo real!
+        ⚡ Dados atualizados via polling!
     </div>
 
     <!-- INDICADOR DE SINCRONIZAÇÃO -->
@@ -1050,7 +1055,7 @@
                     <li>Acesso restrito a usuários autorizados</li>
                     <li>Credenciais protegidas e criptografadas</li>
                     <li>Sistema de auditoria ativo</li>
-                    <li>Sincronização em tempo real</li>
+                    <li>Sincronização via polling Supabase</li>
                 </ul>
             </div>
             
@@ -1093,37 +1098,37 @@
             <div class="supabase-status" id="supabaseStatus">
                 <div class="supabase-header">
                     <div class="supabase-title">
-                        <span id="supabaseIcon">📡</span>
-                        <span id="supabaseTitle">Tempo Real: Ativo</span>
+                        <span id="supabaseIcon">🔄</span>
+                        <span id="supabaseTitle">Polling Supabase: Verificando...</span>
                     </div>
                     <button class="status-toggle" id="statusToggle" onclick="toggleSupabaseDetails()">▼</button>
                 </div>
                 
                 <div class="supabase-details" id="supabaseDetails">
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Modo:</span>
-                        <span class="status-value-inline status-online-inline" id="modoStatus">Broadcast + Polling</span>
+                        <span class="status-label-inline">Conexão:</span>
+                        <span class="status-value-inline status-offline-inline" id="supabaseConnectionStatus">Verificando...</span>
                     </div>
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Sync:</span>
-                        <span class="status-value-inline status-online-inline" id="syncStatus">Ativo</span>
-                    </div>
-                    <div class="status-item-inline">
-                        <span class="status-label-inline">Supabase:</span>
-                        <span class="status-value-inline status-local-inline" id="supabaseConnectionStatus">Opcional</span>
+                        <span class="status-label-inline">Database:</span>
+                        <span class="status-value-inline status-offline-inline" id="supabaseDatabaseStatus">Verificando...</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Polling:</span>
-                        <span class="status-value-inline status-online-inline" id="pollingStatus">Ativo</span>
+                        <span class="status-value-inline status-offline-inline" id="pollingStatus">Iniciando...</span>
+                    </div>
+                    <div class="status-item-inline">
+                        <span class="status-label-inline">Última sync:</span>
+                        <span class="status-value-inline status-local-inline" id="lastSyncStatus">Nunca</span>
                     </div>
                 </div>
                 
-                <button class="supabase-test-btn" id="supabaseTestBtn" onclick="testarSistemaTempoReal()">
-                    🚀 Testar Tempo Real
+                <button class="supabase-test-btn" id="supabaseTestBtn" onclick="testarPollingSupabase()">
+                    🔍 Testar Polling
                 </button>
                 
                 <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="supabaseLastUpdate">
-                    Sistema híbrido com polling ativo
+                    Sistema de polling a cada 3 segundos
                 </div>
             </div>
 
@@ -1155,7 +1160,7 @@
                 <button class="btn-logout" onclick="fazerLogout()">🚪 Logout</button>
             </div>
             <h1>Minerva Foods - Logística Internacional</h1>
-            <p>Pátio Brasfrigo - Sistema Seguro com Sincronização</p>
+            <p>Pátio Brasfrigo - Sistema com Polling Cross-Device</p>
         </div>
 
         <div class="controls">
@@ -1263,7 +1268,7 @@
 
             <div class="button-group">
                 <button class="btn-import" id="btnImportar" onclick="document.getElementById('fileInput').click()">
-                    📤 Importar Excel (Tempo Real)
+                    📤 Importar Excel (Cross-Device)
                 </button>
                 <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="importarExcel(event)">
                 
@@ -1319,23 +1324,23 @@
     </div>
 
     <script>
-        // SISTEMA HÍBRIDO COM TEMPO REAL ROBUSTO
+        // SISTEMA COM POLLING SUPABASE PARA CROSS-DEVICE SYNC
         let usuarioLogado = null;
         let dadosPatio = [];
         let supabase = null;
         let supabaseDisponivel = false;
         let supabaseStatusCollapsed = false;
-        let broadcastChannel = null;
         let pollingInterval = null;
-        let heartbeatInterval = null;
-        let usuariosOnlineInterval = null;
-        let lastDataTimestamp = 0;
+        let lastDataHash = '';
+        let pollingCount = 0;
+        let lastSyncTime = 0;
         let sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-        // 🚀 CONFIGURAÇÃO SUPABASE (OPCIONAL)
+        // 🚀 CONFIGURAÇÃO SUPABASE - COLOQUE SUAS CREDENCIAIS REAIS:
         const supabaseConfig = {
-            url: 'COLE_SUA_SUPABASE_URL_AQUI',          
-            anonKey: 'COLE_SUA_SUPABASE_ANON_KEY_AQUI'
+            // ⚠️ SUBSTITUA PELAS SUAS CREDENCIAIS REAIS:
+            url: 'COLE_SUA_SUPABASE_URL_AQUI',          // Ex: https://abc123def.supabase.co
+            anonKey: 'COLE_SUA_SUPABASE_ANON_KEY_AQUI'  // Ex: eyJ0eXAiOiJKV1QiLCJhbGciOiJI...
         };
 
         // USUÁRIOS PADRÃO - PROTEGIDOS
@@ -1374,311 +1379,273 @@
             }
         ];
 
-        // ========== SISTEMA DE TEMPO REAL ROBUSTO ==========
+        // ========== SISTEMA DE POLLING SUPABASE ==========
 
-        function inicializarSistemaTempoReal() {
-            console.log('📡 Inicializando sistema de tempo real robusto...');
+        function verificarCredenciaisSupabase() {
+            const credenciaisValidas = supabaseConfig.url && supabaseConfig.anonKey && 
+                   !supabaseConfig.url.includes('COLE_') && 
+                   !supabaseConfig.anonKey.includes('COLE_');
             
-            // 1. Broadcast API para abas do mesmo navegador
-            inicializarBroadcastChannel();
+            console.log('🔍 Verificando credenciais:', {
+                hasUrl: !!supabaseConfig.url,
+                hasKey: !!supabaseConfig.anonKey,
+                urlValid: !supabaseConfig.url.includes('COLE_'),
+                keyValid: !supabaseConfig.anonKey.includes('COLE_'),
+                result: credenciaisValidas
+            });
             
-            // 2. Polling para mudanças no localStorage
-            iniciarPollingDados();
-            
-            // 3. Sistema de heartbeat para usuários online
-            iniciarSistemaHeartbeat();
-            
-            // 4. Limpar dados antigos ao iniciar
-            limparDadosAntigos();
-            
-            console.log('✅ Sistema de tempo real configurado com sucesso');
+            return credenciaisValidas;
         }
 
-        function inicializarBroadcastChannel() {
+        function tentarInicializarSupabase() {
             try {
-                broadcastChannel = new BroadcastChannel('minerva_patio_realtime');
+                if (!verificarCredenciaisSupabase()) {
+                    console.log('⚠️ Credenciais não configuradas - modo local');
+                    supabaseDisponivel = false;
+                    atualizarIndicadorPolling('local');
+                    return false;
+                }
+
+                supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
+                supabaseDisponivel = true;
                 
-                broadcastChannel.addEventListener('message', (event) => {
-                    console.log('📡 Broadcast recebido:', event.data);
-                    
-                    if (event.data.type === 'DATA_UPDATE' && event.data.sessionId !== sessionId) {
-                        receberAtualizacaoTempoReal(event.data);
-                    } else if (event.data.type === 'USER_HEARTBEAT') {
-                        // Heartbeat será tratado pelo polling do localStorage
-                    }
-                });
+                console.log('🚀 Supabase inicializado:', supabase);
+                atualizarIndicadorPolling('connecting');
                 
-                console.log('📡 Broadcast Channel ativo');
+                // Testar conexão imediatamente
+                testarConexaoInicial();
+                
                 return true;
             } catch (error) {
-                console.log('⚠️ Broadcast API não disponível:', error.message);
+                console.error('❌ Erro ao inicializar Supabase:', error);
+                supabaseDisponivel = false;
+                atualizarIndicadorPolling('error');
                 return false;
             }
         }
 
-        function iniciarPollingDados() {
-            // Polling para detectar mudanças nos dados (a cada 2 segundos)
-            pollingInterval = setInterval(() => {
-                verificarMudancasDados();
-            }, 2000);
-            
-            console.log('🔄 Polling de dados iniciado (2s)');
-        }
-
-        function verificarMudancasDados() {
+        async function testarConexaoInicial() {
             try {
-                const metadados = localStorage.getItem('dadosPatioMinerva_metadata');
+                console.log('🔍 Testando conexão inicial...');
                 
-                if (!metadados) return;
-                
-                const meta = JSON.parse(metadados);
-                
-                // Verificar se houve mudança e não foi feita por esta sessão
-                if (meta.timestamp > lastDataTimestamp && meta.sessionId !== sessionId) {
-                    console.log('🔄 Mudança detectada via polling:', meta);
-                    
-                    lastDataTimestamp = meta.timestamp;
-                    receberAtualizacaoPolling(meta);
+                const { data, error } = await supabase
+                    .from('dados_patio')
+                    .select('count', { count: 'exact', head: true });
+
+                if (error) {
+                    console.error('❌ Erro na conexão inicial:', error);
+                    atualizarIndicadorPolling('error');
+                    return false;
                 }
+
+                console.log('✅ Conexão Supabase estabelecida');
+                atualizarIndicadorPolling('connected');
+                iniciarPollingSupabase();
+                return true;
                 
             } catch (error) {
-                console.error('Erro no polling:', error);
+                console.error('❌ Erro no teste inicial:', error);
+                atualizarIndicadorPolling('error');
+                return false;
             }
         }
 
-        function iniciarSistemaHeartbeat() {
-            // Heartbeat para rastrear usuários online (a cada 5 segundos)
-            heartbeatInterval = setInterval(() => {
-                enviarHeartbeat();
-            }, 5000);
+        function iniciarPollingSupabase() {
+            if (!supabaseDisponivel) {
+                console.log('📱 Polling local iniciado');
+                iniciarPollingLocal();
+                return;
+            }
+
+            console.log('🔄 Iniciando polling Supabase (a cada 3 segundos)');
             
-            // Verificar usuários online (a cada 3 segundos)
-            usuariosOnlineInterval = setInterval(() => {
-                atualizarListaUsuariosOnline();
+            // Primeiro polling imediato
+            executarPolling();
+            
+            // Polling periódico
+            pollingInterval = setInterval(() => {
+                executarPolling();
             }, 3000);
             
-            console.log('💓 Sistema de heartbeat iniciado');
+            atualizarIndicadorPolling('polling');
         }
 
-        function limparDadosAntigos() {
-            // Limpar heartbeats antigos (mais de 30 segundos)
-            try {
-                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
-                const agora = Date.now();
-                const usuariosAtivos = usuariosOnline.filter(u => (agora - u.lastSeen) < 30000);
-                
-                localStorage.setItem('usuariosOnline_global', JSON.stringify(usuariosAtivos));
-            } catch (error) {
-                console.error('Erro ao limpar dados antigos:', error);
-            }
-        }
-
-        function enviarHeartbeat() {
-            if (!usuarioLogado) return;
+        async function executarPolling() {
+            if (!supabaseDisponivel) return;
             
             try {
-                const agora = Date.now();
-                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+                pollingCount++;
+                atualizarContadorPolling();
                 
-                // Remover minha sessão anterior
-                const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
+                console.log(`🔄 Polling #${pollingCount} - Verificando mudanças...`);
                 
-                // Adicionar minha sessão atual
-                const meuDados = {
-                    sessionId: sessionId,
-                    id: usuarioLogado.id,
-                    nome: usuarioLogado.nome,
-                    nivel: usuarioLogado.nivel,
-                    lastSeen: agora,
-                    timestamp: agora
-                };
-                
-                outrosUsuarios.push(meuDados);
-                
-                // Limpar usuários inativos
-                const usuariosAtivos = outrosUsuarios.filter(u => (agora - u.lastSeen) < 30000);
-                
-                localStorage.setItem('usuariosOnline_global', JSON.stringify(usuariosAtivos));
-                
-                // Enviar via broadcast também
-                if (broadcastChannel) {
-                    broadcastChannel.postMessage({
-                        type: 'USER_HEARTBEAT',
-                        sessionId: sessionId,
-                        usuario: meuDados,
-                        timestamp: agora
-                    });
+                // Consultar timestamp mais recente na tabela
+                const { data, error } = await supabase
+                    .from('dados_patio')
+                    .select('criado_em')
+                    .order('criado_em', { ascending: false })
+                    .limit(1);
+
+                if (error) {
+                    console.error('❌ Erro no polling:', error);
+                    atualizarIndicadorPolling('error');
+                    return;
+                }
+
+                // Verificar se há dados e se mudaram
+                if (data && data.length > 0) {
+                    const ultimoTimestamp = new Date(data[0].criado_em).getTime();
+                    
+                    if (ultimoTimestamp > lastSyncTime) {
+                        console.log('⚡ MUDANÇA DETECTADA! Última atualização:', data[0].criado_em);
+                        
+                        lastSyncTime = ultimoTimestamp;
+                        await carregarDadosDoSupabase();
+                        
+                        // Mostrar notificação apenas se não foi esta sessão que fez a mudança
+                        const metadata = localStorage.getItem('lastImportSession');
+                        if (!metadata || JSON.parse(metadata).sessionId !== sessionId) {
+                            mostrarNotificacaoUpdate('Dados atualizados por outro usuário!');
+                        }
+                    }
+                } else {
+                    // Tabela vazia - verificar se foi limpeza
+                    if (dadosPatio.length > 0) {
+                        console.log('🗑️ Dados foram limpos por outro usuário');
+                        dadosPatio = [];
+                        localStorage.removeItem('dadosPatioMinerva');
+                        
+                        popularFiltros();
+                        renderizarTabela();
+                        atualizarEstatisticas();
+                        
+                        mostrarNotificacaoUpdate('Dados limpos por outro usuário!');
+                    }
                 }
                 
+                atualizarIndicadorPolling('polling');
+                atualizarStatusPolling('success');
+                
             } catch (error) {
-                console.error('Erro no heartbeat:', error);
+                console.error('❌ Erro no polling:', error);
+                atualizarIndicadorPolling('error');
+                atualizarStatusPolling('error');
             }
         }
 
-        function atualizarListaUsuariosOnline() {
+        async function carregarDadosDoSupabase() {
             try {
-                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
-                const agora = Date.now();
+                console.log('📥 Carregando dados atualizados do Supabase...');
+                atualizarIndicadorPolling('updating');
                 
-                // Filtrar usuários ativos (últimos 30 segundos)
-                const usuariosAtivos = usuariosOnline.filter(u => (agora - u.lastSeen) < 30000);
-                
-                // Atualizar localStorage se mudou
-                if (usuariosAtivos.length !== usuariosOnline.length) {
-                    localStorage.setItem('usuariosOnline_global', JSON.stringify(usuariosAtivos));
+                const { data, error } = await supabase
+                    .from('dados_patio')
+                    .select('*')
+                    .order('criado_em', { ascending: false });
+
+                if (error) {
+                    throw error;
+                }
+
+                if (data && data.length > 0) {
+                    // Converter dados do Supabase para formato local
+                    dadosPatio = data.map(item => ({
+                        placa: item.placa || "",
+                        container: item.container || "",
+                        dataChegada: item.data_chegada ? formatarDataBrasil(item.data_chegada) : "",
+                        dataDescarga: item.data_descarga ? formatarDataBrasil(item.data_descarga) : "",
+                        diaria: item.diaria || 0,
+                        dedicada: item.dedicada || "NÃO",
+                        valorDiaria: item.valor_diaria || "R$ 0,00",
+                        valorTotal: item.valor_total || "R$ 0,00",
+                        transportadora: item.transportadora || "",
+                        unidade: item.unidade || "",
+                        origem: item.origem || "",
+                        tipoDescarga: item.tipo_descarga || "",
+                        tipoMercado: item.tipo_mercado || "",
+                        status: item.status || "",
+                        nfOrigem: item.nf_origem || "",
+                        nfeBrasfrigo: item.nfe_brasfrigo || "",
+                        op: item.op || "",
+                        deposito: item.deposito || "",
+                        statusOp: item.status_op || "",
+                        pedido: item.pedido || "",
+                        falta: item.falta || "",
+                        sobra: item.sobra || "",
+                        inversaoRg: item.inversao_rg || "",
+                        doca: item.doca || "",
+                        pbr: item.pbr || "",
+                        oneWay: item.one_way || "",
+                        fumigado: item.fumigado || "",
+                        totalPallet: item.total_pallet || "",
+                        recFrio: item.rec_frio || "",
+                        obs: item.obs || ""
+                    }));
+
+                    // Salvar localmente também
+                    localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
+                    
+                    console.log(`📊 ${data.length} registros sincronizados do Supabase`);
+                    
+                    // Atualizar UI
+                    popularFiltros();
+                    renderizarTabela();
+                    atualizarEstatisticas();
+                    aplicarEfeitoUpdate();
+                    
+                } else {
+                    console.log('📊 Nenhum dado no Supabase');
                 }
                 
-                // Atualizar contador visual
-                atualizarContadorUsuariosOnline(usuariosAtivos);
+                atualizarIndicadorPolling('polling');
                 
             } catch (error) {
-                console.error('Erro ao atualizar usuários online:', error);
+                console.error('❌ Erro ao carregar dados do Supabase:', error);
+                atualizarIndicadorPolling('error');
             }
         }
 
-        function atualizarContadorUsuariosOnline(usuarios) {
-            const contador = document.getElementById('onlineUsers');
-            const total = usuarios.length;
+        function iniciarPollingLocal() {
+            console.log('📱 Polling local iniciado como fallback');
             
-            if (total > 1) {
-                const outros = usuarios.filter(u => u.sessionId !== sessionId);
-                contador.textContent = `👥 ${total} usuários online (${outros.length} outros)`;
-                contador.style.background = '#dcfce7';
-                contador.style.borderColor = '#10b981';
-            } else {
-                contador.textContent = `👤 1 usuário online (você)`;
-                contador.style.background = 'rgba(255,255,255,0.95)';
-                contador.style.borderColor = '#6b7280';
-            }
+            pollingInterval = setInterval(() => {
+                pollingCount++;
+                atualizarContadorPolling();
+            }, 3000);
+            
+            atualizarIndicadorPolling('local');
         }
 
-        function mostrarUsuariosOnline() {
-            const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
-            const lista = usuariosOnline.map(u => `• ${u.nome} (${u.nivel}) - ${u.sessionId === sessionId ? 'VOCÊ' : 'Outro usuário'}`).join('\n');
-            
-            alert(`👥 Usuários Online (${usuariosOnline.length}):\n\n${lista}\n\n🔄 Atualiza a cada 3 segundos`);
+        function formatarDataBrasil(dataISO) {
+            if (!dataISO) return "";
+            const date = new Date(dataISO);
+            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
         }
 
-        function enviarAtualizacaoTempoReal(dados, tipo = 'IMPORT') {
-            const agora = Date.now();
-            lastDataTimestamp = agora;
+        function atualizarIndicadorPolling(status) {
+            const indicator = document.getElementById('pollingIndicator');
+            const statusText = document.getElementById('pollingStatusText');
             
-            const updateData = {
-                type: 'DATA_UPDATE',
-                subtype: tipo,
-                timestamp: agora,
-                sessionId: sessionId,
-                from: usuarioLogado.nome,
-                userLevel: usuarioLogado.nivel,
-                dataCount: dados.length
-            };
-            
-            console.log('📡 Enviando atualização em tempo real:', updateData);
-            
-            try {
-                // 1. Salvar metadados no localStorage (polling vai detectar)
-                localStorage.setItem('dadosPatioMinerva_metadata', JSON.stringify(updateData));
-                
-                // 2. Broadcast para abas do mesmo navegador
-                if (broadcastChannel) {
-                    broadcastChannel.postMessage(updateData);
-                    console.log('📡 Broadcast enviado');
-                }
-                
-                // 3. Trigger storage event forçado
-                window.dispatchEvent(new StorageEvent('storage', {
-                    key: 'dadosPatioMinerva_metadata',
-                    newValue: JSON.stringify(updateData),
-                    url: window.location.href
-                }));
-                
-                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
-                const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
-                
-                mostrarIndicadorSync(`📡 Sincronizado para ${outrosUsuarios.length} outros usuários`, 'success', 3000);
-                atualizarIndicadorRealtime('broadcast');
-                
-            } catch (error) {
-                console.error('Erro ao enviar atualização:', error);
-                atualizarIndicadorRealtime('error');
-            }
-        }
-
-        function receberAtualizacaoTempoReal(updateData) {
-            if (!updateData || updateData.sessionId === sessionId) {
-                return; // Não processar próprias atualizações
-            }
-            
-            console.log('⚡ RECEBENDO ATUALIZAÇÃO de:', updateData.from, '| Tipo:', updateData.subtype);
-            
-            // Mostrar notificação
-            mostrarNotificacaoUpdate(`${updateData.from} (${updateData.userLevel}) ${updateData.subtype === 'IMPORT' ? 'importou dados' : 'limpou dados'}`);
-            
-            // Atualizar indicador
-            atualizarIndicadorRealtime('syncing');
-            
-            // Recarregar dados após pequeno delay
-            setTimeout(() => {
-                recarregarDadosTempoReal();
-            }, 300);
-        }
-
-        function receberAtualizacaoPolling(metadata) {
-            console.log('🔄 Atualização detectada via polling:', metadata);
-            receberAtualizacaoTempoReal(metadata);
-        }
-
-        function recarregarDadosTempoReal() {
-            console.log('🔄 Recarregando dados após atualização...');
-            
-            try {
-                // Recarregar dados do localStorage
-                carregarDadosSalvos();
-                
-                // Atualizar UI
-                popularFiltros();
-                renderizarTabela();
-                atualizarEstatisticas();
-                aplicarEfeitoUpdate();
-                
-                atualizarIndicadorRealtime('broadcast');
-                
-                console.log('✅ Dados recarregados com sucesso');
-                
-            } catch (error) {
-                console.error('❌ Erro ao recarregar dados:', error);
-                atualizarIndicadorRealtime('error');
-            }
-        }
-
-        function mostrarNotificacaoUpdate(mensagem) {
-            const notification = document.getElementById('updateNotification');
-            notification.innerHTML = `⚡ ${mensagem}`;
-            notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 4000);
-        }
-
-        function atualizarIndicadorRealtime(status) {
-            const indicator = document.getElementById('realtimeIndicator');
-            const statusText = document.getElementById('realtimeStatusText');
-            
-            indicator.className = 'realtime-indicator';
+            indicator.className = 'polling-indicator';
             
             switch (status) {
-                case 'broadcast':
-                    indicator.className += ' broadcast';
-                    statusText.textContent = '📡 Tempo Real Ativo';
+                case 'connecting':
+                    statusText.textContent = '🔗 Conectando Supabase...';
                     break;
-                case 'syncing':
-                    indicator.className += ' syncing';
-                    statusText.textContent = '🔄 Sincronizando...';
+                case 'connected':
+                    statusText.textContent = '✅ Supabase Conectado';
+                    break;
+                case 'polling':
+                    indicator.className += ' polling';
+                    statusText.textContent = '🔄 Polling Ativo';
+                    break;
+                case 'updating':
+                    indicator.className += ' updating';
+                    statusText.textContent = '⚡ Atualizando Dados...';
                     break;
                 case 'error':
                     indicator.className += ' error';
-                    statusText.textContent = '❌ Erro de Sync';
+                    statusText.textContent = '❌ Erro de Conexão';
                     break;
                 case 'local':
                     indicator.className += ' local';
@@ -1689,6 +1656,70 @@
             }
         }
 
+        function atualizarContadorPolling() {
+            const counter = document.getElementById('pollingCounter');
+            const proximaVerificacao = 3; // segundos
+            
+            if (supabaseDisponivel) {
+                counter.textContent = `🔄 Polling #${pollingCount} | Próxima: ${proximaVerificacao}s`;
+                counter.style.borderColor = '#3b82f6';
+                counter.style.color = '#1e40af';
+            } else {
+                counter.textContent = `📱 Modo Local | Tentativa: ${pollingCount}`;
+                counter.style.borderColor = '#6b7280';
+                counter.style.color = '#374151';
+            }
+        }
+
+        function atualizarStatusPolling(status) {
+            const lastSync = document.getElementById('lastSyncStatus');
+            const agora = new Date().toLocaleTimeString('pt-BR');
+            
+            if (status === 'success') {
+                lastSync.textContent = agora;
+                lastSync.className = 'status-value-inline status-online-inline';
+            } else if (status === 'error') {
+                lastSync.textContent = 'Erro';
+                lastSync.className = 'status-value-inline status-offline-inline';
+            }
+        }
+
+        function mostrarDetalhesPolling() {
+            const info = `
+🔄 Sistema de Polling Ativo
+
+📊 Estatísticas:
+• Polling #${pollingCount}
+• Última sync: ${lastSyncTime ? new Date(lastSyncTime).toLocaleTimeString() : 'Nunca'}
+• Status: ${supabaseDisponivel ? 'Supabase Online' : 'Modo Local'}
+• Frequência: A cada 3 segundos
+• Session ID: ${sessionId.substr(-8)}
+
+🛠️ Como funciona:
+• Verifica mudanças no banco Supabase
+• Compara timestamps automaticamente  
+• Atualiza dados quando detecta mudanças
+• Funciona entre computadores diferentes
+
+📡 Para testar:
+• Abra em outro computador/navegador
+• Importe arquivo Excel em um deles
+• Veja atualização no outro em até 3 segundos
+            `.trim();
+            
+            alert(info);
+        }
+
+        function mostrarNotificacaoUpdate(mensagem) {
+            const notification = document.getElementById('updateNotification');
+            notification.innerHTML = `⚡ ${mensagem}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
         function aplicarEfeitoUpdate() {
             // Efeito visual nas estatísticas
             const statCards = document.querySelectorAll('.stat-card');
@@ -1696,7 +1727,7 @@
                 card.classList.add('updated');
                 setTimeout(() => {
                     card.classList.remove('updated');
-                }, 600);
+                }, 800);
             });
             
             // Efeito visual nas linhas da tabela
@@ -1707,48 +1738,10 @@
                         row.classList.add('realtime-updated');
                         setTimeout(() => {
                             row.classList.remove('realtime-updated');
-                        }, 2000);
+                        }, 3000);
                     }
                 });
-            }, 200);
-        }
-
-        function mostrarDetalhesConexao() {
-            if (!usuarioLogado) return;
-            
-            const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
-            const detalhes = usuariosOnline.map(u => `• ${u.nome} (${u.nivel}) ${u.sessionId === sessionId ? '← VOCÊ' : ''}`).join('\n');
-            const lastUpdate = localStorage.getItem('dadosPatioMinerva_metadata');
-            const metadata = lastUpdate ? JSON.parse(lastUpdate) : null;
-            
-            alert(`📡 Sistema de Tempo Real\n\n👥 Usuários Online (${usuariosOnline.length}):\n${detalhes}\n\n🔄 Última atualização: ${metadata ? new Date(metadata.timestamp).toLocaleTimeString() : 'Nenhuma'}\n📡 Broadcast API: ${broadcastChannel ? 'Ativo' : 'Inativo'}\n🔄 Polling: Ativo (2s)\n💓 Heartbeat: Ativo (5s)`);
-        }
-
-        // ========== SISTEMA PRINCIPAL ==========
-
-        function verificarCredenciaisSupabase() {
-            return supabaseConfig.url && supabaseConfig.anonKey && 
-                   !supabaseConfig.url.includes('COLE_') && 
-                   !supabaseConfig.anonKey.includes('COLE_');
-        }
-
-        function tentarInicializarSupabase() {
-            try {
-                if (!verificarCredenciaisSupabase()) {
-                    console.log('📱 Modo local ativo - Supabase opcional');
-                    supabaseDisponivel = false;
-                    return false;
-                }
-
-                supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
-                supabaseDisponivel = true;
-                console.log('🚀 Supabase conectado como adicional');
-                return true;
-            } catch (error) {
-                console.log('📱 Supabase indisponível:', error.message);
-                supabaseDisponivel = false;
-                return false;
-            }
+            }, 300);
         }
 
         function atualizarStatusSupabase() {
@@ -1756,21 +1749,42 @@
             const icon = document.getElementById('supabaseIcon');
             const title = document.getElementById('supabaseTitle');
             
-            panel.className = 'supabase-status';
-            icon.textContent = '📡';
-            title.textContent = 'Tempo Real: Ativo';
-            
-            document.getElementById('modoStatus').textContent = 'Broadcast + Polling';
-            document.getElementById('modoStatus').className = 'status-value-inline status-online-inline';
-            
-            document.getElementById('syncStatus').textContent = 'Ativo';
-            document.getElementById('syncStatus').className = 'status-value-inline status-online-inline';
-            
-            document.getElementById('supabaseConnectionStatus').textContent = supabaseDisponivel ? 'Online' : 'Local';
-            document.getElementById('supabaseConnectionStatus').className = `status-value-inline ${supabaseDisponivel ? 'status-online-inline' : 'status-local-inline'}`;
-            
-            document.getElementById('pollingStatus').textContent = pollingInterval ? 'Ativo' : 'Inativo';
-            document.getElementById('pollingStatus').className = `status-value-inline ${pollingInterval ? 'status-online-inline' : 'status-offline-inline'}`;
+            if (!verificarCredenciaisSupabase()) {
+                panel.className = 'supabase-status error';
+                icon.textContent = '⚠️';
+                title.textContent = 'Polling: Credenciais Não Configuradas';
+                
+                ['supabaseConnectionStatus', 'supabaseDatabaseStatus', 'pollingStatus'].forEach(id => {
+                    const element = document.getElementById(id);
+                    element.textContent = 'Config';
+                    element.className = 'status-value-inline status-offline-inline';
+                });
+                
+            } else if (supabaseDisponivel) {
+                panel.className = 'supabase-status';
+                icon.textContent = '🔄';
+                title.textContent = 'Polling Supabase: Ativo';
+                
+                document.getElementById('supabaseConnectionStatus').textContent = 'Online';
+                document.getElementById('supabaseConnectionStatus').className = 'status-value-inline status-online-inline';
+                
+                document.getElementById('supabaseDatabaseStatus').textContent = 'Conectado';
+                document.getElementById('supabaseDatabaseStatus').className = 'status-value-inline status-online-inline';
+                
+                document.getElementById('pollingStatus').textContent = pollingInterval ? 'Ativo' : 'Parado';
+                document.getElementById('pollingStatus').className = `status-value-inline ${pollingInterval ? 'status-online-inline' : 'status-offline-inline'}`;
+                
+            } else {
+                panel.className = 'supabase-status local';
+                icon.textContent = '📱';
+                title.textContent = 'Polling: Modo Local';
+                
+                ['supabaseConnectionStatus', 'supabaseDatabaseStatus', 'pollingStatus'].forEach(id => {
+                    const element = document.getElementById(id);
+                    element.textContent = 'Local';
+                    element.className = 'status-value-inline status-local-inline';
+                });
+            }
         }
 
         function toggleSupabaseDetails() {
@@ -1788,58 +1802,311 @@
             }
         }
 
-        function testarSistemaTempoReal() {
+        async function testarPollingSupabase() {
             const btn = document.getElementById('supabaseTestBtn');
             
             btn.disabled = true;
             btn.textContent = '🔄 Testando...';
             
             try {
-                // Enviar teste de sincronização
-                const testeData = {
-                    type: 'DATA_UPDATE',
-                    subtype: 'TEST',
-                    timestamp: Date.now(),
-                    sessionId: sessionId,
-                    from: usuarioLogado?.nome || 'Sistema',
-                    userLevel: 'test'
-                };
-                
-                localStorage.setItem('dadosPatioMinerva_metadata', JSON.stringify(testeData));
-                
-                if (broadcastChannel) {
-                    broadcastChannel.postMessage(testeData);
+                if (!supabaseDisponivel) {
+                    mostrarAlerta('info', 'ℹ️ Modo local ativo.\n\nPara polling entre computadores, configure credenciais Supabase reais.');
+                    return;
                 }
                 
-                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
-                const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
+                // Teste de conexão
+                const { data, error } = await supabase.from('dados_patio').select('count', { count: 'exact', head: true });
                 
-                mostrarAlerta('success', `✅ Sistema de tempo real funcionando!\n\n📡 Método: Broadcast + Polling\n👥 Usuários online: ${usuariosOnline.length}\n🔄 Outros usuários: ${outrosUsuarios.length}\n⚡ Sincronização: Ativa\n\n🧪 Teste: Abra em outra aba para verificar!`);
+                if (error) {
+                    throw error;
+                }
+                
+                // Forçar um polling manual
+                await executarPolling();
+                
+                mostrarAlerta('success', `✅ Polling Supabase funcionando!\n\n🔄 Verificações: ${pollingCount}\n📊 Última sync: ${lastSyncTime ? new Date(lastSyncTime).toLocaleTimeString() : 'Primeira vez'}\n⏱️ Frequência: A cada 3 segundos\n🌐 Cross-device: Ativo\n\n🧪 Teste: Importe dados em outro computador!`);
                 
             } catch (error) {
                 console.error('Erro no teste:', error);
-                mostrarAlerta('error', `❌ Erro no teste:\n${error.message}`);
+                mostrarAlerta('error', `❌ Erro no teste de polling:\n${error.message}\n\n🔧 Verifique:\n• Credenciais Supabase corretas\n• Tabela 'dados_patio' existe\n• Projeto Supabase ativo`);
             } finally {
                 btn.disabled = false;
-                btn.textContent = '🚀 Testar Tempo Real';
+                btn.textContent = '🔍 Testar Polling';
             }
         }
 
+        // ========== IMPORTAÇÃO COM SUPABASE GARANTIDO ==========
+
+        function importarExcel(event) {
+            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado! Apenas MASTER pode importar.');
+                event.target.value = '';
+                return;
+            }
+            
+            const file = event.target.files[0];
+            if (!file) return;
+
+            console.log('📤 IMPORTAÇÃO COM POLLING CROSS-DEVICE...');
+            atualizarIndicadorPolling('updating');
+
+            const reader = new FileReader();
+            
+            reader.onerror = function(error) {
+                console.error('Erro ao ler arquivo:', error);
+                mostrarAlerta('error', '✗ Erro ao ler o arquivo selecionado.');
+                atualizarIndicadorPolling('error');
+            };
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    
+                    if (!firstSheet) {
+                        throw new Error('Planilha não encontrada');
+                    }
+                    
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    
+                    if (jsonData.length < 2) {
+                        throw new Error('Arquivo deve ter pelo menos 2 linhas (cabeçalho + dados)');
+                    }
+                    
+                    const rows = jsonData.slice(1);
+                    
+                    dadosPatio = rows.map((row, index) => {
+                        try {
+                            return {
+                                placa: converterValor(row[0]) || "",
+                                container: converterValor(row[1]) || "",
+                                dataChegada: formatarData(row[2]) || "",
+                                dataDescarga: formatarData(row[3]) || "",
+                                diaria: converterNumero(row[4]),
+                                dedicada: converterValor(row[5]) || "NÃO",
+                                valorDiaria: converterValor(row[6]) || "R$ 0,00",
+                                valorTotal: converterValor(row[7]) || "R$ 0,00",
+                                transportadora: converterValor(row[8]) || "",
+                                unidade: converterValor(row[9]) || "",
+                                origem: converterValor(row[10]) || "",
+                                tipoDescarga: converterValor(row[11]) || "",
+                                tipoMercado: converterValor(row[12]) || "",
+                                status: converterValor(row[13]) || "",
+                                nfOrigem: converterValor(row[14]) || "",
+                                nfeBrasfrigo: converterValor(row[15]) || "",
+                                op: converterValor(row[16]) || "",
+                                deposito: converterValor(row[17]) || "",
+                                statusOp: converterValor(row[18]) || "",
+                                pedido: converterValor(row[19]) || "",
+                                falta: converterValor(row[20]) || "",
+                                sobra: converterValor(row[21]) || "",
+                                inversaoRg: converterValor(row[22]) || "",
+                                doca: converterValor(row[23]) || "",
+                                pbr: converterValor(row[24]) || "",
+                                oneWay: converterValor(row[25]) || "",
+                                fumigado: converterValor(row[26]) || "",
+                                totalPallet: converterValor(row[27]) || "",
+                                recFrio: converterValor(row[28]) || "",
+                                obs: converterValor(row[29]) || ""
+                            };
+                        } catch (rowError) {
+                            console.error(`Erro na linha ${index + 2}:`, rowError);
+                            return null;
+                        }
+                    }).filter(item => item && item.placa);
+                    
+                    console.log(`📊 ${dadosPatio.length} registros processados`);
+                    
+                    // 1. SALVAR LOCALMENTE
+                    localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
+                    
+                    // 2. Marcar esta sessão como responsável
+                    localStorage.setItem('lastImportSession', JSON.stringify({
+                        sessionId: sessionId,
+                        timestamp: Date.now(),
+                        user: usuarioLogado.nome
+                    }));
+                    
+                    // 3. SALVAR NO SUPABASE (GARANTIR CROSS-DEVICE)
+                    if (supabaseDisponivel) {
+                        salvarNoSupabaseComPolling(dadosPatio);
+                    } else {
+                        mostrarAlerta('info', `📊 ${dadosPatio.length} registros importados (modo local)\n\n⚠️ Para sincronização entre computadores, configure Supabase.`);
+                    }
+                    
+                    // 4. ATUALIZAR UI LOCAL
+                    popularFiltros();
+                    renderizarTabela();
+                    atualizarEstatisticas();
+                    
+                } catch (error) {
+                    console.error('❌ Erro ao processar arquivo:', error);
+                    mostrarAlerta('error', `✗ Erro ao processar arquivo: ${error.message}`);
+                    atualizarIndicadorPolling('error');
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+            event.target.value = '';
+        }
+
+        async function salvarNoSupabaseComPolling(dadosArray) {
+            try {
+                console.log('🚀 Salvando no Supabase para cross-device sync...');
+                mostrarIndicadorSync('🔄 Enviando para Supabase...', 'syncing');
+                atualizarIndicadorPolling('updating');
+                
+                // Limpar dados existentes
+                const { error: deleteError } = await supabase
+                    .from('dados_patio')
+                    .delete()
+                    .gte('id', 0);
+
+                if (deleteError) {
+                    console.log('⚠️ Aviso ao limpar:', deleteError.message);
+                }
+
+                // Converter para formato Supabase
+                const dadosSupabase = dadosArray.map(item => ({
+                    placa: item.placa,
+                    container: item.container,
+                    data_chegada: item.dataChegada ? converterDataParaISO(item.dataChegada) : null,
+                    data_descarga: item.dataDescarga ? converterDataParaISO(item.dataDescarga) : null,
+                    diaria: parseInt(item.diaria) || 0,
+                    dedicada: item.dedicada,
+                    valor_diaria: item.valorDiaria,
+                    valor_total: item.valorTotal,
+                    transportadora: item.transportadora,
+                    unidade: item.unidade,
+                    origem: item.origem,
+                    tipo_descarga: item.tipoDescarga,
+                    tipo_mercado: item.tipoMercado,
+                    status: item.status,
+                    nf_origem: item.nfOrigem,
+                    nfe_brasfrigo: item.nfeBrasfrigo,
+                    op: item.op,
+                    deposito: item.deposito,
+                    status_op: item.statusOp,
+                    pedido: item.pedido,
+                    falta: item.falta,
+                    sobra: item.sobra,
+                    inversao_rg: item.inversaoRg,
+                    doca: item.doca,
+                    pbr: item.pbr,
+                    one_way: item.oneWay,
+                    fumigado: item.fumigado,
+                    total_pallet: item.totalPallet,
+                    rec_frio: item.recFrio,
+                    obs: item.obs
+                }));
+
+                // Inserir novos dados
+                const { data, error } = await supabase
+                    .from('dados_patio')
+                    .insert(dadosSupabase);
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log(`✅ ${dadosSupabase.length} registros salvos no Supabase`);
+                lastSyncTime = Date.now();
+                
+                mostrarIndicadorSync('✅ Sincronizado! Outros usuários receberão em até 3s', 'success', 4000);
+                mostrarAlerta('success', `✅ Importação e sincronização concluídas!\n\n📊 ${dadosPatio.length} registros processados\n🚀 Dados salvos no Supabase\n🔄 Polling detectará mudanças em outros computadores\n⏱️ Outros usuários verão em até 3 segundos!`);
+                
+                atualizarIndicadorPolling('polling');
+                atualizarStatusPolling('success');
+                
+            } catch (error) {
+                console.error('❌ Erro ao salvar no Supabase:', error);
+                mostrarIndicadorSync('❌ Erro no Supabase - salvo apenas localmente', 'error', 4000);
+                mostrarAlerta('error', `❌ Erro na sincronização Supabase:\n${error.message}\n\n💾 Dados salvos localmente\n⚠️ Verifique credenciais e conexão`);
+                atualizarIndicadorPolling('error');
+            }
+        }
+
+        function limparArquivo() {
+            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado!');
+                return;
+            }
+            
+            if (confirm('Tem certeza que deseja limpar todos os dados?\n\n🔄 Esta ação será detectada pelo polling em outros computadores!')) {
+                dadosPatio = [];
+                localStorage.removeItem('dadosPatioMinerva');
+                
+                // Marcar sessão responsável
+                localStorage.setItem('lastImportSession', JSON.stringify({
+                    sessionId: sessionId,
+                    timestamp: Date.now(),
+                    user: usuarioLogado.nome
+                }));
+                
+                // Limpar no Supabase se disponível
+                if (supabaseDisponivel) {
+                    limparSupabaseComPolling();
+                }
+                
+                // Limpar filtros e UI
+                document.getElementById('searchPlaca').value = '';
+                document.getElementById('filterStatus').value = '';
+                document.getElementById('filterOrigem').value = '';
+                document.getElementById('filterTipoMercado').value = '';
+                document.getElementById('filterGerandoDiaria').value = '';
+                document.getElementById('filterTipoDescarga').value = '';
+                document.getElementById('filterDataChegada').value = '';
+                document.getElementById('filterDataDescarga').value = '';
+                document.getElementById('filterMesAno').value = '';
+                document.getElementById('totalDiariasInfo').classList.remove('show');
+                
+                popularFiltros();
+                renderizarTabela();
+                atualizarEstatisticas();
+                
+                mostrarAlerta('info', '🗑️ Dados limpos com sucesso!\n\n🔄 Outros usuários verão a limpeza via polling.');
+            }
+        }
+
+        async function limparSupabaseComPolling() {
+            try {
+                console.log('🗑️ Limpando dados no Supabase...');
+                
+                const { error } = await supabase
+                    .from('dados_patio')
+                    .delete()
+                    .gte('id', 0);
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log('✅ Dados limpos no Supabase - polling detectará');
+                lastSyncTime = Date.now();
+                mostrarIndicadorSync('🗑️ Limpeza sincronizada via polling', 'success', 3000);
+                
+            } catch (error) {
+                console.error('❌ Erro ao limpar Supabase:', error);
+                mostrarIndicadorSync('❌ Erro na limpeza Supabase', 'error');
+            }
+        }
+
+        // ========== SISTEMA PRINCIPAL ==========
+
         function atualizarStatusSistema() {
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-            const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
             const systemStatus = document.getElementById('systemStatus');
             const systemStatusDetails = document.getElementById('systemStatusDetails');
             
             systemStatus.className = 'system-status';
             systemStatusDetails.innerHTML = `
-                📡 Tempo Real: <strong>Ativo</strong><br>
+                🔄 Polling: <strong>${supabaseDisponivel ? 'Supabase' : 'Local'}</strong><br>
                 👥 Usuários Cadastrados: <strong>${usuarios.length}</strong><br>
-                🌐 Usuários Online: <strong>${usuariosOnline.length}</strong><br>
                 💾 Dados: <strong>${dadosPatio.length} registros</strong><br>
-                🔄 Sincronização: <strong>Broadcast + Polling</strong><br>
-                📡 Polling: <strong>A cada 2 segundos</strong><br>
-                💓 Heartbeat: <strong>A cada 5 segundos</strong>
+                📊 Verificações: <strong>${pollingCount}</strong><br>
+                ⏱️ Frequência: <strong>3 segundos</strong><br>
+                🌐 Cross-device: <strong>${supabaseDisponivel ? 'Ativo' : 'Local apenas'}</strong>
             `;
             
             atualizarStatusSupabase();
@@ -1865,29 +2132,13 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 INICIANDO SISTEMA COM TEMPO REAL ROBUSTO...');
+            console.log('🚀 INICIANDO SISTEMA COM POLLING SUPABASE...');
             
             tentarInicializarSupabase();
-            inicializarSistemaTempoReal();
             
             setTimeout(() => {
                 inicializarSistema();
-            }, 500);
-        });
-
-        // Eventos de storage para garantir sincronização
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'dadosPatioMinerva_metadata') {
-                try {
-                    const updateData = JSON.parse(e.newValue);
-                    if (updateData && updateData.sessionId !== sessionId) {
-                        console.log('💾 Storage event detectado:', updateData);
-                        receberAtualizacaoTempoReal(updateData);
-                    }
-                } catch (error) {
-                    console.error('Erro no storage event:', error);
-                }
-            }
+            }, 1000);
         });
 
         function inicializarSistema() {
@@ -1989,11 +2240,11 @@
                 iniciarSistema();
                 atualizarStatusSistema();
                 
-                // Iniciar heartbeat após login
-                enviarHeartbeat();
+                // Iniciar polling após login
+                iniciarPollingSupabase();
                 
                 if (!lembrarMe) {
-                    mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n\n🎯 Nível: ${usuarioEncontrado.nivel.toUpperCase()}\n📡 Tempo Real: Ativo\n⚡ Sincronização: Automática`);
+                    mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n\n🎯 Nível: ${usuarioEncontrado.nivel.toUpperCase()}\n🔄 Polling: ${supabaseDisponivel ? 'Supabase Ativo' : 'Local'}\n🌐 Cross-device: ${supabaseDisponivel ? 'Funcional' : 'Configure Supabase'}`);
                 }
             } else {
                 console.log('❌ FALHA NA AUTENTICAÇÃO');
@@ -2004,31 +2255,11 @@
 
         function fazerLogout() {
             if (confirm('Deseja realmente fazer logout do sistema?')) {
-                // Limpar todos os intervals
+                // Limpar polling
                 if (pollingInterval) {
                     clearInterval(pollingInterval);
                     pollingInterval = null;
                 }
-                
-                if (heartbeatInterval) {
-                    clearInterval(heartbeatInterval);
-                    heartbeatInterval = null;
-                }
-                
-                if (usuariosOnlineInterval) {
-                    clearInterval(usuariosOnlineInterval);
-                    usuariosOnlineInterval = null;
-                }
-                
-                if (broadcastChannel) {
-                    broadcastChannel.close();
-                    broadcastChannel = null;
-                }
-                
-                // Remover minha presença
-                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
-                const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
-                localStorage.setItem('usuariosOnline_global', JSON.stringify(outrosUsuarios));
                 
                 sessionStorage.removeItem('usuarioLogado');
                 localStorage.removeItem('credenciaisLembradas');
@@ -2043,13 +2274,6 @@
             popularFiltros();
             renderizarTabela();
             atualizarEstatisticas();
-            
-            // Detectar timestamp atual dos dados
-            const metadata = localStorage.getItem('dadosPatioMinerva_metadata');
-            if (metadata) {
-                const meta = JSON.parse(metadata);
-                lastDataTimestamp = meta.timestamp;
-            }
         }
 
         function verificarPermissoes() {
@@ -2162,7 +2386,9 @@
                     <div class="user-item">
                         <div>
                             <strong>${user.nome}</strong>
-                            <span style="color: #10b981; font-size: 10px;">📡 SINCRONIZADO</span><br>
+                            <span style="color: ${supabaseDisponivel ? '#10b981' : '#6b7280'}; font-size: 10px;">
+                                ${supabaseDisponivel ? '🔄 POLLING' : '📱 LOCAL'}
+                            </span><br>
                             <small style="color: #6c757d;"><strong>Login:</strong> ${user.login}</small><br>
                             <small style="color: #6c757d;"><strong>Email:</strong> ${user.email}</small>
                             ${user.criadoEm ? `<br><small style="color: #95a5a6;">Criado: ${new Date(user.criadoEm).toLocaleDateString('pt-BR')}</small>` : ''}
@@ -2240,156 +2466,7 @@
             }
         }
 
-        // ========== IMPORTAÇÃO COM TEMPO REAL GARANTIDO ==========
-
-        function importarExcel(event) {
-            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado! Apenas MASTER pode importar.');
-                event.target.value = '';
-                return;
-            }
-            
-            const file = event.target.files[0];
-            if (!file) return;
-
-            console.log('📤 INICIANDO IMPORTAÇÃO COM TEMPO REAL GARANTIDO...');
-            atualizarIndicadorRealtime('syncing');
-
-            const reader = new FileReader();
-            
-            reader.onerror = function(error) {
-                console.error('Erro ao ler arquivo:', error);
-                mostrarAlerta('error', '✗ Erro ao ler o arquivo selecionado.');
-                atualizarIndicadorRealtime('error');
-            };
-            
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    
-                    if (!firstSheet) {
-                        throw new Error('Planilha não encontrada');
-                    }
-                    
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                    
-                    if (jsonData.length < 2) {
-                        throw new Error('Arquivo deve ter pelo menos 2 linhas (cabeçalho + dados)');
-                    }
-                    
-                    const rows = jsonData.slice(1);
-                    
-                    dadosPatio = rows.map((row, index) => {
-                        try {
-                            return {
-                                placa: converterValor(row[0]) || "",
-                                container: converterValor(row[1]) || "",
-                                dataChegada: formatarData(row[2]) || "",
-                                dataDescarga: formatarData(row[3]) || "",
-                                diaria: converterNumero(row[4]),
-                                dedicada: converterValor(row[5]) || "NÃO",
-                                valorDiaria: converterValor(row[6]) || "R$ 0,00",
-                                valorTotal: converterValor(row[7]) || "R$ 0,00",
-                                transportadora: converterValor(row[8]) || "",
-                                unidade: converterValor(row[9]) || "",
-                                origem: converterValor(row[10]) || "",
-                                tipoDescarga: converterValor(row[11]) || "",
-                                tipoMercado: converterValor(row[12]) || "",
-                                status: converterValor(row[13]) || "",
-                                nfOrigem: converterValor(row[14]) || "",
-                                nfeBrasfrigo: converterValor(row[15]) || "",
-                                op: converterValor(row[16]) || "",
-                                deposito: converterValor(row[17]) || "",
-                                statusOp: converterValor(row[18]) || "",
-                                pedido: converterValor(row[19]) || "",
-                                falta: converterValor(row[20]) || "",
-                                sobra: converterValor(row[21]) || "",
-                                inversaoRg: converterValor(row[22]) || "",
-                                doca: converterValor(row[23]) || "",
-                                pbr: converterValor(row[24]) || "",
-                                oneWay: converterValor(row[25]) || "",
-                                fumigado: converterValor(row[26]) || "",
-                                totalPallet: converterValor(row[27]) || "",
-                                recFrio: converterValor(row[28]) || "",
-                                obs: converterValor(row[29]) || ""
-                            };
-                        } catch (rowError) {
-                            console.error(`Erro na linha ${index + 2}:`, rowError);
-                            return null;
-                        }
-                    }).filter(item => item && item.placa);
-                    
-                    console.log(`📊 ${dadosPatio.length} registros processados`);
-                    
-                    // 1. SALVAR LOCALMENTE (SEMPRE FUNCIONA)
-                    localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
-                    console.log('💾 Dados salvos localmente');
-                    
-                    // 2. ENVIAR ATUALIZAÇÃO EM TEMPO REAL (GARANTIDO)
-                    enviarAtualizacaoTempoReal(dadosPatio, 'IMPORT');
-                    
-                    // 3. ATUALIZAR UI LOCAL
-                    popularFiltros();
-                    renderizarTabela();
-                    atualizarEstatisticas();
-                    
-                    const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
-                    const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
-                    
-                    console.log('✅ IMPORTAÇÃO COMPLETA - Sincronização enviada!');
-                    
-                    mostrarAlerta('success', `✅ Importação concluída com sucesso!\n\n📊 ${dadosPatio.length} registros processados\n📡 Sincronizado para ${outrosUsuarios.length} outros usuários\n⚡ Atualização em tempo real enviada!\n\n🧪 Abra em outra aba para verificar a sincronização.`);
-                    
-                } catch (error) {
-                    console.error('❌ Erro ao processar arquivo:', error);
-                    mostrarAlerta('error', `✗ Erro ao processar arquivo: ${error.message}`);
-                    atualizarIndicadorRealtime('error');
-                }
-            };
-            
-            reader.readAsArrayBuffer(file);
-            event.target.value = '';
-        }
-
-        function limparArquivo() {
-            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado!');
-                return;
-            }
-            
-            const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
-            const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
-            
-            if (confirm(`Tem certeza que deseja limpar todos os dados?\n\n⚡ Esta ação será sincronizada para ${outrosUsuarios.length} outros usuários online!`)) {
-                dadosPatio = [];
-                localStorage.removeItem('dadosPatioMinerva');
-                
-                // Enviar atualização de limpeza
-                enviarAtualizacaoTempoReal([], 'CLEAR');
-                
-                // Limpar filtros
-                document.getElementById('searchPlaca').value = '';
-                document.getElementById('filterStatus').value = '';
-                document.getElementById('filterOrigem').value = '';
-                document.getElementById('filterTipoMercado').value = '';
-                document.getElementById('filterGerandoDiaria').value = '';
-                document.getElementById('filterTipoDescarga').value = '';
-                document.getElementById('filterDataChegada').value = '';
-                document.getElementById('filterDataDescarga').value = '';
-                document.getElementById('filterMesAno').value = '';
-                document.getElementById('totalDiariasInfo').classList.remove('show');
-                
-                popularFiltros();
-                renderizarTabela();
-                atualizarEstatisticas();
-                
-                mostrarAlerta('info', `🗑️ Dados limpos com sucesso!\n\n📡 ${outrosUsuarios.length} usuários receberão a atualização.`);
-            }
-        }
-
-        // RESTO DAS FUNÇÕES PERMANECE IGUAL...
+        // RESTO DAS FUNÇÕES PERMANECEM IGUAIS...
         function converterDataParaISO(dataBr) {
             if (!dataBr) return null;
             try {
