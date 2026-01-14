@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pátio Atual - Minerva Foods</title>
     
-    <!-- Firebase SDKs (OPCIONAL) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -1106,16 +1106,23 @@
         let realtimeDb = null;
         let firebaseDisponivel = false;
 
-        // CONFIGURAÇÃO FIREBASE (OPCIONAL)
+        // 🔥 CONFIGURAÇÃO FIREBASE - COLOQUE SUAS CREDENCIAIS AQUI:
         const firebaseConfig = {
-            // 🔥 SUBSTITUA PELAS SUAS CREDENCIAIS SE QUISER FIREBASE
-            apiKey: "AIzaSyB123456789-OPCIONAL",
-            authDomain: "minerva-patio.firebaseapp.com",
-            databaseURL: "https://minerva-patio-default-rtdb.firebaseio.com",
-            projectId: "minerva-patio",
-            storageBucket: "minerva-patio.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcdef123456789012345"
+            // ⚠️  INSTRUÇÕES: 
+            // 1. Vá no console do Firebase (https://console.firebase.google.com)
+            // 2. Selecione seu projeto
+            // 3. Vá em ⚙️ Configurações > Configurações do projeto
+            // 4. Na aba "Geral", role até "Seus aplicativos" 
+            // 5. Clique no ícone </> (Web)
+            // 6. Copie as credenciais abaixo e substitua:
+            
+            apiKey: "AIzaSyCHkCQwAwDLJCiLESjj7VsvLdua6UoA1jc",
+            authDomain: "brasil-armazem.firebaseapp.com",
+            databaseURL: "COLE_SUA_DATABASE_URL_AQUI", 
+            projectId: "COLE_SEU_PROJECT_ID_AQUI",
+            storageBucket: "brasil-armazem.firebasestorage.app",
+            messagingSenderId: "21202753102",
+            appId: "1:21202753102:web:b4a2c829c5d4171e99551f"
         };
 
         // USUÁRIOS PADRÃO - PROTEGIDOS
@@ -1154,20 +1161,37 @@
             }
         ];
 
-        // INICIALIZAR FIREBASE (OPCIONAL)
+        // VERIFICAR SE AS CREDENCIAIS FORAM CONFIGURADAS
+        function verificarCredenciaisFirebase() {
+            const credenciaisVazias = Object.values(firebaseConfig).some(value => 
+                typeof value === 'string' && value.includes('COLE_')
+            );
+            
+            return !credenciaisVazias;
+        }
+
+        // INICIALIZAR FIREBASE 
         function tentarInicializarFirebase() {
             try {
+                // Verificar se as credenciais foram configuradas
+                if (!verificarCredenciaisFirebase()) {
+                    console.log('⚠️ Credenciais do Firebase não configuradas - usando modo local');
+                    firebaseDisponivel = false;
+                    atualizarStatusSistema();
+                    return false;
+                }
+
                 firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth();
                 db = firebase.firestore();
                 realtimeDb = firebase.database();
                 firebaseDisponivel = true;
                 
-                console.log('🔥 Firebase inicializado');
+                console.log('🔥 Firebase inicializado com sucesso');
                 atualizarStatusSistema();
                 return true;
             } catch (error) {
-                console.log('⚠️ Firebase indisponível, usando modo local:', error.message);
+                console.log('⚠️ Erro ao inicializar Firebase, usando modo local:', error.message);
                 firebaseDisponivel = false;
                 atualizarStatusSistema();
                 return false;
@@ -1248,7 +1272,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 INICIANDO SISTEMA SEGURO...');
             
-            // Tentar Firebase (opcional)
+            // Tentar Firebase 
             tentarInicializarFirebase();
             
             // Inicializar sistema principal
@@ -1532,7 +1556,7 @@
 
                 await db.collection('usuarios').add(usuarioSeguro);
 
-                console.log('✅ Usuário salvo no Firebase (dados protegidos)');
+                console.log('✅ Usuário salvo no Firebase');
                 mostrarIndicadorSync('✅ Sincronizado com Firebase!');
             } catch (error) {
                 console.error('❌ Erro ao salvar no Firebase:', error);
