@@ -40,7 +40,7 @@
         .firebase-status-panel {
             position: fixed;
             top: 20px;
-            right: 20px;
+            left: 20px;
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
@@ -182,32 +182,6 @@
             color: #999;
             margin-top: 8px;
             font-style: italic;
-        }
-
-        /* SISTEMA DE PRESENÇA ONLINE */
-        .online-status {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: #28a745;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            z-index: 1002;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .online-status.offline {
-            background: #dc3545;
-        }
-
-        .online-status.local {
-            background: #6c757d;
         }
 
         .debug-info {
@@ -976,25 +950,16 @@
                 justify-content: center;
                 flex-wrap: wrap;
             }
-            .online-status {
-                position: relative;
-                margin: 10px;
-            }
             .firebase-status-panel {
                 position: relative;
                 margin: 10px;
                 top: auto;
-                right: auto;
+                left: auto;
             }
         }
     </style>
 </head>
 <body>
-    <!-- SISTEMA DE PRESENÇA ONLINE -->
-    <div class="online-status" id="onlineStatus" onclick="toggleDebug()">
-        <span id="onlineStatusText">🔄 Conectando...</span>
-    </div>
-
     <!-- PAINEL DE STATUS FIREBASE COMPLETO -->
     <div class="firebase-status-panel" id="firebaseStatusPanel">
         <div class="status-header" onclick="toggleFirebaseDetails()">
@@ -1501,15 +1466,12 @@
             const panel = document.getElementById('firebaseStatusPanel');
             const icon = document.getElementById('firebaseStatusIcon');
             const title = document.getElementById('firebaseStatusTitle');
-            const onlineStatus = document.getElementById('onlineStatusText');
             
             if (!verificarCredenciaisFirebase()) {
                 // Credenciais não configuradas
                 panel.className = 'firebase-status-panel error';
                 icon.textContent = '⚠️';
                 title.textContent = 'Firebase: Credenciais Não Configuradas';
-                onlineStatus.textContent = '⚠️ Configuração Pendente';
-                document.getElementById('onlineStatus').className = 'online-status offline';
                 
                 // Atualizar detalhes
                 ['firebaseAppStatus', 'authStatus', 'firestoreStatus', 'realtimeStatus'].forEach(id => {
@@ -1523,16 +1485,12 @@
                 panel.className = 'firebase-status-panel connected';
                 icon.textContent = '🔥';
                 title.textContent = 'Firebase: Conectado';
-                onlineStatus.textContent = '🟢 Sistema Completo';
-                document.getElementById('onlineStatus').className = 'online-status';
                 
             } else {
                 // Modo local
                 panel.className = 'firebase-status-panel local';
                 icon.textContent = '📱';
                 title.textContent = 'Firebase: Modo Local';
-                onlineStatus.textContent = '📱 Modo Local';
-                document.getElementById('onlineStatus').className = 'online-status local';
                 
                 // Atualizar detalhes para modo local
                 ['firebaseAppStatus', 'authStatus', 'firestoreStatus', 'realtimeStatus'].forEach(id => {
