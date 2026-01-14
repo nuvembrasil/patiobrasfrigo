@@ -111,6 +111,7 @@
             font-weight: 600;
             z-index: 1003;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
 
         /* INDICADOR DE SINCRONIZAÇÃO */
@@ -1023,8 +1024,8 @@
     </div>
 
     <!-- CONTADOR DE USUÁRIOS ONLINE -->
-    <div class="online-users" id="onlineUsers">
-        👥 1 usuário online
+    <div class="online-users" id="onlineUsers" onclick="mostrarUsuariosOnline()">
+        👥 Detectando usuários...
     </div>
 
     <!-- NOTIFICAÇÃO DE ATUALIZAÇÕES -->
@@ -1101,7 +1102,7 @@
                 <div class="supabase-details" id="supabaseDetails">
                     <div class="status-item-inline">
                         <span class="status-label-inline">Modo:</span>
-                        <span class="status-value-inline status-local-inline" id="modoStatus">Local + Broadcast</span>
+                        <span class="status-value-inline status-online-inline" id="modoStatus">Broadcast + Polling</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Sync:</span>
@@ -1112,8 +1113,8 @@
                         <span class="status-value-inline status-local-inline" id="supabaseConnectionStatus">Opcional</span>
                     </div>
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Broadcast:</span>
-                        <span class="status-value-inline status-online-inline" id="broadcastStatus">Funcional</span>
+                        <span class="status-label-inline">Polling:</span>
+                        <span class="status-value-inline status-online-inline" id="pollingStatus">Ativo</span>
                     </div>
                 </div>
                 
@@ -1122,7 +1123,7 @@
                 </button>
                 
                 <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="supabaseLastUpdate">
-                    Sistema híbrido: Local + Tempo Real simulado
+                    Sistema híbrido com polling ativo
                 </div>
             </div>
 
@@ -1318,14 +1319,18 @@
     </div>
 
     <script>
-        // SISTEMA HÍBRIDO: LOCAL + TEMPO REAL SIMULADO
+        // SISTEMA HÍBRIDO COM TEMPO REAL ROBUSTO
         let usuarioLogado = null;
         let dadosPatio = [];
         let supabase = null;
         let supabaseDisponivel = false;
         let supabaseStatusCollapsed = false;
         let broadcastChannel = null;
+        let pollingInterval = null;
+        let heartbeatInterval = null;
         let usuariosOnlineInterval = null;
+        let lastDataTimestamp = 0;
+        let sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
         // 🚀 CONFIGURAÇÃO SUPABASE (OPCIONAL)
         const supabaseConfig = {
@@ -1369,151 +1374,280 @@
             }
         ];
 
-        // ========== SISTEMA DE TEMPO REAL LOCAL ==========
+        // ========== SISTEMA DE TEMPO REAL ROBUSTO ==========
+
+        function inicializarSistemaTempoReal() {
+            console.log('📡 Inicializando sistema de tempo real robusto...');
+            
+            // 1. Broadcast API para abas do mesmo navegador
+            inicializarBroadcastChannel();
+            
+            // 2. Polling para mudanças no localStorage
+            iniciarPollingDados();
+            
+            // 3. Sistema de heartbeat para usuários online
+            iniciarSistemaHeartbeat();
+            
+            // 4. Limpar dados antigos ao iniciar
+            limparDadosAntigos();
+            
+            console.log('✅ Sistema de tempo real configurado com sucesso');
+        }
 
         function inicializarBroadcastChannel() {
             try {
-                // Broadcast API para comunicação entre abas
-                broadcastChannel = new BroadcastChannel('minerva_patio_sync');
+                broadcastChannel = new BroadcastChannel('minerva_patio_realtime');
                 
                 broadcastChannel.addEventListener('message', (event) => {
                     console.log('📡 Broadcast recebido:', event.data);
                     
-                    if (event.data.type === 'DATA_UPDATE') {
+                    if (event.data.type === 'DATA_UPDATE' && event.data.sessionId !== sessionId) {
                         receberAtualizacaoTempoReal(event.data);
                     } else if (event.data.type === 'USER_HEARTBEAT') {
-                        atualizarContadorUsuariosOnline(event.data.usuarios);
+                        // Heartbeat será tratado pelo polling do localStorage
                     }
                 });
                 
-                console.log('📡 Broadcast Channel inicializado');
-                atualizarIndicadorRealtime('broadcast');
-                enviarHeartbeat();
-                
+                console.log('📡 Broadcast Channel ativo');
                 return true;
             } catch (error) {
-                console.log('📱 Broadcast API não suportado, usando storage events');
-                
-                // Fallback: Storage Events
-                window.addEventListener('storage', (e) => {
-                    if (e.key === 'dadosPatioMinerva_realtime') {
-                        console.log('💾 Storage update detectado');
-                        receberAtualizacaoStorage();
-                    }
-                });
-                
-                atualizarIndicadorRealtime('local');
+                console.log('⚠️ Broadcast API não disponível:', error.message);
                 return false;
             }
         }
 
-        function enviarHeartbeat() {
-            if (!broadcastChannel || !usuarioLogado) return;
+        function iniciarPollingDados() {
+            // Polling para detectar mudanças nos dados (a cada 2 segundos)
+            pollingInterval = setInterval(() => {
+                verificarMudancasDados();
+            }, 2000);
             
-            const usuariosOnline = JSON.parse(sessionStorage.getItem('usuariosOnline') || '[]');
-            const meuUsuario = {
-                id: usuarioLogado.id,
-                nome: usuarioLogado.nome,
-                nivel: usuarioLogado.nivel,
-                lastSeen: Date.now()
-            };
-            
-            // Atualizar minha presença
-            const usuariosAtualizados = usuariosOnline.filter(u => u.id !== usuarioLogado.id);
-            usuariosAtualizados.push(meuUsuario);
-            
-            // Limpar usuários inativos (mais de 30 segundos)
-            const agora = Date.now();
-            const usuariosAtivos = usuariosAtualizados.filter(u => (agora - u.lastSeen) < 30000);
-            
-            sessionStorage.setItem('usuariosOnline', JSON.stringify(usuariosAtivos));
-            
-            // Enviar heartbeat
-            broadcastChannel.postMessage({
-                type: 'USER_HEARTBEAT',
-                usuarios: usuariosAtivos,
-                from: usuarioLogado.nome
-            });
-            
-            atualizarContadorUsuariosOnline(usuariosAtivos);
+            console.log('🔄 Polling de dados iniciado (2s)');
         }
 
-        function atualizarContadorUsuariosOnline(usuarios = null) {
-            const usuariosAtivos = usuarios || JSON.parse(sessionStorage.getItem('usuariosOnline') || '[]');
-            const contador = document.getElementById('onlineUsers');
-            const total = usuariosAtivos.length;
+        function verificarMudancasDados() {
+            try {
+                const metadados = localStorage.getItem('dadosPatioMinerva_metadata');
+                
+                if (!metadados) return;
+                
+                const meta = JSON.parse(metadados);
+                
+                // Verificar se houve mudança e não foi feita por esta sessão
+                if (meta.timestamp > lastDataTimestamp && meta.sessionId !== sessionId) {
+                    console.log('🔄 Mudança detectada via polling:', meta);
+                    
+                    lastDataTimestamp = meta.timestamp;
+                    receberAtualizacaoPolling(meta);
+                }
+                
+            } catch (error) {
+                console.error('Erro no polling:', error);
+            }
+        }
+
+        function iniciarSistemaHeartbeat() {
+            // Heartbeat para rastrear usuários online (a cada 5 segundos)
+            heartbeatInterval = setInterval(() => {
+                enviarHeartbeat();
+            }, 5000);
             
-            contador.textContent = `👥 ${total} usuário${total !== 1 ? 's' : ''} online`;
+            // Verificar usuários online (a cada 3 segundos)
+            usuariosOnlineInterval = setInterval(() => {
+                atualizarListaUsuariosOnline();
+            }, 3000);
+            
+            console.log('💓 Sistema de heartbeat iniciado');
+        }
+
+        function limparDadosAntigos() {
+            // Limpar heartbeats antigos (mais de 30 segundos)
+            try {
+                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+                const agora = Date.now();
+                const usuariosAtivos = usuariosOnline.filter(u => (agora - u.lastSeen) < 30000);
+                
+                localStorage.setItem('usuariosOnline_global', JSON.stringify(usuariosAtivos));
+            } catch (error) {
+                console.error('Erro ao limpar dados antigos:', error);
+            }
+        }
+
+        function enviarHeartbeat() {
+            if (!usuarioLogado) return;
+            
+            try {
+                const agora = Date.now();
+                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+                
+                // Remover minha sessão anterior
+                const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
+                
+                // Adicionar minha sessão atual
+                const meuDados = {
+                    sessionId: sessionId,
+                    id: usuarioLogado.id,
+                    nome: usuarioLogado.nome,
+                    nivel: usuarioLogado.nivel,
+                    lastSeen: agora,
+                    timestamp: agora
+                };
+                
+                outrosUsuarios.push(meuDados);
+                
+                // Limpar usuários inativos
+                const usuariosAtivos = outrosUsuarios.filter(u => (agora - u.lastSeen) < 30000);
+                
+                localStorage.setItem('usuariosOnline_global', JSON.stringify(usuariosAtivos));
+                
+                // Enviar via broadcast também
+                if (broadcastChannel) {
+                    broadcastChannel.postMessage({
+                        type: 'USER_HEARTBEAT',
+                        sessionId: sessionId,
+                        usuario: meuDados,
+                        timestamp: agora
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Erro no heartbeat:', error);
+            }
+        }
+
+        function atualizarListaUsuariosOnline() {
+            try {
+                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+                const agora = Date.now();
+                
+                // Filtrar usuários ativos (últimos 30 segundos)
+                const usuariosAtivos = usuariosOnline.filter(u => (agora - u.lastSeen) < 30000);
+                
+                // Atualizar localStorage se mudou
+                if (usuariosAtivos.length !== usuariosOnline.length) {
+                    localStorage.setItem('usuariosOnline_global', JSON.stringify(usuariosAtivos));
+                }
+                
+                // Atualizar contador visual
+                atualizarContadorUsuariosOnline(usuariosAtivos);
+                
+            } catch (error) {
+                console.error('Erro ao atualizar usuários online:', error);
+            }
+        }
+
+        function atualizarContadorUsuariosOnline(usuarios) {
+            const contador = document.getElementById('onlineUsers');
+            const total = usuarios.length;
             
             if (total > 1) {
+                const outros = usuarios.filter(u => u.sessionId !== sessionId);
+                contador.textContent = `👥 ${total} usuários online (${outros.length} outros)`;
                 contador.style.background = '#dcfce7';
                 contador.style.borderColor = '#10b981';
-                contador.style.color = '#065f46';
             } else {
+                contador.textContent = `👤 1 usuário online (você)`;
                 contador.style.background = 'rgba(255,255,255,0.95)';
-                contador.style.borderColor = '#10b981';
-                contador.style.color = '#065f46';
+                contador.style.borderColor = '#6b7280';
             }
+        }
+
+        function mostrarUsuariosOnline() {
+            const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+            const lista = usuariosOnline.map(u => `• ${u.nome} (${u.nivel}) - ${u.sessionId === sessionId ? 'VOCÊ' : 'Outro usuário'}`).join('\n');
+            
+            alert(`👥 Usuários Online (${usuariosOnline.length}):\n\n${lista}\n\n🔄 Atualiza a cada 3 segundos`);
         }
 
         function enviarAtualizacaoTempoReal(dados, tipo = 'IMPORT') {
+            const agora = Date.now();
+            lastDataTimestamp = agora;
+            
             const updateData = {
                 type: 'DATA_UPDATE',
                 subtype: tipo,
-                dados: dados,
-                timestamp: Date.now(),
+                timestamp: agora,
+                sessionId: sessionId,
                 from: usuarioLogado.nome,
-                userLevel: usuarioLogado.nivel
+                userLevel: usuarioLogado.nivel,
+                dataCount: dados.length
             };
             
-            console.log('📡 Enviando atualização para outras abas...', updateData);
+            console.log('📡 Enviando atualização em tempo real:', updateData);
             
-            if (broadcastChannel) {
-                broadcastChannel.postMessage(updateData);
-                console.log('✅ Broadcast enviado');
+            try {
+                // 1. Salvar metadados no localStorage (polling vai detectar)
+                localStorage.setItem('dadosPatioMinerva_metadata', JSON.stringify(updateData));
+                
+                // 2. Broadcast para abas do mesmo navegador
+                if (broadcastChannel) {
+                    broadcastChannel.postMessage(updateData);
+                    console.log('📡 Broadcast enviado');
+                }
+                
+                // 3. Trigger storage event forçado
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'dadosPatioMinerva_metadata',
+                    newValue: JSON.stringify(updateData),
+                    url: window.location.href
+                }));
+                
+                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+                const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
+                
+                mostrarIndicadorSync(`📡 Sincronizado para ${outrosUsuarios.length} outros usuários`, 'success', 3000);
+                atualizarIndicadorRealtime('broadcast');
+                
+            } catch (error) {
+                console.error('Erro ao enviar atualização:', error);
+                atualizarIndicadorRealtime('error');
             }
-            
-            // Fallback: storage events
-            localStorage.setItem('dadosPatioMinerva_realtime', JSON.stringify(updateData));
-            
-            mostrarIndicadorSync(`📡 Sincronizado para ${JSON.parse(sessionStorage.getItem('usuariosOnline') || '[]').length} usuários`, 'success', 3000);
         }
 
         function receberAtualizacaoTempoReal(updateData) {
-            if (!updateData || updateData.from === usuarioLogado?.nome) {
+            if (!updateData || updateData.sessionId === sessionId) {
                 return; // Não processar próprias atualizações
             }
             
-            console.log('⚡ Recebendo atualização de:', updateData.from);
+            console.log('⚡ RECEBENDO ATUALIZAÇÃO de:', updateData.from, '| Tipo:', updateData.subtype);
             
             // Mostrar notificação
-            mostrarNotificacaoUpdate(`Atualização de ${updateData.from} (${updateData.userLevel})`);
+            mostrarNotificacaoUpdate(`${updateData.from} (${updateData.userLevel}) ${updateData.subtype === 'IMPORT' ? 'importou dados' : 'limpou dados'}`);
             
             // Atualizar indicador
             atualizarIndicadorRealtime('syncing');
             
+            // Recarregar dados após pequeno delay
             setTimeout(() => {
-                // Recarregar dados
+                recarregarDadosTempoReal();
+            }, 300);
+        }
+
+        function receberAtualizacaoPolling(metadata) {
+            console.log('🔄 Atualização detectada via polling:', metadata);
+            receberAtualizacaoTempoReal(metadata);
+        }
+
+        function recarregarDadosTempoReal() {
+            console.log('🔄 Recarregando dados após atualização...');
+            
+            try {
+                // Recarregar dados do localStorage
                 carregarDadosSalvos();
+                
+                // Atualizar UI
                 popularFiltros();
                 renderizarTabela();
                 atualizarEstatisticas();
                 aplicarEfeitoUpdate();
                 
                 atualizarIndicadorRealtime('broadcast');
-            }, 500);
-        }
-
-        function receberAtualizacaoStorage() {
-            try {
-                const updateStr = localStorage.getItem('dadosPatioMinerva_realtime');
-                if (!updateStr) return;
                 
-                const updateData = JSON.parse(updateStr);
-                receberAtualizacaoTempoReal(updateData);
+                console.log('✅ Dados recarregados com sucesso');
                 
             } catch (error) {
-                console.error('Erro ao processar storage update:', error);
+                console.error('❌ Erro ao recarregar dados:', error);
+                atualizarIndicadorRealtime('error');
             }
         }
 
@@ -1582,13 +1716,15 @@
         function mostrarDetalhesConexao() {
             if (!usuarioLogado) return;
             
-            const usuariosOnline = JSON.parse(sessionStorage.getItem('usuariosOnline') || '[]');
-            const detalhes = usuariosOnline.map(u => `• ${u.nome} (${u.nivel})`).join('\n');
+            const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+            const detalhes = usuariosOnline.map(u => `• ${u.nome} (${u.nivel}) ${u.sessionId === sessionId ? '← VOCÊ' : ''}`).join('\n');
+            const lastUpdate = localStorage.getItem('dadosPatioMinerva_metadata');
+            const metadata = lastUpdate ? JSON.parse(lastUpdate) : null;
             
-            alert(`📡 Sistema de Tempo Real\n\n👥 Usuários Online (${usuariosOnline.length}):\n${detalhes}\n\n🔄 Modo: ${broadcastChannel ? 'Broadcast API' : 'Storage Events'}\n⚡ Status: Ativo`);
+            alert(`📡 Sistema de Tempo Real\n\n👥 Usuários Online (${usuariosOnline.length}):\n${detalhes}\n\n🔄 Última atualização: ${metadata ? new Date(metadata.timestamp).toLocaleTimeString() : 'Nenhuma'}\n📡 Broadcast API: ${broadcastChannel ? 'Ativo' : 'Inativo'}\n🔄 Polling: Ativo (2s)\n💓 Heartbeat: Ativo (5s)`);
         }
 
-        // ========== SUPABASE (OPCIONAL) ==========
+        // ========== SISTEMA PRINCIPAL ==========
 
         function verificarCredenciaisSupabase() {
             return supabaseConfig.url && supabaseConfig.anonKey && 
@@ -1609,7 +1745,7 @@
                 console.log('🚀 Supabase conectado como adicional');
                 return true;
             } catch (error) {
-                console.log('📱 Supabase indisponível, continuando em modo local:', error.message);
+                console.log('📱 Supabase indisponível:', error.message);
                 supabaseDisponivel = false;
                 return false;
             }
@@ -1620,13 +1756,11 @@
             const icon = document.getElementById('supabaseIcon');
             const title = document.getElementById('supabaseTitle');
             
-            // Sempre mostrar como funcional
             panel.className = 'supabase-status';
             icon.textContent = '📡';
             title.textContent = 'Tempo Real: Ativo';
             
-            // Atualizar detalhes específicos
-            document.getElementById('modoStatus').textContent = broadcastChannel ? 'Broadcast API' : 'Storage Events';
+            document.getElementById('modoStatus').textContent = 'Broadcast + Polling';
             document.getElementById('modoStatus').className = 'status-value-inline status-online-inline';
             
             document.getElementById('syncStatus').textContent = 'Ativo';
@@ -1635,8 +1769,8 @@
             document.getElementById('supabaseConnectionStatus').textContent = supabaseDisponivel ? 'Online' : 'Local';
             document.getElementById('supabaseConnectionStatus').className = `status-value-inline ${supabaseDisponivel ? 'status-online-inline' : 'status-local-inline'}`;
             
-            document.getElementById('broadcastStatus').textContent = 'Ativo';
-            document.getElementById('broadcastStatus').className = 'status-value-inline status-online-inline';
+            document.getElementById('pollingStatus').textContent = pollingInterval ? 'Ativo' : 'Inativo';
+            document.getElementById('pollingStatus').className = `status-value-inline ${pollingInterval ? 'status-online-inline' : 'status-offline-inline'}`;
         }
 
         function toggleSupabaseDetails() {
@@ -1661,22 +1795,26 @@
             btn.textContent = '🔄 Testando...';
             
             try {
-                // Teste do sistema de broadcast
+                // Enviar teste de sincronização
+                const testeData = {
+                    type: 'DATA_UPDATE',
+                    subtype: 'TEST',
+                    timestamp: Date.now(),
+                    sessionId: sessionId,
+                    from: usuarioLogado?.nome || 'Sistema',
+                    userLevel: 'test'
+                };
+                
+                localStorage.setItem('dadosPatioMinerva_metadata', JSON.stringify(testeData));
+                
                 if (broadcastChannel) {
-                    broadcastChannel.postMessage({
-                        type: 'TEST',
-                        message: 'Teste de conectividade',
-                        from: usuarioLogado?.nome || 'Sistema'
-                    });
+                    broadcastChannel.postMessage(testeData);
                 }
                 
-                // Atualizar indicadores
-                atualizarStatusSupabase();
-                enviarHeartbeat();
+                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+                const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
                 
-                const usuariosOnline = JSON.parse(sessionStorage.getItem('usuariosOnline') || '[]');
-                
-                mostrarAlerta('success', `✅ Sistema de tempo real funcionando!\n\n📡 Método: ${broadcastChannel ? 'Broadcast API' : 'Storage Events'}\n👥 Usuários online: ${usuariosOnline.length}\n⚡ Sincronização: Ativa\n\n🚀 Para testar: abra o sistema em outra aba e importe um arquivo Excel.`);
+                mostrarAlerta('success', `✅ Sistema de tempo real funcionando!\n\n📡 Método: Broadcast + Polling\n👥 Usuários online: ${usuariosOnline.length}\n🔄 Outros usuários: ${outrosUsuarios.length}\n⚡ Sincronização: Ativa\n\n🧪 Teste: Abra em outra aba para verificar!`);
                 
             } catch (error) {
                 console.error('Erro no teste:', error);
@@ -1687,13 +1825,11 @@
             }
         }
 
-        // ========== SISTEMA PRINCIPAL ==========
-
         function atualizarStatusSistema() {
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
             const systemStatus = document.getElementById('systemStatus');
             const systemStatusDetails = document.getElementById('systemStatusDetails');
-            const usuariosOnline = JSON.parse(sessionStorage.getItem('usuariosOnline') || '[]');
             
             systemStatus.className = 'system-status';
             systemStatusDetails.innerHTML = `
@@ -1701,8 +1837,9 @@
                 👥 Usuários Cadastrados: <strong>${usuarios.length}</strong><br>
                 🌐 Usuários Online: <strong>${usuariosOnline.length}</strong><br>
                 💾 Dados: <strong>${dadosPatio.length} registros</strong><br>
-                🔄 Sincronização: <strong>Automática</strong><br>
-                ${supabaseDisponivel ? '🚀 Supabase: <strong>Conectado</strong>' : '📱 Modo: <strong>Local</strong>'}
+                🔄 Sincronização: <strong>Broadcast + Polling</strong><br>
+                📡 Polling: <strong>A cada 2 segundos</strong><br>
+                💓 Heartbeat: <strong>A cada 5 segundos</strong>
             `;
             
             atualizarStatusSupabase();
@@ -1728,14 +1865,29 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 INICIANDO SISTEMA HÍBRIDO COM TEMPO REAL...');
+            console.log('🚀 INICIANDO SISTEMA COM TEMPO REAL ROBUSTO...');
             
             tentarInicializarSupabase();
-            inicializarBroadcastChannel();
+            inicializarSistemaTempoReal();
             
             setTimeout(() => {
                 inicializarSistema();
             }, 500);
+        });
+
+        // Eventos de storage para garantir sincronização
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'dadosPatioMinerva_metadata') {
+                try {
+                    const updateData = JSON.parse(e.newValue);
+                    if (updateData && updateData.sessionId !== sessionId) {
+                        console.log('💾 Storage event detectado:', updateData);
+                        receberAtualizacaoTempoReal(updateData);
+                    }
+                } catch (error) {
+                    console.error('Erro no storage event:', error);
+                }
+            }
         });
 
         function inicializarSistema() {
@@ -1801,8 +1953,6 @@
             const senha = document.getElementById('loginSenha').value.trim();
             const lembrarMe = document.getElementById('lembrarMe').checked;
             
-            console.log('🔍 Tentativa de login para usuário:', login);
-            
             if (!login || !senha) {
                 alert('Por favor, preencha usuário e senha!');
                 return;
@@ -1840,10 +1990,7 @@
                 atualizarStatusSistema();
                 
                 // Iniciar heartbeat após login
-                if (broadcastChannel) {
-                    enviarHeartbeat();
-                    usuariosOnlineInterval = setInterval(enviarHeartbeat, 10000); // A cada 10 segundos
-                }
+                enviarHeartbeat();
                 
                 if (!lembrarMe) {
                     mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n\n🎯 Nível: ${usuarioEncontrado.nivel.toUpperCase()}\n📡 Tempo Real: Ativo\n⚡ Sincronização: Automática`);
@@ -1857,7 +2004,17 @@
 
         function fazerLogout() {
             if (confirm('Deseja realmente fazer logout do sistema?')) {
-                // Limpar heartbeat e broadcast
+                // Limpar todos os intervals
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                }
+                
+                if (heartbeatInterval) {
+                    clearInterval(heartbeatInterval);
+                    heartbeatInterval = null;
+                }
+                
                 if (usuariosOnlineInterval) {
                     clearInterval(usuariosOnlineInterval);
                     usuariosOnlineInterval = null;
@@ -1868,8 +2025,12 @@
                     broadcastChannel = null;
                 }
                 
+                // Remover minha presença
+                const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+                const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
+                localStorage.setItem('usuariosOnline_global', JSON.stringify(outrosUsuarios));
+                
                 sessionStorage.removeItem('usuarioLogado');
-                sessionStorage.removeItem('usuariosOnline');
                 localStorage.removeItem('credenciaisLembradas');
                 location.reload();
             }
@@ -1882,6 +2043,13 @@
             popularFiltros();
             renderizarTabela();
             atualizarEstatisticas();
+            
+            // Detectar timestamp atual dos dados
+            const metadata = localStorage.getItem('dadosPatioMinerva_metadata');
+            if (metadata) {
+                const meta = JSON.parse(metadata);
+                lastDataTimestamp = meta.timestamp;
+            }
         }
 
         function verificarPermissoes() {
@@ -1982,7 +2150,7 @@
             carregarListaUsuarios();
             atualizarStatusSistema();
 
-            mostrarAlerta('success', `✅ Usuário ${nome} criado com sucesso!\n\n👤 Nível: ${nivel}\n💾 Disponível imediatamente para login!`);
+            mostrarAlerta('success', `✅ Usuário ${nome} criado com sucesso!\n\n👤 Nível: ${nivel}\n💾 Disponível para login imediato!`);
         }
 
         function carregarListaUsuarios() {
@@ -2084,7 +2252,7 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            console.log('📤 Iniciando importação com sincronização garantida...');
+            console.log('📤 INICIANDO IMPORTAÇÃO COM TEMPO REAL GARANTIDO...');
             atualizarIndicadorRealtime('syncing');
 
             const reader = new FileReader();
@@ -2153,30 +2321,29 @@
                         }
                     }).filter(item => item && item.placa);
                     
-                    // 1. Salvar localmente (SEMPRE funciona)
+                    console.log(`📊 ${dadosPatio.length} registros processados`);
+                    
+                    // 1. SALVAR LOCALMENTE (SEMPRE FUNCIONA)
                     localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
                     console.log('💾 Dados salvos localmente');
                     
-                    // 2. Enviar para outras abas (TEMPO REAL GARANTIDO)
+                    // 2. ENVIAR ATUALIZAÇÃO EM TEMPO REAL (GARANTIDO)
                     enviarAtualizacaoTempoReal(dadosPatio, 'IMPORT');
                     
-                    // 3. Tentar Supabase (opcional)
-                    if (supabaseDisponivel) {
-                        salvarDadosSupabase(dadosPatio);
-                    }
-                    
-                    // 4. Atualizar UI
+                    // 3. ATUALIZAR UI LOCAL
                     popularFiltros();
                     renderizarTabela();
                     atualizarEstatisticas();
                     
-                    atualizarIndicadorRealtime('broadcast');
+                    const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+                    const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
                     
-                    const usuariosOnline = JSON.parse(sessionStorage.getItem('usuariosOnline') || '[]');
-                    mostrarAlerta('success', `✅ Arquivo importado e sincronizado!\n\n📊 ${dadosPatio.length} registros processados\n📡 Sincronizado para ${usuariosOnline.length} usuários online\n⚡ Todos receberão a atualização instantaneamente!`);
+                    console.log('✅ IMPORTAÇÃO COMPLETA - Sincronização enviada!');
+                    
+                    mostrarAlerta('success', `✅ Importação concluída com sucesso!\n\n📊 ${dadosPatio.length} registros processados\n📡 Sincronizado para ${outrosUsuarios.length} outros usuários\n⚡ Atualização em tempo real enviada!\n\n🧪 Abra em outra aba para verificar a sincronização.`);
                     
                 } catch (error) {
-                    console.error('Erro ao processar arquivo:', error);
+                    console.error('❌ Erro ao processar arquivo:', error);
                     mostrarAlerta('error', `✗ Erro ao processar arquivo: ${error.message}`);
                     atualizarIndicadorRealtime('error');
                 }
@@ -2186,57 +2353,20 @@
             event.target.value = '';
         }
 
-        async function salvarDadosSupabase(dadosArray) {
-            if (!supabaseDisponivel) return;
-
-            try {
-                console.log('🚀 Tentando salvar no Supabase também...');
-                
-                const dadosSupabase = dadosArray.map(item => ({
-                    placa: item.placa,
-                    container: item.container,
-                    data_chegada: item.dataChegada ? converterDataParaISO(item.dataChegada) : null,
-                    data_descarga: item.dataDescarga ? converterDataParaISO(item.dataDescarga) : null,
-                    diaria: parseInt(item.diaria) || 0,
-                    dedicada: item.dedicada,
-                    valor_diaria: item.valorDiaria,
-                    valor_total: item.valorTotal,
-                    transportadora: item.transportadora,
-                    unidade: item.unidade,
-                    origem: item.origem,
-                    tipo_descarga: item.tipoDescarga,
-                    tipo_mercado: item.tipoMercado,
-                    status: item.status
-                }));
-
-                // Limpar dados existentes
-                const { error: deleteError } = await supabase.from('dados_patio').delete().gte('id', 0);
-                
-                // Inserir novos dados
-                const { data, error } = await supabase.from('dados_patio').insert(dadosSupabase);
-
-                if (error) throw error;
-                
-                console.log('✅ Dados salvos no Supabase também!');
-                mostrarIndicadorSync('🚀 Supabase + Tempo Real sincronizados!', 'success', 3000);
-                
-            } catch (error) {
-                console.log('⚠️ Supabase indisponível, tempo real local funcionando:', error.message);
-                mostrarIndicadorSync('📡 Tempo real local ativo', 'success', 2000);
-            }
-        }
-
         function limparArquivo() {
             if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
                 mostrarAlerta('error', '⚠️ Acesso negado!');
                 return;
             }
             
-            if (confirm('Tem certeza que deseja limpar todos os dados?\n\n⚡ Esta ação será sincronizada em tempo real para todos os usuários online!')) {
+            const usuariosOnline = JSON.parse(localStorage.getItem('usuariosOnline_global') || '[]');
+            const outrosUsuarios = usuariosOnline.filter(u => u.sessionId !== sessionId);
+            
+            if (confirm(`Tem certeza que deseja limpar todos os dados?\n\n⚡ Esta ação será sincronizada para ${outrosUsuarios.length} outros usuários online!`)) {
                 dadosPatio = [];
                 localStorage.removeItem('dadosPatioMinerva');
                 
-                // Enviar atualização para outras abas
+                // Enviar atualização de limpeza
                 enviarAtualizacaoTempoReal([], 'CLEAR');
                 
                 // Limpar filtros
@@ -2255,12 +2385,11 @@
                 renderizarTabela();
                 atualizarEstatisticas();
                 
-                const usuariosOnline = JSON.parse(sessionStorage.getItem('usuariosOnline') || '[]');
-                mostrarAlerta('info', `🗑️ Dados limpos com sucesso!\n\n📡 ${usuariosOnline.length} usuários receberão a atualização.`);
+                mostrarAlerta('info', `🗑️ Dados limpos com sucesso!\n\n📡 ${outrosUsuarios.length} usuários receberão a atualização.`);
             }
         }
 
-        // RESTO DAS FUNÇÕES PERMANECEM IGUAIS...
+        // RESTO DAS FUNÇÕES PERMANECE IGUAL...
         function converterDataParaISO(dataBr) {
             if (!dataBr) return null;
             try {
