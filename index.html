@@ -34,24 +34,22 @@
             overflow: hidden;
         }
 
-        /* INDICADOR DE POLLING EM TEMPO REAL */
+        /* INDICADOR DE POLLING SOMENTE NO PAINEL DE GOVERNANÇA */
         .polling-indicator {
-            position: fixed;
-            top: 20px;
-            left: 20px;
             background: #10b981;
             color: white;
             padding: 6px 12px;
             border-radius: 16px;
             font-size: 11px;
             font-weight: 600;
-            z-index: 1004;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
             gap: 6px;
             transition: all 0.3s ease;
             cursor: pointer;
+            margin: 10px 0;
+            width: fit-content;
         }
 
         .polling-indicator.polling {
@@ -507,6 +505,7 @@
             padding: 25px;
             text-align: center;
             position: relative;
+            overflow: visible;
         }
 
         .header h1 {
@@ -520,27 +519,40 @@
             opacity: 0.9;
         }
 
+        /* USER-INFO COM FONTES MENORES - LAYOUT AJUSTADO */
         .user-info {
             position: absolute;
-            top: 15px;
-            right: 25px;
-            font-size: 12px;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 10px;
             background: rgba(255,255,255,0.1);
-            padding: 8px 12px;
-            border-radius: 20px;
+            padding: 8px;
+            border-radius: 12px;
             backdrop-filter: blur(10px);
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
+            text-align: center;
+            width: 160px;
+            box-sizing: border-box;
+            z-index: 100;
+            pointer-events: auto;
+        }
+
+        .user-info div {
+            font-size: 9px;
+            line-height: 1.2;
         }
 
         .user-badge {
             display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 8px;
             font-weight: bold;
-            margin-left: 5px;
+            margin: 0;
         }
 
         .user-master {
@@ -558,39 +570,50 @@
             color: white;
         }
 
+        /* BOTÕES PADRÃO NEUTROS - FONTES MENORES */
         .btn-control-panel {
-            padding: 6px 12px;
-            background: #9b59b6;
+            padding: 5px 8px;
+            background: #6c757d;
             color: white;
             border: none;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 600;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
             display: none;
+            width: 100%;
+            text-align: center;
+            z-index: 101;
+            pointer-events: auto;
+            line-height: 1.2;
         }
 
         .btn-control-panel:hover {
-            background: #8e44ad;
-            transform: scale(1.05);
+            background: #5a6268;
+            transform: translateY(-1px);
         }
 
         .btn-logout {
-            padding: 6px 12px;
-            background: #e74c3c;
+            padding: 5px 8px;
+            background: #6c757d;
             color: white;
             border: none;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 600;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
+            width: 100%;
+            text-align: center;
+            z-index: 101;
+            pointer-events: auto;
+            line-height: 1.2;
         }
 
         .btn-logout:hover {
-            background: #c0392b;
-            transform: scale(1.05);
+            background: #5a6268;
+            transform: translateY(-1px);
         }
 
         /* CONTROLES CENTRALIZADOS AUTOMATICAMENTE */
@@ -1181,6 +1204,64 @@
             }
         }
 
+        /* AJUSTE RESPONSIVO PARA USER-INFO */
+        @media (max-width: 1200px) {
+            .user-info {
+                width: 140px;
+                font-size: 9px;
+                padding: 6px;
+                right: 15px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+                margin-right: 160px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .header {
+                padding: 20px 15px;
+                text-align: center;
+            }
+            
+            .user-info {
+                position: static;
+                transform: none;
+                margin: 0 auto 15px auto;
+                width: 180px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+                margin-right: 0;
+            }
+            
+            .header p {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 15px 10px;
+            }
+            
+            .user-info {
+                width: 90%;
+                max-width: 200px;
+                font-size: 9px;
+            }
+            
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            .header p {
+                font-size: 10px;
+            }
+        }
+
         /* Telas pequenas (600-1000px) - Stack centralizado */
         @media (max-width: 1000px) and (min-width: 600px) {
             .controls {
@@ -1285,42 +1366,6 @@
                 gap: 8px;
             }
             
-            .polling-indicator, .update-notification, .update-timestamp {
-                position: relative;
-                margin: 8px auto;
-                top: auto;
-                left: auto;
-                max-width: calc(100vw - 20px);
-                font-size: 10px;
-                padding: 4px 8px;
-            }
-            
-            .auto-save-indicator, .sync-indicator {
-                position: relative;
-                margin: 8px auto;
-                top: auto;
-                right: auto;
-                max-width: calc(100vw - 20px);
-                font-size: 11px;
-                padding: 4px 8px;
-            }
-            
-            .user-info {
-                position: relative;
-                margin-bottom: 15px;
-                justify-content: center;
-                flex-wrap: wrap;
-                font-size: 11px;
-            }
-            
-            .header h1 {
-                font-size: 20px;
-            }
-            
-            .header p {
-                font-size: 11px;
-            }
-            
             body.panel-open {
                 overflow: hidden;
             }
@@ -1365,11 +1410,6 @@
     </style>
 </head>
 <body>
-    <!-- INDICADOR DE POLLING -->
-    <div class="polling-indicator" id="pollingIndicator" onclick="mostrarDetalhesPolling()">
-        <span id="pollingStatusText">🔄 Conectando Supabase...</span>
-    </div>
-
     <!-- VISUALIZADOR DE ÚLTIMA ATUALIZAÇÃO -->
     <div class="update-timestamp" id="updateTimestamp">
         📅 Última atualização: Nunca
@@ -1417,6 +1457,13 @@
     <div class="user-panel" id="userPanel">
         <div class="user-panel-modal">
             <h3 id="panelTitle">👥 Painel de Governança - ACESSO SEGURO</h3>
+            
+            <!-- INDICADOR DE POLLING APENAS PARA MASTER -->
+            <div id="pollingIndicatorPanel" style="display: none;">
+                <div class="polling-indicator" id="pollingIndicator" onclick="mostrarDetalhesPolling()">
+                    <span id="pollingStatusText">🔄 Conectando Supabase...</span>
+                </div>
+            </div>
             
             <div id="createUserSection">
                 <h4 style="margin-bottom: 15px; color: #2c3e50;">➕ Criar Novo Usuário</h4>
@@ -1500,8 +1547,8 @@
                     <span id="nomeUsuario">-</span>
                     <span class="user-badge" id="tipoUsuario">-</span>
                 </div>
-                <button class="btn-control-panel" id="btnControlPanel" onclick="abrirPainelGovernanca()">⚙️ Painel de Governança</button>
-                <button class="btn-logout" onclick="fazerLogout()">🚪 Logout</button>
+                <button class="btn-control-panel" id="btnControlPanel" onclick="abrirPainelGovernanca()">Painel de Governança</button>
+                <button class="btn-logout" onclick="fazerLogout()">Logout</button>
             </div>
             <h1>Minerva Foods - Logística Internacional</h1>
             <p>Pátio Brasfrigo - Sistema Supabase em Tempo Real</p>
@@ -2297,6 +2344,8 @@
             const indicator = document.getElementById('pollingIndicator');
             const statusText = document.getElementById('pollingStatusText');
             
+            if (!indicator || !statusText) return;
+            
             indicator.className = 'polling-indicator';
             
             switch (status) {
@@ -3013,12 +3062,16 @@ ${debugInfo}
             console.log('✅ Acesso autorizado ao Painel de Governança');
             
             // Configurar painel conforme nível de acesso
+            const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
+            
             if (usuarioLogado.nivel === 'master') {
                 document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - ACESSO MASTER';
                 document.getElementById('createUserSection').style.display = 'block';
+                pollingIndicatorPanel.style.display = 'block'; // MOSTRAR POLLING PARA MASTER
             } else if (usuarioLogado.nivel === 'administrador') {
                 document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - ACESSO ADMINISTRADOR (Leitura)';
                 document.getElementById('createUserSection').style.display = 'none';
+                pollingIndicatorPanel.style.display = 'none'; // ESCONDER POLLING PARA ADMIN
             }
             
             document.body.classList.add('panel-open');
