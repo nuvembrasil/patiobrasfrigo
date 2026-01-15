@@ -345,6 +345,27 @@
             background: #e67e22;
         }
 
+        /* SEÇÃO APENAS LEITURA PARA ADMINISTRADORES */
+        .readonly-section {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .readonly-section::before {
+            content: "🔒 Apenas visualização";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #f39c12;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 1;
+        }
+
         /* STATUS SUPABASE INTEGRADO */
         .supabase-status {
             margin-top: 20px;
@@ -1395,20 +1416,22 @@
     <!-- PAINEL DE GOVERNANÇA DE USUÁRIOS -->
     <div class="user-panel" id="userPanel">
         <div class="user-panel-modal">
-            <h3>👥 Painel de Governança - ACESSO SEGURO</h3>
+            <h3 id="panelTitle">👥 Painel de Governança - ACESSO SEGURO</h3>
             
-            <h4 style="margin-bottom: 15px; color: #2c3e50;">➕ Criar Novo Usuário</h4>
-            <form class="user-form" onsubmit="criarUsuario(event)">
-                <input type="text" id="novoNome" placeholder="Nome completo" required>
-                <input type="text" id="novoLogin" placeholder="Login" required>
-                <input type="password" id="novaSenha" placeholder="Senha (min. 6 caracteres)" required minlength="6">
-                <select id="novoNivel" required>
-                    <option value="">Selecione o nível</option>
-                    <option value="administrador">Administrador</option>
-                    <option value="user">Usuário</option>
-                </select>
-                <button type="submit" class="btn-search">Criar</button>
-            </form>
+            <div id="createUserSection">
+                <h4 style="margin-bottom: 15px; color: #2c3e50;">➕ Criar Novo Usuário</h4>
+                <form class="user-form" onsubmit="criarUsuario(event)">
+                    <input type="text" id="novoNome" placeholder="Nome completo" required>
+                    <input type="text" id="novoLogin" placeholder="Login" required>
+                    <input type="password" id="novaSenha" placeholder="Senha (min. 6 caracteres)" required minlength="6">
+                    <select id="novoNivel" required>
+                        <option value="">Selecione o nível</option>
+                        <option value="administrador">Administrador</option>
+                        <option value="user">Usuário</option>
+                    </select>
+                    <button type="submit" class="btn-search">Criar</button>
+                </form>
+            </div>
 
             <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 Usuários Cadastrados</h4>
             <div class="user-list" id="userList">
@@ -1775,6 +1798,7 @@
                 
                 await sincronizarUsuarios();
                 await carregarDadosSupabase();
+                await carregarTimestampDoSupabase();
                 iniciarPollingSupabase();
                 return true;
                 
@@ -1788,8 +1812,8 @@
 
         // ========== SISTEMA DE TIMESTAMP BRASILEIRO REAL ==========
 
-        async function salvarTimestampImportacaoSupabase() {
-            if (!supabaseDisponivel) return;
+        async function salvarTimestampNoSupabase() {
+            if (!supabaseDisponivel) return null;
 
             try {
                 // Capturar horário brasileiro EXATO no momento da importação
@@ -1812,28 +1836,39 @@
                 
                 const data = formatadorData.format(agora);
                 const hora = formatadorHora.format(agora);
-                const timestampBrasil = `${data} às ${hora}`;
+                const timestampCompleto = `${data} às ${hora}`;
                 
-                console.log('🇧🇷 Salvando timestamp real brasileiro:', timestampBrasil);
+                console.log('🇧🇷 Salvando timestamp brasileiro real no Supabase:', timestampCompleto);
                 
-                // Salvar em tabela específica para metadados ou usar campo especial
+                // Deletar timestamp anterior
+                await supabase
+                    .from('dados_patio')
+                    .delete()
+                    .eq('placa', '__TIMESTAMP_BRASILEIRO__');
+
+                // Inserir novo timestamp
                 const { error } = await supabase
                     .from('dados_patio')
-                    .upsert({
-                        id: -1, // ID especial para metadata
-                        placa: '__METADATA__',
-                        timestamp_brasileiro: timestampBrasil,
-                        importado_por: usuarioLogado.nome,
-                        tipo_descarga: '__TIMESTAMP__'
+                    .insert({
+                        placa: '__TIMESTAMP_BRASILEIRO__',
+                        tipo_descarga: '__METADATA__',
+                        transportadora: timestampCompleto,
+                        origem: usuarioLogado.nome,
+                        status: 'ATIVO',
+                        obs: `Atualizado por ${usuarioLogado.nome} em ${timestampCompleto}`
                     });
 
                 if (error) {
-                    console.log('⚠️ Erro ao salvar timestamp, usando método alternativo');
-                    // Fallback: salvar como primeiro registro com identificador especial
+                    console.error('❌ Erro ao salvar timestamp:', error);
+                    return null;
                 }
 
-                console.log('✅ Timestamp brasileiro salvo no Supabase');
-                return timestampBrasil;
+                console.log('✅ Timestamp brasileiro salvo no Supabase:', timestampCompleto);
+                
+                // Atualizar visualizador local imediatamente
+                document.getElementById('updateTimestamp').textContent = `📅 Última atualização: ${timestampCompleto}`;
+                
+                return timestampCompleto;
                 
             } catch (error) {
                 console.error('❌ Erro ao salvar timestamp:', error);
@@ -1841,80 +1876,37 @@
             }
         }
 
-        async function consultarTimestampRealDoSupabase() {
+        async function carregarTimestampDoSupabase() {
             if (!supabaseDisponivel) {
-                // Fallback para localStorage
-                const ultimaAtualizacao = localStorage.getItem('ultimaAtualizacaoExcel');
-                if (ultimaAtualizacao) {
-                    const dados = JSON.parse(ultimaAtualizacao);
-                    return `${dados.data} às ${dados.hora}`;
-                }
-                return null;
+                document.getElementById('updateTimestamp').textContent = '📅 Última atualização: Nunca';
+                return;
             }
 
             try {
-                console.log('📅 Consultando timestamp brasileiro real do Supabase...');
+                console.log('📅 Carregando timestamp brasileiro do Supabase...');
                 
-                // Primeiro tentar buscar registro de metadata
-                const { data: metadata, error: metaError } = await supabase
-                    .from('dados_patio')
-                    .select('timestamp_brasileiro, importado_por')
-                    .eq('placa', '__METADATA__')
-                    .limit(1);
-
-                if (!metaError && metadata && metadata.length > 0 && metadata[0].timestamp_brasileiro) {
-                    console.log('✅ Timestamp brasileiro encontrado no metadata:', metadata[0].timestamp_brasileiro);
-                    return metadata[0].timestamp_brasileiro;
-                }
-
-                // Fallback: usar registro mais recente e converter
                 const { data, error } = await supabase
                     .from('dados_patio')
-                    .select('criado_em')
-                    .neq('placa', '__METADATA__')
-                    .order('criado_em', { ascending: false })
+                    .select('transportadora, origem, obs')
+                    .eq('placa', '__TIMESTAMP_BRASILEIRO__')
                     .limit(1);
 
                 if (error || !data || data.length === 0) {
-                    return null;
+                    console.log('📅 Nenhum timestamp encontrado no Supabase');
+                    document.getElementById('updateTimestamp').textContent = '📅 Última atualização: Nunca';
+                    return;
                 }
 
-                // Converter UTC para brasileiro como última opção
-                const timestampUTC = data[0].criado_em;
-                const dataUTC = new Date(timestampUTC);
+                const timestampBrasil = data[0].transportadora;
+                const usuario = data[0].origem;
                 
-                // Subtrair 3 horas para converter UTC para BRT
-                const dataBrasil = new Date(dataUTC.getTime() - (3 * 60 * 60 * 1000));
+                console.log('✅ Timestamp brasileiro carregado do Supabase:', timestampBrasil, 'por', usuario);
                 
-                const dataFormatada = dataBrasil.toLocaleDateString('pt-BR');
-                const horaFormatada = dataBrasil.toLocaleTimeString('pt-BR');
-                
-                console.log('⚠️ Usando conversão UTC->BRT como fallback:', dataFormatada, horaFormatada);
-                return `${dataFormatada} às ${horaFormatada}`;
+                document.getElementById('updateTimestamp').textContent = `📅 Última atualização: ${timestampBrasil}`;
                 
             } catch (error) {
-                console.error('❌ Erro ao consultar timestamp:', error);
-                return null;
-            }
-        }
-
-        async function atualizarTimestampUltimaAtualizacao() {
-            const timestamp = document.getElementById('updateTimestamp');
-            
-            try {
-                const timestampReal = await consultarTimestampRealDoSupabase();
-                
-                if (timestampReal) {
-                    timestamp.textContent = `📅 Última atualização: ${timestampReal}`;
-                    console.log('✅ Timestamp atualizado:', timestampReal);
-                } else {
-                    timestamp.textContent = '📅 Última atualização: Nunca';
-                    console.log('📅 Nenhum timestamp encontrado');
-                }
-                
-            } catch (error) {
-                console.error('❌ Erro ao atualizar timestamp:', error);
-                timestamp.textContent = '📅 Última atualização: Erro';
+                console.error('❌ Erro ao carregar timestamp:', error);
+                document.getElementById('updateTimestamp').textContent = '📅 Última atualização: Erro';
             }
         }
 
@@ -2031,6 +2023,7 @@
             
             if (usuarioEncontrado) {
                 console.log('✅ LOGIN BEM-SUCEDIDO para:', usuarioEncontrado.nome);
+                console.log('🔑 Nível detectado:', usuarioEncontrado.nivel);
                 
                 usuarioLogado = usuarioEncontrado;
                 sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
@@ -2048,7 +2041,7 @@
                 atualizarStatusSistema();
                 
                 // Carregar timestamp real
-                await atualizarTimestampUltimaAtualizacao();
+                await carregarTimestampDoSupabase();
                 
                 if (!lembrarMe) {
                     mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n\n🎯 Nível: ${usuarioEncontrado.nivel.toUpperCase()}\n🚀 Supabase: ${supabaseDisponivel ? 'Conectado' : 'Erro'}\n👥 Login cross-device ativo!`);
@@ -2063,8 +2056,13 @@
         async function criarUsuario(event) {
             event.preventDefault();
             
-            if (usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado!');
+            // DEBUG: Verificar usuário logado
+            console.log('🔍 DEBUG - Tentativa de criar usuário:');
+            console.log('   Usuário logado:', usuarioLogado);
+            console.log('   Nível:', usuarioLogado?.nivel);
+            
+            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado! Apenas usuários MASTER podem criar usuários.');
                 return;
             }
 
@@ -2147,6 +2145,7 @@
                 const { data, error } = await supabase
                     .from('dados_patio')
                     .select('criado_em')
+                    .neq('placa', '__TIMESTAMP_BRASILEIRO__')
                     .neq('placa', '__METADATA__')
                     .order('criado_em', { ascending: false })
                     .limit(1);
@@ -2165,9 +2164,7 @@
                         ultimoTimestampBanco = ultimoTimestamp;
                         
                         await carregarDadosSupabase();
-                        
-                        // Atualizar timestamp usando a fonte real
-                        await atualizarTimestampUltimaAtualizacao();
+                        await carregarTimestampDoSupabase();
                         
                         mostrarNotificacaoUpdate('Dados atualizados via Supabase!');
                         aplicarEfeitoUpdate();
@@ -2205,6 +2202,7 @@
                 const { data, error } = await supabase
                     .from('dados_patio')
                     .select('*')
+                    .neq('placa', '__TIMESTAMP_BRASILEIRO__')
                     .neq('placa', '__METADATA__')
                     .order('criado_em', { ascending: false });
 
@@ -2356,6 +2354,13 @@
             const ultimaSync = lastSyncTime ? new Date(lastSyncTime).toLocaleTimeString('pt-BR') : 'Nunca';
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]').length;
             
+            // DEBUG INFO
+            const debugInfo = `
+USUÁRIO LOGADO: ${usuarioLogado ? usuarioLogado.nome : 'NENHUM'}
+NÍVEL: ${usuarioLogado ? usuarioLogado.nivel : 'N/A'}
+BOTÃO VISÍVEL: ${document.getElementById('btnControlPanel').style.display}
+            `;
+            
             const info = `
 🔄 Sistema de Polling Supabase
 
@@ -2369,9 +2374,12 @@
 • Tabelas: dados_patio, usuarios
 • Timezone: America/Sao_Paulo (Brasil)
 
+🔍 DEBUG INFO:
+${debugInfo}
+
 🛠️ Como funciona:
 • Monitora tabela dados_patio do Supabase
-• Salva timestamp brasileiro real na importação
+• Salva timestamp brasileiro real no banco
 • Todos consultam o mesmo timestamp salvo
 • Sincroniza usuários entre computadores
 • Detecta mudanças via timestamp
@@ -2609,36 +2617,11 @@
             }
 
             try {
-                console.log('🚀 Salvando dados DIRETAMENTE na tabela dados_patio...');
+                console.log('🚀 Salvando dados + timestamp brasileiro no Supabase...');
                 mostrarIndicadorSync('🔄 Salvando no Supabase...', 'syncing');
                 atualizarIndicadorPolling('updating');
                 
-                // 1. CAPTURAR HORÁRIO BRASILEIRO REAL AGORA
-                const agora = new Date();
-                const formatadorData = new Intl.DateTimeFormat('pt-BR', {
-                    timeZone: 'America/Sao_Paulo',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                });
-                const formatadorHora = new Intl.DateTimeFormat('pt-BR', {
-                    timeZone: 'America/Sao_Paulo',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                });
-                
-                const data = formatadorData.format(agora);
-                const hora = formatadorHora.format(agora);
-                const timestampBrasileiro = `${data} às ${hora}`;
-                
-                console.log('🇧🇷 Timestamp brasileiro capturado:', timestampBrasileiro);
-                
-                // Atualizar visualizador imediatamente para o master
-                document.getElementById('updateTimestamp').textContent = `📅 Última atualização: ${timestampBrasileiro}`;
-                
-                // 2. LIMPAR DADOS EXISTENTES (incluindo metadata anterior)
+                // 1. LIMPAR TODOS DADOS (incluindo timestamps antigos)
                 const { error: deleteError } = await supabase
                     .from('dados_patio')
                     .delete()
@@ -2648,7 +2631,13 @@
                     console.log('⚠️ Aviso ao limpar:', deleteError.message);
                 }
 
-                // 3. PREPARAR DADOS + METADATA COM TIMESTAMP BRASILEIRO
+                // 2. CAPTURAR TIMESTAMP BRASILEIRO EXATO
+                const timestampBrasil = await salvarTimestampNoSupabase();
+                if (!timestampBrasil) {
+                    console.log('⚠️ Erro ao salvar timestamp, continuando com dados...');
+                }
+
+                // 3. PREPARAR E INSERIR DADOS
                 const dadosSupabase = dadosArray.map(item => ({
                     placa: item.placa,
                     container: item.container,
@@ -2682,17 +2671,7 @@
                     obs: item.obs
                 }));
 
-                // 4. ADICIONAR REGISTRO DE METADATA COM TIMESTAMP BRASILEIRO
-                dadosSupabase.push({
-                    placa: '__METADATA__',
-                    tipo_descarga: '__TIMESTAMP__',
-                    transportadora: timestampBrasileiro,
-                    origem: usuarioLogado.nome,
-                    status: 'TIMESTAMP_BRASILEIRO',
-                    obs: `Importação realizada em ${timestampBrasileiro} por ${usuarioLogado.nome}`
-                });
-
-                console.log(`💾 Inserindo ${dadosSupabase.length} registros (incluindo metadata)...`);
+                console.log(`💾 Inserindo ${dadosSupabase.length} registros de dados...`);
                 const { data, error } = await supabase
                     .from('dados_patio')
                     .insert(dadosSupabase);
@@ -2701,7 +2680,7 @@
                     throw error;
                 }
 
-                console.log('✅ DADOS + TIMESTAMP BRASILEIRO SALVOS NO SUPABASE!');
+                console.log('✅ DADOS + TIMESTAMP SALVOS NO SUPABASE!');
                 
                 dadosPatio = dadosArray;
                 localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
@@ -2717,7 +2696,7 @@
                 atualizarStatusPolling('success');
                 
                 mostrarIndicadorSync('✅ Dados + timestamp salvos! Outros usuários receberão via polling.', 'success', 4000);
-                mostrarAlerta('success', `✅ Importação concluída!\n\n📊 ${dadosArray.length} registros salvos\n🚀 Disponível no Supabase\n🕐 Timestamp: ${timestampBrasileiro}\n🔄 Sincronização em até 3s!\n\n🌐 Cross-device ativo!`);
+                mostrarAlerta('success', `✅ Importação concluída!\n\n📊 ${dadosArray.length} registros salvos\n🚀 Disponível no Supabase\n🕐 Timestamp brasileiro real salvo\n🔄 Sincronização em até 3s!\n\n🌐 Cross-device ativo!`);
                 
             } catch (error) {
                 console.error('❌ Erro ao salvar no Supabase:', error);
@@ -2779,19 +2758,7 @@
                     atualizarEstatisticas();
                     
                     // Atualizar timestamp para limpeza
-                    const agora = new Date();
-                    const dataFormatada = new Intl.DateTimeFormat('pt-BR', {
-                        timeZone: 'America/Sao_Paulo'
-                    }).format(agora);
-                    const horaFormatada = new Intl.DateTimeFormat('pt-BR', {
-                        timeZone: 'America/Sao_Paulo',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false
-                    }).format(agora);
-                    
-                    document.getElementById('updateTimestamp').textContent = `📅 Última atualização: ${dataFormatada} às ${horaFormatada} (limpeza)`;
+                    document.getElementById('updateTimestamp').textContent = '📅 Última atualização: Dados limpos agora';
                     
                     lastSyncTime = Date.now();
                     ultimoTimestampBanco = Date.now();
@@ -2982,7 +2949,14 @@
         }
 
         function verificarPermissoes() {
-            if (!usuarioLogado) return;
+            if (!usuarioLogado) {
+                console.log('❌ ERRO: Nenhum usuário logado!');
+                return;
+            }
+            
+            console.log('🔑 Verificando permissões para usuário:', usuarioLogado.nome);
+            console.log('🔑 Nível detectado:', usuarioLogado.nivel);
+            console.log('🔑 Tipo do nível:', typeof usuarioLogado.nivel);
             
             const btnImportar = document.getElementById('btnImportar');
             const btnLimparArquivo = document.getElementById('btnLimparArquivo');
@@ -2993,28 +2967,58 @@
             nomeUsuario.textContent = usuarioLogado.nome;
             tipoUsuario.textContent = usuarioLogado.nivel.toUpperCase();
             
+            // CORRIGIDO: Acesso ao painel para MASTER E ADMINISTRADOR
             if (usuarioLogado.nivel === 'master') {
+                console.log('✅ MASTER detectado - acesso total');
                 btnImportar.style.display = 'flex';
                 btnLimparArquivo.style.display = 'flex';
                 btnControlPanel.style.display = 'inline-block';
                 tipoUsuario.className = 'user-badge user-master';
+                
             } else if (usuarioLogado.nivel === 'administrador') {
+                console.log('✅ ADMINISTRADOR detectado - acesso de leitura');
                 btnImportar.style.display = 'none';
                 btnLimparArquivo.style.display = 'none';
-                btnControlPanel.style.display = 'none';
+                btnControlPanel.style.display = 'inline-block'; // ← CORRIGIDO: Admin pode ver
                 tipoUsuario.className = 'user-badge user-admin';
+                
             } else {
+                console.log('✅ USER detectado - sem acesso ao painel');
                 btnImportar.style.display = 'none';
                 btnLimparArquivo.style.display = 'none';
                 btnControlPanel.style.display = 'none';
                 tipoUsuario.className = 'user-badge user-normal';
             }
+            
+            console.log('🔍 Estado final do botão painel:', btnControlPanel.style.display);
         }
 
         function abrirPainelGovernanca() {
-            if (usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado! Apenas usuários MASTER podem acessar o Painel de Governança.');
+            console.log('🎛️ Tentativa de acesso ao Painel de Governança');
+            console.log('🎛️ Usuário:', usuarioLogado?.nome);
+            console.log('🎛️ Nível:', usuarioLogado?.nivel);
+            
+            if (!usuarioLogado) {
+                console.log('❌ ERRO: Usuário não logado!');
+                mostrarAlerta('error', '❌ Erro de autenticação! Faça login novamente.');
                 return;
+            }
+            
+            if (usuarioLogado.nivel !== 'master' && usuarioLogado.nivel !== 'administrador') {
+                console.log('❌ Acesso negado - nível insuficiente:', usuarioLogado.nivel);
+                mostrarAlerta('error', '⚠️ Acesso negado! Apenas usuários MASTER e ADMINISTRADOR podem acessar o Painel de Governança.');
+                return;
+            }
+            
+            console.log('✅ Acesso autorizado ao Painel de Governança');
+            
+            // Configurar painel conforme nível de acesso
+            if (usuarioLogado.nivel === 'master') {
+                document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - ACESSO MASTER';
+                document.getElementById('createUserSection').style.display = 'block';
+            } else if (usuarioLogado.nivel === 'administrador') {
+                document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - ACESSO ADMINISTRADOR (Leitura)';
+                document.getElementById('createUserSection').style.display = 'none';
             }
             
             document.body.classList.add('panel-open');
@@ -3032,9 +3036,12 @@
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
             const lista = document.getElementById('userList');
             
+            // Configurar lista conforme permissões
+            const isReadOnly = usuarioLogado && usuarioLogado.nivel === 'administrador';
+            
             lista.innerHTML = usuarios.map(user => {
                 return `
-                    <div class="user-item">
+                    <div class="user-item ${isReadOnly ? 'readonly-section' : ''}">
                         <div>
                             <strong>${user.nome}</strong>
                             <span style="color: ${supabaseDisponivel ? '#10b981' : '#6b7280'}; font-size: 10px;">
@@ -3046,10 +3053,10 @@
                         </div>
                         <div class="user-actions">
                             <span class="user-level level-${user.nivel}">${user.nivel}</span>
-                            ${user.nivel !== 'master' ? `
+                            ${!isReadOnly && user.nivel !== 'master' ? `
                                 <button class="btn-reset" onclick="resetarSenhaUsuario(${user.id})" title="Reset Senha">🔄</button>
                                 <button class="btn-delete" onclick="excluirUsuario(${user.id})" title="Excluir">🗑️</button>
-                            ` : '<small style="color: #e74c3c;">🔒 Protegido</small>'}
+                            ` : user.nivel === 'master' ? '<small style="color: #e74c3c;">🔒 Protegido</small>' : '<small style="color: #6c757d;">👁️ Visualização</small>'}
                         </div>
                     </div>
                 `;
@@ -3058,7 +3065,7 @@
 
         function resetarSenhaUsuario(id) {
             if (usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado!');
+                mostrarAlerta('error', '⚠️ Acesso negado! Apenas MASTER pode resetar senhas.');
                 return;
             }
 
@@ -3095,7 +3102,7 @@
 
         function excluirUsuario(id) {
             if (usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado!');
+                mostrarAlerta('error', '⚠️ Acesso negado! Apenas MASTER pode excluir usuários.');
                 return;
             }
 
