@@ -1111,7 +1111,7 @@
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Database:</span>
-                        <span class="status-value-inline status-online-inline" id="supabaseDatabaseStatus">Conectado</span>
+                        <span class="status-value-inline status-online-inline" id="supabaseDatabaseStatus">dados_patio</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Polling:</span>
@@ -1382,7 +1382,7 @@
 
         function inicializarSupabase() {
             try {
-                console.log('🚀 Inicializando Supabase com credenciais reais...');
+                console.log('🚀 Inicializando Supabase...');
                 
                 supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
                 supabaseDisponivel = true;
@@ -1390,38 +1390,39 @@
                 console.log('✅ Supabase inicializado:', supabase);
                 atualizarIndicadorPolling('connecting');
                 
-                // Testar conexão imediatamente
                 testarConexaoInicial();
-                
                 return true;
             } catch (error) {
                 console.error('❌ Erro ao inicializar Supabase:', error);
                 supabaseDisponivel = false;
                 atualizarIndicadorPolling('error');
-                carregarDadosLocal(); // Fallback
+                carregarDadosLocal();
                 return false;
             }
         }
 
         async function testarConexaoInicial() {
             try {
-                console.log('🔍 Testando conexão inicial com tabela dados_patio...');
+                console.log('🔍 Testando conexão inicial...');
                 
                 const { count, error } = await supabase
                     .from('dados_patio')
                     .select('*', { count: 'exact', head: true });
 
                 if (error) {
-                    console.error('❌ Erro na conexão inicial:', error);
+                    console.error('❌ Erro na conexão:', error);
                     atualizarIndicadorPolling('error');
                     carregarDadosLocal();
                     return false;
                 }
 
-                console.log('✅ Conexão com dados_patio estabelecida');
+                console.log('✅ Conexão estabelecida');
                 atualizarIndicadorPolling('connected');
                 
-                // Carregar dados iniciais do Supabase
+                // Sincronizar usuários primeiro
+                await sincronizarUsuarios();
+                
+                // Carregar dados
                 await carregarDadosSupabase();
                 
                 // Iniciar polling
@@ -1436,15 +1437,225 @@
             }
         }
 
+        // ========== SINCRONIZAÇÃO DE USUÁRIOS ==========
+
+        async function sincronizarUsuarios() {
+            if (!supabaseDisponivel) {
+                console.log('📱 Modo local - usuários apenas no localStorage');
+                return;
+            }
+
+            try {
+                console.log('👥 Sincronizando usuários com Supabase...');
+                
+                // 1. Carregar usuários do Supabase
+                const { data: usuariosSupabase, error } = await supabase
+                    .from('usuarios')
+                    .select('*');
+
+                if (error && error.code !== 'PGRST116') { // PGRST116 = tabela não existe
+                    console.error('❌ Erro ao carregar usuários do Supabase:', error);
+                    return;
+                }
+
+                // 2. Carregar usuários locais
+                let usuariosLocais = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+                
+                // 3. Se não há usuários locais, usar padrão
+                if (usuariosLocais.length === 0) {
+                    usuariosLocais = [...USUARIOS_PADRAO];
+                }
+
+                // 4. Mesclar usuários (prioridade para Supabase)
+                const usuariosMesclados = [...usuariosLocais];
+                
+                if (usuariosSupabase && usuariosSupabase.length > 0) {
+                    console.log(`📥 ${usuariosSupabase.length} usuários encontrados no Supabase`);
+                    
+                    usuariosSupabase.forEach(userSupabase => {
+                        const existeLocal = usuariosMesclados.find(u => u.login === userSupabase.login);
+                        
+                        if (!existeLocal) {
+                            // Adicionar usuário do Supabase que não existe localmente
+                            const novoUsuario = {
+                                id: userSupabase.id,
+                                nome: userSupabase.nome,
+                                login: userSupabase.login,
+                                senha: userSupabase.senha,
+                                nivel: userSupabase.nivel,
+                                email: userSupabase.email,
+                                criadoEm: userSupabase.criado_em,
+                                criadoPor: userSupabase.criado_por
+                            };
+                            usuariosMesclados.push(novoUsuario);
+                            console.log(`👤 Usuário sincronizado: ${novoUsuario.nome}`);
+                        }
+                    });
+                }
+
+                // 5. Salvar usuários mesclados localmente
+                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosMesclados));
+                console.log('✅ Usuários sincronizados:', usuariosMesclados.length);
+                
+            } catch (error) {
+                console.error('❌ Erro na sincronização de usuários:', error);
+            }
+        }
+
+        async function salvarUsuarioNoSupabase(novoUsuario) {
+            if (!supabaseDisponivel) {
+                console.log('📱 Supabase indisponível - usuário salvo apenas localmente');
+                return false;
+            }
+
+            try {
+                console.log('👤 Salvando usuário no Supabase:', novoUsuario.nome);
+                
+                const usuarioSupabase = {
+                    nome: novoUsuario.nome,
+                    login: novoUsuario.login,
+                    senha: novoUsuario.senha,
+                    nivel: novoUsuario.nivel,
+                    email: novoUsuario.email,
+                    criado_por: novoUsuario.criadoPor
+                };
+
+                const { data, error } = await supabase
+                    .from('usuarios')
+                    .insert([usuarioSupabase])
+                    .select();
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log('✅ Usuário salvo no Supabase:', data);
+                mostrarIndicadorSync('👤 Usuário sincronizado com Supabase', 'success', 3000);
+                return true;
+
+            } catch (error) {
+                console.error('❌ Erro ao salvar usuário no Supabase:', error);
+                mostrarIndicadorSync('⚠️ Usuário salvo apenas localmente', 'error');
+                return false;
+            }
+        }
+
+        async function autenticarUsuario(login, senha, lembrarMe = false) {
+            console.log('🔐 Processando autenticação...');
+            
+            // 1. PRIMEIRO: Sincronizar usuários do Supabase
+            if (supabaseDisponivel) {
+                await sincronizarUsuarios();
+            }
+            
+            // 2. SEGUNDO: Buscar no localStorage atualizado
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            
+            const usuarioEncontrado = usuarios.find(u => 
+                u.login.toLowerCase().trim() === login.toLowerCase().trim() && 
+                u.senha.trim() === senha.trim()
+            );
+            
+            if (usuarioEncontrado) {
+                console.log('✅ LOGIN BEM-SUCEDIDO para:', usuarioEncontrado.nome);
+                
+                usuarioLogado = usuarioEncontrado;
+                sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
+                
+                if (lembrarMe) {
+                    localStorage.setItem('credenciaisLembradas', JSON.stringify({ login, senha }));
+                } else {
+                    localStorage.removeItem('credenciaisLembradas');
+                }
+                
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainContainer').style.display = 'block';
+                
+                iniciarSistema();
+                atualizarStatusSistema();
+                
+                if (!lembrarMe) {
+                    mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n\n🎯 Nível: ${usuarioEncontrado.nivel.toUpperCase()}\n🚀 Supabase: ${supabaseDisponivel ? 'Conectado' : 'Erro'}\n👥 Login cross-device ativo!`);
+                }
+            } else {
+                console.log('❌ FALHA NA AUTENTICAÇÃO');
+                alert('❌ Usuário ou senha incorretos!\n\nVerifique suas credenciais e tente novamente.\n\n💡 Se foi criado em outro computador, aguarde sincronização.');
+                localStorage.removeItem('credenciaisLembradas');
+            }
+        }
+
+        async function criarUsuario(event) {
+            event.preventDefault();
+            
+            if (usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Acesso negado!');
+                return;
+            }
+
+            const nome = document.getElementById('novoNome').value.trim();
+            const login = document.getElementById('novoLogin').value.trim();
+            const senha = document.getElementById('novaSenha').value.trim();
+            const nivel = document.getElementById('novoNivel').value;
+
+            if (!nome || !login || !senha || !nivel) {
+                alert('❌ Preencha todos os campos!');
+                return;
+            }
+
+            if (senha.length < 6) {
+                alert('❌ A senha deve ter pelo menos 6 caracteres!');
+                return;
+            }
+
+            let usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            
+            const loginExistente = usuarios.find(u => u.login.toLowerCase() === login.toLowerCase());
+            if (loginExistente) {
+                alert(`❌ Login "${login}" já existe!`);
+                return;
+            }
+
+            const novoUsuario = {
+                id: Date.now(),
+                nome: nome,
+                login: login,
+                senha: senha,
+                nivel: nivel,
+                email: `${login}@minervafoods.com`,
+                criadoEm: new Date().toISOString(),
+                criadoPor: usuarioLogado.nome
+            };
+
+            // 1. Salvar localmente PRIMEIRO
+            usuarios.push(novoUsuario);
+            localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
+            console.log('💾 Usuário criado localmente');
+
+            // 2. Tentar salvar no Supabase
+            const salvouSupabase = await salvarUsuarioNoSupabase(novoUsuario);
+            
+            // 3. Limpar formulário
+            document.getElementById('novoNome').value = '';
+            document.getElementById('novoLogin').value = '';
+            document.getElementById('novaSenha').value = '';
+            document.getElementById('novoNivel').value = '';
+
+            carregarListaUsuarios();
+            atualizarStatusSistema();
+
+            if (salvouSupabase) {
+                mostrarAlerta('success', `✅ Usuário ${nome} criado com sucesso!\n\n👤 Nível: ${nivel}\n🚀 Sincronizado com Supabase\n🌐 Disponível em todos os computadores!\n\n🔐 Login: ${login}\n🔒 Senha: ${senha}`);
+            } else {
+                mostrarAlerta('success', `✅ Usuário ${nome} criado localmente!\n\n👤 Nível: ${nivel}\n📱 Salvo no localStorage\n⚠️ Supabase indisponível para sincronização\n\n🔐 Login: ${login}\n🔒 Senha: ${senha}`);
+            }
+        }
+
         // ========== SISTEMA DE POLLING SUPABASE ==========
 
         function iniciarPollingSupabase() {
             console.log('🔄 Iniciando polling da tabela dados_patio (a cada 3 segundos)');
             
-            // Primeiro polling imediato
             executarPolling();
-            
-            // Polling periódico
             pollingInterval = setInterval(() => {
                 executarPolling();
             }, 3000);
@@ -1461,7 +1672,6 @@
                 
                 console.log(`🔄 Polling #${pollingCount} - Verificando tabela dados_patio...`);
                 
-                // Consultar timestamp mais recente na tabela
                 const { data, error } = await supabase
                     .from('dados_patio')
                     .select('criado_em')
@@ -1474,7 +1684,6 @@
                     return;
                 }
 
-                // Verificar se há dados e se mudaram
                 if (data && data.length > 0) {
                     const ultimoTimestamp = new Date(data[0].criado_em).getTime();
                     
@@ -1482,23 +1691,17 @@
                         console.log('⚡ MUDANÇA DETECTADA na tabela dados_patio!');
                         ultimoTimestampBanco = ultimoTimestamp;
                         
-                        // Recarregar dados do Supabase
                         await carregarDadosSupabase();
-                        
-                        // Mostrar notificação
                         mostrarNotificacaoUpdate('Dados atualizados via Supabase!');
                         aplicarEfeitoUpdate();
                     }
                 } else {
-                    // Tabela vazia - verificar se foi limpeza
                     if (dadosPatio.length > 0) {
                         console.log('🗑️ Tabela foi limpa via Supabase');
                         dadosPatio = [];
-                        
                         popularFiltros();
                         renderizarTabela();
                         atualizarEstatisticas();
-                        
                         mostrarNotificacaoUpdate('Dados limpos via Supabase!');
                         aplicarEfeitoUpdate();
                     }
@@ -1529,7 +1732,6 @@
                 }
 
                 if (data && data.length > 0) {
-                    // Converter dados do Supabase para formato local
                     dadosPatio = data.map(item => ({
                         placa: item.placa || "",
                         container: item.container || "",
@@ -1564,16 +1766,12 @@
                     }));
 
                     console.log(`📊 ${data.length} registros carregados da tabela dados_patio`);
-                    
-                    // Salvar backup local
                     localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
-                    
                 } else {
                     console.log('📊 Nenhum dado na tabela dados_patio');
                     dadosPatio = [];
                 }
                 
-                // Atualizar UI
                 popularFiltros();
                 renderizarTabela();
                 atualizarEstatisticas();
@@ -1584,8 +1782,6 @@
             } catch (error) {
                 console.error('❌ Erro ao carregar dados do Supabase:', error);
                 atualizarIndicadorPolling('error');
-                
-                // Fallback para dados locais
                 carregarDadosLocal();
             }
         }
@@ -1682,6 +1878,7 @@
         function mostrarDetalhesPolling() {
             const registros = dadosPatio.length;
             const ultimaSync = lastSyncTime ? new Date(lastSyncTime).toLocaleTimeString() : 'Nunca';
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]').length;
             
             const info = `
 🔄 Sistema de Polling Supabase
@@ -1689,21 +1886,24 @@
 📊 Estatísticas:
 • Polling: #${pollingCount}
 • Registros: ${registros}
+• Usuários: ${usuarios}
 • Última sync: ${ultimaSync}
 • Status: ${supabaseDisponivel ? 'Supabase Online' : 'Modo Local'}
 • Frequência: A cada 3 segundos
-• Tabela: dados_patio
+• Tabelas: dados_patio, usuarios
 
 🛠️ Como funciona:
 • Monitora tabela dados_patio do Supabase
+• Sincroniza usuários entre computadores
 • Detecta mudanças via timestamp
 • Atualiza dados automaticamente
 • Funciona entre computadores diferentes
 
 📡 Para testar:
-• Abra em outro computador
+• Crie usuário em um computador
+• Tente login em outro computador
 • Importe arquivo Excel
-• Veja atualização em até 3 segundos
+• Veja atualização em outros PCs
             `.trim();
             
             alert(info);
@@ -1720,7 +1920,6 @@
         }
 
         function aplicarEfeitoUpdate() {
-            // Efeito visual nas estatísticas
             const statCards = document.querySelectorAll('.stat-card');
             statCards.forEach(card => {
                 card.classList.add('updated');
@@ -1729,7 +1928,6 @@
                 }, 800);
             });
             
-            // Efeito visual nas linhas da tabela
             setTimeout(() => {
                 const rows = document.querySelectorAll('tbody tr');
                 rows.forEach(row => {
@@ -1756,7 +1954,7 @@
                 document.getElementById('supabaseConnectionStatus').textContent = 'Online';
                 document.getElementById('supabaseConnectionStatus').className = 'status-value-inline status-online-inline';
                 
-                document.getElementById('supabaseDatabaseStatus').textContent = 'dados_patio';
+                document.getElementById('supabaseDatabaseStatus').textContent = 'dados_patio + usuarios';
                 document.getElementById('supabaseDatabaseStatus').className = 'status-value-inline status-online-inline';
                 
                 document.getElementById('pollingStatus').textContent = pollingInterval ? 'Ativo' : 'Parado';
@@ -1797,24 +1995,34 @@
             btn.textContent = '🔄 Testando...';
             
             try {
-                // Teste de conexão com a tabela
-                const { data, error } = await supabase
+                // Teste tabela dados_patio
+                const { data: dadosTest, error: dadosError } = await supabase
                     .from('dados_patio')
                     .select('count', { count: 'exact', head: true });
                 
-                if (error) {
-                    throw error;
+                if (dadosError) {
+                    throw dadosError;
                 }
                 
-                // Forçar um polling manual
+                // Teste tabela usuarios  
+                const { data: usersTest, error: usersError } = await supabase
+                    .from('usuarios')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (usersError && usersError.code !== 'PGRST116') {
+                    console.log('⚠️ Tabela usuarios não existe, mas dados_patio funciona');
+                }
+                
                 await executarPolling();
                 
                 const registros = dadosPatio.length;
-                mostrarAlerta('success', `✅ Polling Supabase funcionando!\n\n🔄 Verificações: ${pollingCount}\n📊 Registros: ${registros}\n⏱️ Frequência: 3 segundos\n🗄️ Tabela: dados_patio\n🌐 Cross-device: Ativo\n\n🧪 Teste: Importe dados em outro computador!`);
+                const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]').length;
+                
+                mostrarAlerta('success', `✅ Supabase funcionando perfeitamente!\n\n🔄 Verificações: ${pollingCount}\n📊 Registros: ${registros}\n👥 Usuários: ${usuarios}\n⏱️ Polling: A cada 3 segundos\n🗄️ Tabela: dados_patio\n🌐 Cross-device: Ativo!`);
                 
             } catch (error) {
                 console.error('Erro no teste:', error);
-                mostrarAlerta('error', `❌ Erro no teste:\n${error.message}\n\n🔧 Verifique:\n• Tabela 'dados_patio' existe\n• Credenciais corretas\n• Projeto ativo`);
+                mostrarAlerta('error', `❌ Erro no teste:\n${error.message}\n\nExecute os scripts SQL fornecidos.`);
             } finally {
                 btn.disabled = false;
                 btn.textContent = '🔍 Testar Conexão';
@@ -1903,8 +2111,6 @@
                     }).filter(item => item && item.placa);
                     
                     console.log(`📊 ${dadosProcessados.length} registros processados`);
-                    
-                    // SALVAR DIRETAMENTE NO SUPABASE
                     salvarDadosNoSupabase(dadosProcessados);
                     
                 } catch (error) {
@@ -1920,7 +2126,7 @@
 
         async function salvarDadosNoSupabase(dadosArray) {
             if (!supabaseDisponivel) {
-                mostrarAlerta('error', '❌ Supabase não disponível!\n\nVerifique a conexão e credenciais.');
+                mostrarAlerta('error', '❌ Supabase não disponível!');
                 atualizarIndicadorPolling('error');
                 return;
             }
@@ -1931,7 +2137,6 @@
                 atualizarIndicadorPolling('updating');
                 
                 // 1. LIMPAR DADOS EXISTENTES
-                console.log('🗑️ Limpando dados antigos...');
                 const { error: deleteError } = await supabase
                     .from('dados_patio')
                     .delete()
@@ -2003,12 +2208,11 @@
                 atualizarStatusPolling('success');
                 
                 mostrarIndicadorSync('✅ Dados salvos no Supabase! Outros usuários receberão via polling.', 'success', 4000);
-                mostrarAlerta('success', `✅ Importação concluída com sucesso!\n\n📊 ${dadosArray.length} registros salvos na tabela dados_patio\n🚀 Dados disponíveis no Supabase\n🔄 Outros usuários receberão via polling em até 3 segundos!\n\n🌐 Sincronização cross-device ativa!`);
+                mostrarAlerta('success', `✅ Importação concluída com sucesso!\n\n📊 ${dadosArray.length} registros salvos na tabela dados_patio\n🚀 Dados disponíveis no Supabase\n🔄 Outros usuários receberão em até 3 segundos!\n\n🌐 Sincronização cross-device ativa!`);
                 
             } catch (error) {
                 console.error('❌ Erro ao salvar no Supabase:', error);
                 
-                // Fallback local
                 dadosPatio = dadosArray;
                 localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
                 popularFiltros();
@@ -2016,7 +2220,7 @@
                 atualizarEstatisticas();
                 
                 mostrarIndicadorSync('❌ Erro no Supabase - salvo apenas localmente', 'error', 4000);
-                mostrarAlerta('error', `❌ Erro ao salvar no Supabase:\n${error.message}\n\n💾 Dados salvos localmente como backup\n⚠️ Verifique conexão e credenciais`);
+                mostrarAlerta('error', `❌ Erro ao salvar no Supabase:\n${error.message}\n\n💾 Dados salvos localmente\n⚠️ Execute os scripts SQL fornecidos`);
                 atualizarIndicadorPolling('error');
             }
         }
@@ -2027,7 +2231,7 @@
                 return;
             }
             
-            if (confirm('Tem certeza que deseja limpar todos os dados?\n\n🚀 Esta ação será sincronizada via Supabase para todos os usuários!')) {
+            if (confirm('Tem certeza que deseja limpar todos os dados?\n\n🚀 Esta ação será sincronizada via Supabase!')) {
                 
                 try {
                     if (supabaseDisponivel) {
@@ -2043,14 +2247,12 @@
                         }
 
                         console.log('✅ Tabela dados_patio limpa no Supabase');
-                        mostrarIndicadorSync('🗑️ Dados limpos no Supabase - sincronizando...', 'success', 3000);
+                        mostrarIndicadorSync('🗑️ Dados limpos no Supabase', 'success', 3000);
                     }
                     
-                    // Limpar dados locais
                     dadosPatio = [];
                     localStorage.removeItem('dadosPatioMinerva');
                     
-                    // Limpar filtros
                     document.getElementById('searchPlaca').value = '';
                     document.getElementById('filterStatus').value = '';
                     document.getElementById('filterOrigem').value = '';
@@ -2073,7 +2275,7 @@
                     
                 } catch (error) {
                     console.error('❌ Erro ao limpar dados:', error);
-                    mostrarAlerta('error', `❌ Erro ao limpar dados no Supabase:\n${error.message}`);
+                    mostrarAlerta('error', `❌ Erro ao limpar dados:\n${error.message}`);
                 }
             }
         }
@@ -2093,7 +2295,7 @@
                     👥 Usuários: <strong>${usuarios.length}</strong><br>
                     📊 Registros: <strong>${dadosPatio.length}</strong><br>
                     ⏱️ Frequência: <strong>3 segundos</strong><br>
-                    🗄️ Tabela: <strong>dados_patio</strong><br>
+                    🗄️ Tabelas: <strong>dados_patio + usuarios</strong><br>
                     🌐 Cross-device: <strong>Ativo</strong>
                 `;
             } else {
@@ -2147,6 +2349,11 @@
             if (!usuariosSalvos) {
                 console.log('📥 Primeira inicialização - carregando usuários padrão');
                 localStorage.setItem('usuariosSistema', JSON.stringify(USUARIOS_PADRAO));
+                
+                // Tentar salvar usuários padrão no Supabase
+                if (supabaseDisponivel) {
+                    salvarUsuariosPadraoSupabase();
+                }
             } else {
                 let usuarios = JSON.parse(usuariosSalvos);
                 const masterExiste = usuarios.some(u => u.nivel === 'master');
@@ -2190,6 +2397,21 @@
             }
         }
 
+        async function salvarUsuariosPadraoSupabase() {
+            if (!supabaseDisponivel) return;
+
+            try {
+                console.log('👥 Salvando usuários padrão no Supabase...');
+                
+                for (const usuario of USUARIOS_PADRAO) {
+                    await salvarUsuarioNoSupabase(usuario);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao salvar usuários padrão:', error);
+            }
+        }
+
         function mostrarTelaLogin() {
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('mainContainer').style.display = 'none';
@@ -2210,47 +2432,8 @@
             autenticarUsuario(login, senha, lembrarMe);
         }
 
-        function autenticarUsuario(login, senha, lembrarMe = false) {
-            console.log('🔐 Processando autenticação...');
-            
-            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-            
-            const usuarioEncontrado = usuarios.find(u => 
-                u.login.toLowerCase().trim() === login.toLowerCase().trim() && 
-                u.senha.trim() === senha.trim()
-            );
-            
-            if (usuarioEncontrado) {
-                console.log('✅ LOGIN BEM-SUCEDIDO para:', usuarioEncontrado.nome);
-                
-                usuarioLogado = usuarioEncontrado;
-                sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
-                
-                if (lembrarMe) {
-                    localStorage.setItem('credenciaisLembradas', JSON.stringify({ login, senha }));
-                } else {
-                    localStorage.removeItem('credenciaisLembradas');
-                }
-                
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('mainContainer').style.display = 'block';
-                
-                iniciarSistema();
-                atualizarStatusSistema();
-                
-                if (!lembrarMe) {
-                    mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n\n🎯 Nível: ${usuarioEncontrado.nivel.toUpperCase()}\n🚀 Supabase: ${supabaseDisponivel ? 'Conectado' : 'Erro'}\n🔄 Polling: ${supabaseDisponivel ? 'Ativo' : 'Local'}`);
-                }
-            } else {
-                console.log('❌ FALHA NA AUTENTICAÇÃO');
-                alert('❌ Usuário ou senha incorretos!\n\nVerifique suas credenciais e tente novamente.');
-                localStorage.removeItem('credenciaisLembradas');
-            }
-        }
-
         function fazerLogout() {
             if (confirm('Deseja realmente fazer logout do sistema?')) {
-                // Limpar polling
                 if (pollingInterval) {
                     clearInterval(pollingInterval);
                     pollingInterval = null;
@@ -2266,7 +2449,6 @@
             console.log('🚀 Iniciando sistema para:', usuarioLogado.nome);
             verificarPermissoes();
             
-            // Carregar dados do Supabase primeiro
             if (supabaseDisponivel) {
                 carregarDadosSupabase();
             } else {
@@ -2317,62 +2499,6 @@
 
         function fecharPainelGovernanca() {
             document.getElementById('userPanel').style.display = 'none';
-        }
-
-        function criarUsuario(event) {
-            event.preventDefault();
-            
-            if (usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Acesso negado!');
-                return;
-            }
-
-            const nome = document.getElementById('novoNome').value.trim();
-            const login = document.getElementById('novoLogin').value.trim();
-            const senha = document.getElementById('novaSenha').value.trim();
-            const nivel = document.getElementById('novoNivel').value;
-
-            if (!nome || !login || !senha || !nivel) {
-                alert('❌ Preencha todos os campos!');
-                return;
-            }
-
-            if (senha.length < 6) {
-                alert('❌ A senha deve ter pelo menos 6 caracteres!');
-                return;
-            }
-
-            let usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-            
-            const loginExistente = usuarios.find(u => u.login.toLowerCase() === login.toLowerCase());
-            if (loginExistente) {
-                alert(`❌ Login "${login}" já existe!`);
-                return;
-            }
-
-            const novoUsuario = {
-                id: Date.now(),
-                nome: nome,
-                login: login,
-                senha: senha,
-                nivel: nivel,
-                email: `${login}@minervafoods.com`,
-                criadoEm: new Date().toISOString(),
-                criadoPor: usuarioLogado.nome
-            };
-
-            usuarios.push(novoUsuario);
-            localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
-            
-            document.getElementById('novoNome').value = '';
-            document.getElementById('novoLogin').value = '';
-            document.getElementById('novaSenha').value = '';
-            document.getElementById('novoNivel').value = '';
-
-            carregarListaUsuarios();
-            atualizarStatusSistema();
-
-            mostrarAlerta('success', `✅ Usuário ${nome} criado com sucesso!\n\n👤 Nível: ${nivel}\n💾 Disponível para login imediato!`);
         }
 
         function carregarListaUsuarios() {
