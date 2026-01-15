@@ -82,14 +82,14 @@
             50% { opacity: 0.7; transform: scale(1.05); }
         }
 
-        /* CONTADOR DE POLLING */
-        .polling-counter {
+        /* VISUALIZADOR DE ÚLTIMA IMPORTAÇÃO */
+        .import-timestamp {
             position: fixed;
             top: 65px;
             left: 20px;
             background: rgba(255,255,255,0.95);
-            border: 1px solid #3b82f6;
-            color: #1e40af;
+            border: 1px solid #10b981;
+            color: #065f46;
             padding: 4px 8px;
             border-radius: 8px;
             font-size: 9px;
@@ -571,7 +571,7 @@
             transform: scale(1.05);
         }
 
-        /* CONTROLES COMPACTOS E PROFISSIONAIS */
+        /* CONTROLES CENTRALIZADOS AUTOMATICAMENTE */
         .controls {
             padding: 12px 16px;
             background: #f8f9fa;
@@ -603,6 +603,7 @@
             gap: 8px;
             align-items: end;
             min-width: max-content;
+            justify-content: center;
         }
 
         .control-group {
@@ -684,6 +685,7 @@
             margin-top: 12px;
             padding-top: 8px;
             border-top: 1px solid #e9ecef;
+            width: 100%;
         }
 
         .btn-search {
@@ -1127,13 +1129,13 @@
             display: none !important;
         }
 
-        /* MEDIA QUERIES OTIMIZADAS PARA LAYOUT COMPACTO */
+        /* MEDIA QUERIES PARA CENTRALIZAÇÃO AUTOMÁTICA */
 
         /* Telas grandes (>1400px) - Layout horizontal completo */
         @media (min-width: 1400px) {
             .controls-content {
                 flex-wrap: nowrap;
-                justify-content: flex-start;
+                justify-content: center;
             }
             
             .control-group {
@@ -1145,17 +1147,19 @@
             }
         }
 
-        /* Telas médias (1000-1400px) - Quebra em 2 linhas */
+        /* Telas médias (1000-1400px) - Grid centralizado */
         @media (max-width: 1400px) and (min-width: 1000px) {
             .controls-content {
                 display: grid;
                 grid-template-columns: repeat(4, minmax(120px, 1fr));
                 gap: 8px;
                 align-items: end;
+                justify-content: center;
+                justify-items: center;
             }
         }
 
-        /* Telas pequenas (600-1000px) - Stack responsivo */
+        /* Telas pequenas (600-1000px) - Stack centralizado */
         @media (max-width: 1000px) and (min-width: 600px) {
             .controls {
                 padding: 10px 12px;
@@ -1166,6 +1170,8 @@
                 grid-template-columns: repeat(3, minmax(110px, 1fr));
                 gap: 6px;
                 align-items: start;
+                justify-content: center;
+                justify-items: center;
             }
             
             .control-group {
@@ -1182,13 +1188,17 @@
                 gap: 4px;
             }
             
+            .controls-buttons {
+                justify-content: center;
+            }
+            
             .controls-buttons button {
                 font-size: 10px;
                 padding: 5px 10px;
             }
         }
 
-        /* Telas muito pequenas (<600px) - Single stack */
+        /* Telas muito pequenas (<600px) - Single stack centralizado */
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -1202,16 +1212,17 @@
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
-                align-items: stretch;
+                align-items: center;
+                justify-content: center;
             }
             
             .control-group {
-                min-width: 100%;
+                min-width: 90%;
                 flex: none;
             }
             
             .control-group.date-range {
-                min-width: 100%;
+                min-width: 90%;
             }
             
             .date-range-inputs {
@@ -1225,6 +1236,8 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 6px;
                 margin-top: 8px;
+                justify-content: center;
+                width: 90%;
             }
             
             .controls-buttons .btn-clear-file {
@@ -1250,7 +1263,7 @@
                 gap: 8px;
             }
             
-            .polling-indicator, .update-notification, .polling-counter {
+            .polling-indicator, .update-notification, .import-timestamp {
                 position: relative;
                 margin: 8px auto;
                 top: auto;
@@ -1335,9 +1348,9 @@
         <span id="pollingStatusText">🔄 Conectando Supabase...</span>
     </div>
 
-    <!-- CONTADOR DE POLLING -->
-    <div class="polling-counter" id="pollingCounter">
-        🔄 Inicializando...
+    <!-- VISUALIZADOR DE ÚLTIMA IMPORTAÇÃO -->
+    <div class="import-timestamp" id="importTimestamp">
+        📥 Última importação: Nunca
     </div>
 
     <!-- NOTIFICAÇÃO DE ATUALIZAÇÕES -->
@@ -1901,6 +1914,9 @@
                 iniciarSistema();
                 atualizarStatusSistema();
                 
+                // Carregar última importação salva
+                carregarUltimaImportacao();
+                
                 if (!lembrarMe) {
                     mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n\n🎯 Nível: ${usuarioEncontrado.nivel.toUpperCase()}\n🚀 Supabase: ${supabaseDisponivel ? 'Conectado' : 'Erro'}\n👥 Login cross-device ativo!`);
                 }
@@ -1909,6 +1925,35 @@
                 alert('❌ Usuário ou senha incorretos!\n\nVerifique suas credenciais e tente novamente.\n\n💡 Se foi criado em outro computador, aguarde sincronização.');
                 localStorage.removeItem('credenciaisLembradas');
             }
+        }
+
+        function carregarUltimaImportacao() {
+            const ultimaImportacao = localStorage.getItem('ultimaImportacaoExcel');
+            const timestamp = document.getElementById('importTimestamp');
+            
+            if (ultimaImportacao) {
+                const dados = JSON.parse(ultimaImportacao);
+                timestamp.textContent = `📥 Última importação: ${dados.data} às ${dados.hora}`;
+            } else {
+                timestamp.textContent = '📥 Última importação: Nunca';
+            }
+        }
+
+        function atualizarTimestampImportacao() {
+            const agora = new Date();
+            const data = agora.toLocaleDateString('pt-BR');
+            const hora = agora.toLocaleTimeString('pt-BR');
+            
+            // Salvar no localStorage
+            localStorage.setItem('ultimaImportacaoExcel', JSON.stringify({
+                data: data,
+                hora: hora,
+                timestamp: agora.getTime(),
+                usuario: usuarioLogado.nome
+            }));
+            
+            // Atualizar visualizador
+            document.getElementById('importTimestamp').textContent = `📥 Última importação: ${data} às ${hora}`;
         }
 
         async function criarUsuario(event) {
@@ -1992,7 +2037,6 @@
             
             try {
                 pollingCount++;
-                atualizarContadorPolling();
                 
                 console.log(`🔄 Polling #${pollingCount} - Verificando tabela dados_patio...`);
                 
@@ -2169,20 +2213,6 @@
                     break;
                 default:
                     statusText.textContent = '🔄 Iniciando...';
-            }
-        }
-
-        function atualizarContadorPolling() {
-            const counter = document.getElementById('pollingCounter');
-            
-            if (supabaseDisponivel) {
-                counter.textContent = `#${pollingCount} | 3s`;
-                counter.style.borderColor = '#3b82f6';
-                counter.style.color = '#1e40af';
-            } else {
-                counter.textContent = `Local #${pollingCount}`;
-                counter.style.borderColor = '#6b7280';
-                counter.style.color = '#374151';
             }
         }
 
@@ -2433,6 +2463,10 @@
                     }).filter(item => item && item.placa);
                     
                     console.log(`📊 ${dadosProcessados.length} registros processados`);
+                    
+                    // ATUALIZAR TIMESTAMP DE IMPORTAÇÃO
+                    atualizarTimestampImportacao();
+                    
                     salvarDadosNoSupabase(dadosProcessados);
                     
                 } catch (error) {
