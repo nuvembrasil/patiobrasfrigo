@@ -249,21 +249,24 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 9998;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
         }
 
         .user-panel-modal {
             background: white;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            width: 900px;
-            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            width: 95%;
+            max-width: 1000px;
+            max-height: 95vh;
             overflow-y: auto;
+            position: relative;
         }
 
         .user-panel h3 {
@@ -567,12 +570,13 @@
             transform: scale(1.05);
         }
 
+        /* CONTROLES COM FILTROS DE INTERVALO */
         .controls {
             padding: 20px;
             background: #f8f9fa;
             border-bottom: 2px solid #dee2e6;
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr auto auto auto;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr auto auto auto;
             gap: 15px;
             align-items: end;
         }
@@ -581,6 +585,17 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+        }
+
+        .control-group.date-range {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .control-group.date-range label {
+            grid-column: 1 / -1;
+            text-align: center;
         }
 
         .control-group label {
@@ -604,6 +619,17 @@
         .control-group select:focus {
             outline: none;
             border-color: #2c3e50;
+        }
+
+        .date-input-small {
+            padding: 8px !important;
+            font-size: 12px !important;
+        }
+
+        .date-label-small {
+            font-size: 9px !important;
+            color: #6c757d !important;
+            margin-bottom: 2px;
         }
 
         .btn-search {
@@ -995,30 +1021,124 @@
             display: none !important;
         }
 
+        /* RESPONSIVO PARA TELAS MENORES E PAINEL ABERTO */
+        @media (max-width: 1400px) {
+            .controls {
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .control-group.date-range {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .controls {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 10px;
+            }
+        }
+
         @media (max-width: 968px) {
             .controls {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
             }
-            .login-modal, .user-panel-modal {
-                width: 95%;
+            
+            .control-group.date-range {
+                grid-column: span 2;
+            }
+            
+            .user-panel-modal {
+                width: 98%;
+                height: 95vh;
+                padding: 20px;
                 margin: 10px;
             }
+            
+            .user-form {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            
             .user-info {
                 position: relative;
                 margin-bottom: 15px;
                 justify-content: center;
                 flex-wrap: wrap;
             }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .control-group.date-range {
+                grid-column: 1;
+            }
+            
             .polling-indicator, .update-notification, .polling-counter {
                 position: relative;
-                margin: 10px;
+                margin: 10px auto;
+                top: auto;
+                left: auto;
+                max-width: calc(100vw - 40px);
             }
-            .auto-save-indicator {
+            
+            .auto-save-indicator, .sync-indicator {
                 position: relative;
-                margin: 10px;
+                margin: 10px auto;
                 top: auto;
                 right: auto;
+                max-width: calc(100vw - 40px);
             }
+            
+            .user-panel {
+                padding: 10px;
+                align-items: flex-start;
+                overflow-y: auto;
+            }
+            
+            .user-panel-modal {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                max-height: none;
+                border-radius: 0;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .user-form {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            body.panel-open {
+                overflow: hidden;
+            }
+        }
+
+        /* MELHORIAS PARA MODAL ABERTO */
+        .user-panel-modal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .user-panel-modal::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .user-panel-modal::-webkit-scrollbar-thumb {
+            background: #9b59b6;
+            border-radius: 4px;
+        }
+
+        .user-panel-modal::-webkit-scrollbar-thumb:hover {
+            background: #8e44ad;
         }
     </style>
 </head>
@@ -1206,17 +1326,27 @@
                     <option value="ITAJAI">Itajaí</option>
                 </select>
             </div>
-            <div class="control-group">
+            <div class="control-group date-range">
                 <label>📅 Data de Chegada</label>
-                <input type="date" id="filterDataChegada">
+                <div>
+                    <div class="date-label-small">De:</div>
+                    <input type="date" id="filterDataChegadaDe" class="date-input-small">
+                </div>
+                <div>
+                    <div class="date-label-small">Até:</div>
+                    <input type="date" id="filterDataChegadaAte" class="date-input-small">
+                </div>
             </div>
-            <div class="control-group">
+            <div class="control-group date-range">
                 <label>📆 Data de Descarga</label>
-                <input type="date" id="filterDataDescarga">
-            </div>
-            <div class="control-group">
-                <label>🗓️ Mês e Ano</label>
-                <input type="month" id="filterMesAno">
+                <div>
+                    <div class="date-label-small">De:</div>
+                    <input type="date" id="filterDataDescargaDe" class="date-input-small">
+                </div>
+                <div>
+                    <div class="date-label-small">Até:</div>
+                    <input type="date" id="filterDataDescargaAte" class="date-input-small">
+                </div>
             </div>
             <button class="btn-search" onclick="aplicarFiltros()">Aplicar Filtros</button>
             <button class="btn-clear" onclick="limparFiltros()">🔄 Limpar Filtros</button>
@@ -1419,13 +1549,8 @@
                 console.log('✅ Conexão estabelecida');
                 atualizarIndicadorPolling('connected');
                 
-                // Sincronizar usuários primeiro
                 await sincronizarUsuarios();
-                
-                // Carregar dados
                 await carregarDadosSupabase();
-                
-                // Iniciar polling
                 iniciarPollingSupabase();
                 return true;
                 
@@ -1448,25 +1573,21 @@
             try {
                 console.log('👥 Sincronizando usuários com Supabase...');
                 
-                // 1. Carregar usuários do Supabase
                 const { data: usuariosSupabase, error } = await supabase
                     .from('usuarios')
                     .select('*');
 
-                if (error && error.code !== 'PGRST116') { // PGRST116 = tabela não existe
+                if (error && error.code !== 'PGRST116') {
                     console.error('❌ Erro ao carregar usuários do Supabase:', error);
                     return;
                 }
 
-                // 2. Carregar usuários locais
                 let usuariosLocais = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
                 
-                // 3. Se não há usuários locais, usar padrão
                 if (usuariosLocais.length === 0) {
                     usuariosLocais = [...USUARIOS_PADRAO];
                 }
 
-                // 4. Mesclar usuários (prioridade para Supabase)
                 const usuariosMesclados = [...usuariosLocais];
                 
                 if (usuariosSupabase && usuariosSupabase.length > 0) {
@@ -1476,7 +1597,6 @@
                         const existeLocal = usuariosMesclados.find(u => u.login === userSupabase.login);
                         
                         if (!existeLocal) {
-                            // Adicionar usuário do Supabase que não existe localmente
                             const novoUsuario = {
                                 id: userSupabase.id,
                                 nome: userSupabase.nome,
@@ -1493,7 +1613,6 @@
                     });
                 }
 
-                // 5. Salvar usuários mesclados localmente
                 localStorage.setItem('usuariosSistema', JSON.stringify(usuariosMesclados));
                 console.log('✅ Usuários sincronizados:', usuariosMesclados.length);
                 
@@ -1543,12 +1662,10 @@
         async function autenticarUsuario(login, senha, lembrarMe = false) {
             console.log('🔐 Processando autenticação...');
             
-            // 1. PRIMEIRO: Sincronizar usuários do Supabase
             if (supabaseDisponivel) {
                 await sincronizarUsuarios();
             }
             
-            // 2. SEGUNDO: Buscar no localStorage atualizado
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
             
             const usuarioEncontrado = usuarios.find(u => 
@@ -1626,15 +1743,12 @@
                 criadoPor: usuarioLogado.nome
             };
 
-            // 1. Salvar localmente PRIMEIRO
             usuarios.push(novoUsuario);
             localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
             console.log('💾 Usuário criado localmente');
 
-            // 2. Tentar salvar no Supabase
             const salvouSupabase = await salvarUsuarioNoSupabase(novoUsuario);
             
-            // 3. Limpar formulário
             document.getElementById('novoNome').value = '';
             document.getElementById('novoLogin').value = '';
             document.getElementById('novaSenha').value = '';
@@ -1995,7 +2109,6 @@
             btn.textContent = '🔄 Testando...';
             
             try {
-                // Teste tabela dados_patio
                 const { data: dadosTest, error: dadosError } = await supabase
                     .from('dados_patio')
                     .select('count', { count: 'exact', head: true });
@@ -2004,7 +2117,6 @@
                     throw dadosError;
                 }
                 
-                // Teste tabela usuarios  
                 const { data: usersTest, error: usersError } = await supabase
                     .from('usuarios')
                     .select('count', { count: 'exact', head: true });
@@ -2136,7 +2248,6 @@
                 mostrarIndicadorSync('🔄 Salvando no Supabase...', 'syncing');
                 atualizarIndicadorPolling('updating');
                 
-                // 1. LIMPAR DADOS EXISTENTES
                 const { error: deleteError } = await supabase
                     .from('dados_patio')
                     .delete()
@@ -2146,7 +2257,6 @@
                     console.log('⚠️ Aviso ao limpar:', deleteError.message);
                 }
 
-                // 2. CONVERTER PARA FORMATO SUPABASE
                 const dadosSupabase = dadosArray.map(item => ({
                     placa: item.placa,
                     container: item.container,
@@ -2180,7 +2290,6 @@
                     obs: item.obs
                 }));
 
-                // 3. INSERIR NOVOS DADOS
                 console.log(`💾 Inserindo ${dadosSupabase.length} registros...`);
                 const { data, error } = await supabase
                     .from('dados_patio')
@@ -2192,11 +2301,9 @@
 
                 console.log('✅ DADOS SALVOS COM SUCESSO NO SUPABASE!');
                 
-                // 4. ATUALIZAR DADOS LOCAIS
                 dadosPatio = dadosArray;
                 localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
                 
-                // 5. ATUALIZAR UI
                 popularFiltros();
                 renderizarTabela();
                 atualizarEstatisticas();
@@ -2259,9 +2366,10 @@
                     document.getElementById('filterTipoMercado').value = '';
                     document.getElementById('filterGerandoDiaria').value = '';
                     document.getElementById('filterTipoDescarga').value = '';
-                    document.getElementById('filterDataChegada').value = '';
-                    document.getElementById('filterDataDescarga').value = '';
-                    document.getElementById('filterMesAno').value = '';
+                    document.getElementById('filterDataChegadaDe').value = '';
+                    document.getElementById('filterDataChegadaAte').value = '';
+                    document.getElementById('filterDataDescargaDe').value = '';
+                    document.getElementById('filterDataDescargaAte').value = '';
                     document.getElementById('totalDiariasInfo').classList.remove('show');
                     
                     popularFiltros();
@@ -2350,7 +2458,6 @@
                 console.log('📥 Primeira inicialização - carregando usuários padrão');
                 localStorage.setItem('usuariosSistema', JSON.stringify(USUARIOS_PADRAO));
                 
-                // Tentar salvar usuários padrão no Supabase
                 if (supabaseDisponivel) {
                     salvarUsuariosPadraoSupabase();
                 }
@@ -2492,12 +2599,14 @@
                 return;
             }
             
+            document.body.classList.add('panel-open');
             carregarListaUsuarios();
             atualizarStatusSistema();
             document.getElementById('userPanel').style.display = 'flex';
         }
 
         function fecharPainelGovernanca() {
+            document.body.classList.remove('panel-open');
             document.getElementById('userPanel').style.display = 'none';
         }
 
@@ -2616,36 +2725,30 @@
             }
         }
 
-        function verificarMesAnoComDiarias(item, mesAnoFiltro) {
-            if (!mesAnoFiltro) return true;
+        function verificarIntervaloData(dataItem, dataDe, dataAte) {
+            if (!dataItem) return false;
             
             try {
-                const [anoFiltro, mesFiltro] = mesAnoFiltro.split('-');
-                const temDiaria = parseInt(item.diaria) > 0;
+                // Converter data brasileira para ISO para comparação
+                const dataItemISO = converterDataParaISO(dataItem);
+                if (!dataItemISO) return false;
                 
-                if (!temDiaria) {
-                    if (item.dataChegada) {
-                        const [dia, mes, ano] = item.dataChegada.split('/');
-                        return ano === anoFiltro && mes.padStart(2, '0') === mesFiltro;
-                    }
-                    return false;
+                let match = true;
+                
+                // Se tem data "De", verificar se item é >= dataDe
+                if (dataDe) {
+                    match = match && (dataItemISO >= dataDe);
                 }
                 
-                let matchChegada = false;
-                let matchDescarga = false;
-                
-                if (item.dataChegada) {
-                    const [diaC, mesC, anoC] = item.dataChegada.split('/');
-                    matchChegada = anoC === anoFiltro && mesC.padStart(2, '0') === mesFiltro;
+                // Se tem data "Até", verificar se item é <= dataAte
+                if (dataAte) {
+                    match = match && (dataItemISO <= dataAte);
                 }
                 
-                if (item.dataDescarga) {
-                    const [diaD, mesD, anoD] = item.dataDescarga.split('/');
-                    matchDescarga = anoD === anoFiltro && mesD.padStart(2, '0') === mesFiltro;
-                }
+                return match;
                 
-                return matchChegada || matchDescarga;
             } catch (error) {
+                console.error('Erro ao verificar intervalo de data:', error);
                 return false;
             }
         }
@@ -2788,9 +2891,10 @@
             document.getElementById('filterTipoMercado').value = '';
             document.getElementById('filterGerandoDiaria').value = '';
             document.getElementById('filterTipoDescarga').value = '';
-            document.getElementById('filterDataChegada').value = '';
-            document.getElementById('filterDataDescarga').value = '';
-            document.getElementById('filterMesAno').value = '';
+            document.getElementById('filterDataChegadaDe').value = '';
+            document.getElementById('filterDataChegadaAte').value = '';
+            document.getElementById('filterDataDescargaDe').value = '';
+            document.getElementById('filterDataDescargaAte').value = '';
             document.getElementById('totalDiariasInfo').classList.remove('show');
             
             renderizarTabela();
@@ -2965,9 +3069,12 @@
             const filterTipoMercado = document.getElementById('filterTipoMercado').value;
             const filterGerandoDiaria = document.getElementById('filterGerandoDiaria').value;
             const filterTipoDescarga = document.getElementById('filterTipoDescarga').value;
-            const filterDataChegada = document.getElementById('filterDataChegada').value;
-            const filterDataDescarga = document.getElementById('filterDataDescarga').value;
-            const filterMesAno = document.getElementById('filterMesAno').value;
+            
+            // NOVOS FILTROS DE INTERVALO DE DATAS
+            const filterDataChegadaDe = document.getElementById('filterDataChegadaDe').value;
+            const filterDataChegadaAte = document.getElementById('filterDataChegadaAte').value;
+            const filterDataDescargaDe = document.getElementById('filterDataDescargaDe').value;
+            const filterDataDescargaAte = document.getElementById('filterDataDescargaAte').value;
 
             let dadosFiltrados = dadosPatio.filter(item => {
                 let matchPlaca = !searchPlaca || item.placa.includes(searchPlaca);
@@ -2984,24 +3091,19 @@
                 
                 let matchTipoDescarga = !filterTipoDescarga || item.tipoDescarga === filterTipoDescarga;
                 
+                // NOVO: Filtro de intervalo para Data de Chegada
                 let matchDataChegada = true;
-                if (filterDataChegada) {
-                    const dataSelecionada = converterDataParaBrasileiro(filterDataChegada);
-                    matchDataChegada = item.dataChegada === dataSelecionada;
+                if (filterDataChegadaDe || filterDataChegadaAte) {
+                    matchDataChegada = verificarIntervaloData(item.dataChegada, filterDataChegadaDe, filterDataChegadaAte);
                 }
                 
+                // NOVO: Filtro de intervalo para Data de Descarga
                 let matchDataDescarga = true;
-                if (filterDataDescarga) {
-                    const dataSelecionada = converterDataParaBrasileiro(filterDataDescarga);
-                    matchDataDescarga = item.dataDescarga === dataSelecionada;
+                if (filterDataDescargaDe || filterDataDescargaAte) {
+                    matchDataDescarga = verificarIntervaloData(item.dataDescarga, filterDataDescargaDe, filterDataDescargaAte);
                 }
                 
-                let matchMesAno = true;
-                if (filterMesAno) {
-                    matchMesAno = verificarMesAnoComDiarias(item, filterMesAno);
-                }
-                
-                return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchGerandoDiaria && matchTipoDescarga && matchDataChegada && matchDataDescarga && matchMesAno;
+                return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchGerandoDiaria && matchTipoDescarga && matchDataChegada && matchDataDescarga;
             });
 
             atualizarContadorDiarias(dadosFiltrados);
