@@ -143,24 +143,25 @@
 
         /* INDICADOR ESPECIAL DE DADOS IMPORTADOS */
         .import-success-banner {
-            background: #d4edda;
-            border: 2px solid #c3e6cb;
-            color: #155724;
-            padding: 15px 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 18px 25px;
             text-align: center;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 15px;
             display: none;
-            animation: successPulse 2s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            letter-spacing: 0.5px;
         }
 
         .import-success-banner.show {
             display: block;
+            animation: successSlide 0.6s ease-out;
         }
 
-        @keyframes successPulse {
-            0% { background: #28a745; color: white; }
-            100% { background: #d4edda; color: #155724; }
+        @keyframes successSlide {
+            0% { transform: translateY(-100%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
 
         /* VISUALIZADOR DE ÚLTIMA ATUALIZAÇÃO */
@@ -888,67 +889,128 @@
             transform: none;
         }
 
+        /* ========== CARDS PROFISSIONAIS ========== */
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            padding: 20px;
-            background: #f8f9fa;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
 
         .stat-card {
             background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
             transition: all 0.3s ease;
         }
 
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
         .stat-card.updated {
-            animation: cardPulse 0.8s ease;
+            animation: cardProfessionalPulse 1.2s ease;
         }
 
-        @keyframes cardPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4); }
-            100% { transform: scale(1); }
+        @keyframes cardProfessionalPulse {
+            0% { transform: scale(1); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+            50% { transform: scale(1.05); box-shadow: 0 25px 50px rgba(59, 130, 246, 0.25); }
+            100% { transform: scale(1); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
         }
 
-        .stat-card.total { border-color: #3498db; }
-        .stat-card.aguardando { border-color: #f39c12; }
-        .stat-card.transito { border-color: #9b59b6; }
-        .stat-card.descarregado { border-color: #27ae60; }
-        .stat-card.desovando { border-color: #17a2b8; }
-        .stat-card.gerando-diaria { border-color: #e74c3c; }
+        /* CORES PROFISSIONAIS DOS CARDS */
+        .stat-card.transito::before { background: linear-gradient(90deg, #8e44ad 0%, #9b59b6 100%); }
+        .stat-card.aguardando::before { background: linear-gradient(90deg, #f39c12 0%, #ff8c00 100%); }
+        .stat-card.desovando::before { background: linear-gradient(90deg, #17a2b8 0%, #20c997 100%); }
+        .stat-card.gerando-diaria::before { background: linear-gradient(90deg, #dc3545 0%, #e74c3c 100%); }
+        .stat-card.descarregado::before { background: linear-gradient(90deg, #28a745 0%, #20c997 100%); }
+        .stat-card.total::before { background: linear-gradient(90deg, #007bff 0%, #4dabf7 100%); }
+
+        .stat-card .card-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            opacity: 0.15;
+        }
 
         .stat-card .label {
-            font-size: 16px;
+            font-size: 14px;
             color: #6c757d;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 2;
         }
 
         .stat-card .value {
-            font-size: 32px;
-            font-weight: bold;
+            font-size: 36px;
+            font-weight: 700;
             color: #2c3e50;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         .stat-card .sub-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #e74c3c;
+            font-size: 16px;
+            font-weight: 600;
+            color: #dc3545;
             margin-top: 8px;
+            position: relative;
+            z-index: 2;
+            background: rgba(220, 53, 69, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
         }
 
+        .stat-card .card-description {
+            font-size: 11px;
+            color: #95a5a6;
+            margin-top: 8px;
+            font-style: italic;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* HOVER EFFECTS PROFISSIONAIS */
+        .stat-card.transito:hover::before { background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%); }
+        .stat-card.aguardando:hover::before { background: linear-gradient(90deg, #ff8c00 0%, #f39c12 100%); }
+        .stat-card.desovando:hover::before { background: linear-gradient(90deg, #20c997 0%, #17a2b8 100%); }
+        .stat-card.gerando-diaria:hover::before { background: linear-gradient(90deg, #e74c3c 0%, #dc3545 100%); }
+        .stat-card.descarregado:hover::before { background: linear-gradient(90deg, #20c997 0%, #28a745 100%); }
+        .stat-card.total:hover::before { background: linear-gradient(90deg, #4dabf7 0%, #007bff 100%); }
+
         .total-diarias-info {
-            padding: 15px 20px;
+            padding: 18px 25px;
             background: linear-gradient(135deg, #6c5ce7 0%, #7c4dff 100%);
             color: white;
             text-align: center;
             font-weight: 600;
             display: none;
+            box-shadow: 0 4px 15px rgba(124, 77, 255, 0.3);
+            letter-spacing: 0.3px;
         }
 
         .total-diarias-info.show {
@@ -1263,13 +1325,25 @@
             display: none !important;
         }
 
-        /* MEDIA QUERIES - mantendo as mesmas do anterior */
+        /* MEDIA QUERIES PARA CENTRALIZAÇÃO AUTOMÁTICA */
+
+        /* Telas grandes (>1400px) - Layout horizontal centralizado */
         @media (min-width: 1400px) {
-            .controls-content { flex-wrap: nowrap; justify-content: center; }
-            .control-group { min-width: 130px; }
-            .control-group.date-range { min-width: 170px; }
+            .controls-content {
+                flex-wrap: nowrap;
+                justify-content: center;
+            }
+            
+            .control-group {
+                min-width: 130px;
+            }
+            
+            .control-group.date-range {
+                min-width: 170px;
+            }
         }
 
+        /* Telas médias (1000-1400px) - Grid centralizado */
         @media (max-width: 1400px) and (min-width: 1000px) {
             .controls-content {
                 display: grid;
@@ -1281,23 +1355,222 @@
             }
         }
 
+        /* AJUSTE RESPONSIVO PARA USER-INFO */
         @media (max-width: 1200px) {
-            .user-info { width: 140px; font-size: 9px; padding: 6px; right: 15px; }
-            .header h1 { font-size: 24px; margin-right: 160px; }
+            .user-info {
+                width: 140px;
+                font-size: 9px;
+                padding: 6px;
+                right: 15px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+                margin-right: 160px;
+            }
         }
 
         @media (max-width: 900px) {
-            .header { padding: 20px 15px; text-align: center; }
-            .user-info { position: static; transform: none; margin: 0 auto 15px auto; width: 180px; }
-            .header h1 { font-size: 20px; margin-right: 0; }
-            .header p { font-size: 12px; }
+            .header {
+                padding: 20px 15px;
+                text-align: center;
+            }
+            
+            .user-info {
+                position: static;
+                transform: none;
+                margin: 0 auto 15px auto;
+                width: 180px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+                margin-right: 0;
+            }
+            
+            .header p {
+                font-size: 12px;
+            }
         }
 
         @media (max-width: 600px) {
-            .header { padding: 15px 10px; }
-            .user-info { width: 90%; max-width: 200px; font-size: 9px; }
-            .header h1 { font-size: 16px; }
-            .header p { font-size: 10px; }
+            .header {
+                padding: 15px 10px;
+            }
+            
+            .user-info {
+                width: 90%;
+                max-width: 200px;
+                font-size: 9px;
+            }
+            
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            .header p {
+                font-size: 10px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-card .value {
+                font-size: 28px;
+            }
+        }
+
+        /* Telas pequenas (600-1000px) - Stack centralizado */
+        @media (max-width: 1000px) and (min-width: 600px) {
+            .controls {
+                padding: 10px 12px;
+            }
+            
+            .controls-content {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(110px, 1fr));
+                gap: 6px;
+                align-items: start;
+                justify-content: center;
+                justify-items: center;
+            }
+            
+            .control-group {
+                min-width: 110px;
+            }
+            
+            .control-group.date-range {
+                grid-column: span 2;
+                min-width: 100%;
+            }
+            
+            .date-range-inputs {
+                grid-template-columns: 1fr 1fr;
+                gap: 4px;
+            }
+            
+            .controls-buttons {
+                justify-content: center;
+            }
+            
+            .controls-buttons button {
+                font-size: 10px;
+                padding: 5px 10px;
+            }
+        }
+
+        /* Telas muito pequenas (<600px) - Single stack centralizado */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .controls {
+                padding: 8px 10px;
+            }
+            
+            .controls-content {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .control-group {
+                min-width: 90%;
+                flex: none;
+            }
+            
+            .control-group.date-range {
+                min-width: 90%;
+            }
+            
+            .date-range-inputs {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            
+            .controls-buttons {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                margin-top: 8px;
+                justify-content: center;
+                width: 90%;
+            }
+            
+            .controls-buttons .btn-clear-file {
+                grid-column: 1 / -1;
+            }
+            
+            .controls-buttons button {
+                font-size: 11px;
+                padding: 8px;
+                height: 36px;
+            }
+            
+            .user-panel-modal {
+                width: 100%;
+                height: 100%;
+                max-height: none;
+                border-radius: 0;
+                padding: 15px;
+            }
+            
+            .user-form {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            body.panel-open {
+                overflow: hidden;
+            }
+            
+            /* Scroll da tabela mais fino em mobile */
+            .table-wrapper::-webkit-scrollbar {
+                width: 4px;
+                height: 4px;
+            }
+            
+            .table-wrapper {
+                max-height: calc(100vh - 280px);
+            }
+        }
+
+        /* Melhorias específicas para scroll em diferentes resoluções */
+        @media (max-width: 1200px) {
+            .table-wrapper::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+        }
+
+        /* Melhorias para modal responsivo */
+        .user-panel-modal::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .user-panel-modal::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .user-panel-modal::-webkit-scrollbar-thumb {
+            background: #9b59b6;
+            border-radius: 3px;
+        }
+
+        .user-panel-modal::-webkit-scrollbar-thumb:hover {
+            background: #8e44ad;
         }
     </style>
 </head>
@@ -1317,7 +1590,7 @@
 
     <!-- BANNER DE SUCESSO DA IMPORTAÇÃO -->
     <div class="import-success-banner" id="importSuccessBanner">
-        🎉 DADOS IMPORTADOS COM SUCESSO - VISÍVEIS PERMANENTEMENTE!
+        🎉 DADOS IMPORTADOS COM SUCESSO - CARDS PROFISSIONAIS ATUALIZADOS!
     </div>
 
     <!-- VISUALIZADOR DE ÚLTIMA ATUALIZAÇÃO -->
@@ -1561,31 +1834,44 @@
             📊 <span id="totalDiariasTexto">Total de diárias geradas no período: 0</span>
         </div>
 
+        <!-- CARDS PROFISSIONAIS -->
         <div class="stats">
             <div class="stat-card transito">
+                <div class="card-icon">🚚</div>
                 <div class="label">Em Trânsito</div>
                 <div class="value" id="totalTransito">0</div>
+                <div class="card-description">Placas únicas - histórico completo</div>
             </div>
             <div class="stat-card aguardando">
+                <div class="card-icon">⏳</div>
                 <div class="label">Aguardando</div>
                 <div class="value" id="totalAguardando">0</div>
+                <div class="card-description">Placas únicas - histórico completo</div>
             </div>
             <div class="stat-card desovando">
+                <div class="card-icon">🚛</div>
                 <div class="label">Desovando</div>
                 <div class="value" id="totalDesovando">0</div>
+                <div class="card-description">Placas únicas - dia atual</div>
             </div>
             <div class="stat-card gerando-diaria">
+                <div class="card-icon">💰</div>
                 <div class="label">Gerando Diária</div>
                 <div class="value" id="totalGerandoDiaria">0</div>
                 <div class="sub-value" id="valorTotalDiaria">R$ 0,00</div>
+                <div class="card-description">Placas únicas - dia atual</div>
             </div>
             <div class="stat-card descarregado">
+                <div class="card-icon">✅</div>
                 <div class="label">Descarregado</div>
                 <div class="value" id="totalDescarregado">0</div>
+                <div class="card-description">Placas únicas - dia atual</div>
             </div>
             <div class="stat-card total">
-                <div class="label">Total de Placa</div>
+                <div class="card-icon">📈</div>
+                <div class="label">Movimentação Total</div>
                 <div class="value" id="totalVeiculos">0</div>
+                <div class="card-description">Placas únicas - dia atual</div>
             </div>
         </div>
 
@@ -1750,6 +2036,27 @@
             ];
             
             return filtros.some(filtro => filtro && filtro.trim() !== '');
+        }
+
+        // ========== FUNÇÃO PARA OBTER VALOR PADRÃO DE PLACAS NÃO DEDICADAS ==========
+        function obterValorPadraoNaoDedicada() {
+            // Buscar PRIMEIRO valor de placa não dedicada que tem valor válido
+            const placaNaoDedicadaComValor = dadosPatio.find(item => 
+                item.dedicada === 'NÃO' && 
+                item.valorDiaria && 
+                item.valorDiaria !== '' && 
+                item.valorDiaria !== 'R$ 0,00' &&
+                converterValorMonetario(item.valorDiaria) > 0
+            );
+            
+            if (placaNaoDedicadaComValor) {
+                const valor = converterValorMonetario(placaNaoDedicadaComValor.valorDiaria);
+                console.log(`💰 Valor padrão não dedicada encontrado: ${placaNaoDedicadaComValor.valorDiaria} (R$ ${valor}) da placa ${placaNaoDedicadaComValor.placa}`);
+                return valor;
+            }
+            
+            console.log('⚠️ Nenhum valor padrão de placa não dedicada encontrado');
+            return 0;
         }
 
         // ========== INICIALIZAÇÃO SUPABASE ==========
@@ -2060,7 +2367,7 @@
                 localStorage.setItem('dadosImportadosBackup', JSON.stringify(dadosArray));
                 sessionStorage.setItem('ultimaImportacao', JSON.stringify(dadosArray));
                 
-                console.log(`💾 DADOS SALVOS EM 4 LOCAIS:`, {
+                console.log(`💾 DADOS SALVOS EM 5 LOCAIS:`, {
                     dadosPatio: dadosPatio.length,
                     backup: dadosImportadosRecentemente.length,
                     localStorage: JSON.parse(localStorage.getItem('dadosPatioMinerva')).length,
@@ -2156,33 +2463,8 @@
             console.log(`✅ TABELA FORÇADAMENTE RENDERIZADA COM ${dadosPatio.length} REGISTROS`);
             
             // ATUALIZAR ESTATÍSTICAS TAMBÉM
-            forcarAtualizacaoEstatisticas();
+            atualizarEstatisticas();
             popularFiltrosForçado();
-        }
-
-        function forcarAtualizacaoEstatisticas() {
-            console.log('📊 FORÇANDO ATUALIZAÇÃO DE ESTATÍSTICAS...');
-            
-            // Contagem direta dos dados importados
-            const total = dadosPatio.length;
-            const aguardando = dadosPatio.filter(d => d.status === 'AGUARDANDO').length;
-            const transito = dadosPatio.filter(d => d.status === 'TRÂNSITO').length;
-            const descarregado = dadosPatio.filter(d => d.status === 'DESCARREGADO').length;
-            const desovando = dadosPatio.filter(d => d.status === 'DESOVANDO').length;
-            const gerandoDiaria = dadosPatio.filter(d => 
-                (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && 
-                parseInt(d.diaria) > 0
-            ).length;
-            
-            // FORÇAR ATUALIZAÇÃO DOS CARDS
-            document.getElementById('totalVeiculos').textContent = total;
-            document.getElementById('totalAguardando').textContent = aguardando;
-            document.getElementById('totalTransito').textContent = transito;
-            document.getElementById('totalDescarregado').textContent = descarregado;
-            document.getElementById('totalDesovando').textContent = desovando;
-            document.getElementById('totalGerandoDiaria').textContent = gerandoDiaria;
-            
-            console.log(`✅ ESTATÍSTICAS FORÇADAS:`, { total, aguardando, transito, descarregado, desovando, gerandoDiaria });
         }
 
         function popularFiltrosForçado() {
@@ -2277,7 +2559,7 @@
                 
                 // Banner de sucesso
                 const banner = document.getElementById('importSuccessBanner');
-                banner.textContent = `🎉 ${mensagem} - DADOS PERMANENTEMENTE VISÍVEIS!`;
+                banner.textContent = `🎉 ${mensagem} - CARDS PROFISSIONAIS COM PLACAS ÚNICAS!`;
                 banner.classList.add('show');
                 
                 setTimeout(() => banner.classList.remove('show'), 10000);
@@ -2287,7 +2569,7 @@
                 const timestampLocal = agora.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
                 document.getElementById('updateTimestamp').textContent = `📅 Importação: ${timestampLocal}`;
                 
-                mostrarAlerta('success', `🎉 IMPORTAÇÃO 100% CONCLUÍDA!\n\n📊 ${mensagem}\n✅ Dados FORÇADOS na tabela\n🛡️ Sistema blindado funcionou\n🔒 Polling pausado por 20 segundos\n\n🌟 DADOS NÃO PODEM MAIS SUMIR!`);
+                mostrarAlerta('success', `🎉 IMPORTAÇÃO COM CARDS PROFISSIONAIS!\n\n📊 ${mensagem}\n✅ Dados FORÇADOS na tabela\n🎨 Cards com design profissional\n🔢 Contagem de placas únicas\n💰 Valor diária com fallback\n\n🌟 SISTEMA COMPLETO!`);
             } else {
                 mostrarAlerta('error', `❌ Falha na importação: ${mensagem}`);
             }
@@ -2313,6 +2595,132 @@
             }, 20000); // 20 SEGUNDOS DE PROTEÇÃO
         }
 
+        // ========== ESTATÍSTICAS PROFISSIONAIS - PLACAS ÚNICAS + VALOR FALLBACK ==========
+        function atualizarEstatisticas(dadosFiltrados = null) {
+            console.log('📊 Atualizando estatísticas - PLACAS ÚNICAS + VALOR FALLBACK...');
+            
+            const dataAtual = obterDataAtual();
+            console.log(`📅 Data atual: ${dataAtual}`);
+            console.log(`📋 Total de registros no sistema: ${dadosPatio.length}`);
+            
+            // 💰 OBTER VALOR PADRÃO PARA PLACAS NÃO DEDICADAS SEM VALOR
+            const valorPadraoNaoDedicada = obterValorPadraoNaoDedicada();
+            
+            // 🚚 EM TRÂNSITO - PLACAS ÚNICAS (HISTÓRICO COMPLETO)
+            const placasTransitoUnicas = [...new Set(
+                dadosPatio
+                    .filter(d => d.status === 'TRÂNSITO')
+                    .map(d => d.placa)
+            )].length;
+            
+            // ⏳ AGUARDANDO - PLACAS ÚNICAS (HISTÓRICO COMPLETO)
+            const placasAguardandoUnicas = [...new Set(
+                dadosPatio
+                    .filter(d => d.status === 'AGUARDANDO')
+                    .map(d => d.placa)
+            )].length;
+            
+            // 📅 DADOS DO DIA ATUAL
+            const dadosDoDiaAtual = dadosPatio.filter(item => {
+                return item.dataChegada === dataAtual || item.dataDescarga === dataAtual;
+            });
+            
+            console.log(`📊 Registros do dia atual: ${dadosDoDiaAtual.length}`);
+            
+            // 🚛 DESOVANDO - PLACAS ÚNICAS DO DIA ATUAL
+            const placasDesovandoUnicas = [...new Set(
+                dadosDoDiaAtual
+                    .filter(d => d.status === 'DESOVANDO')
+                    .map(d => d.placa)
+            )].length;
+            
+            // 💰 GERANDO DIÁRIA - PLACAS ÚNICAS DO DIA ATUAL (status específico + diária > 0)
+            const placasGerandoDiariaUnicas = [...new Set(
+                dadosDoDiaAtual
+                    .filter(d => 
+                        (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && 
+                        parseInt(d.diaria) > 0
+                    )
+                    .map(d => d.placa)
+            )].length;
+            
+            // ✅ DESCARREGADO - PLACAS ÚNICAS DO DIA ATUAL
+            const placasDescarregadoUnicas = [...new Set(
+                dadosDoDiaAtual
+                    .filter(d => d.status === 'DESCARREGADO')
+                    .map(d => d.placa)
+            )].length;
+            
+            // 📈 MOVIMENTAÇÃO TOTAL - PLACAS ÚNICAS DO DIA ATUAL
+            const placasMovimentacaoTotalUnicas = [...new Set(
+                dadosDoDiaAtual.map(d => d.placa)
+            )].length;
+            
+            // 💵 CALCULAR VALOR TOTAL DAS DIÁRIAS (POR PLACA ÚNICA COM VALOR FALLBACK)
+            const placasComDiariaDiaAtual = [...new Set(
+                dadosDoDiaAtual
+                    .filter(d => 
+                        (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && 
+                        parseInt(d.diaria) > 0
+                    )
+                    .map(d => d.placa)
+            )];
+            
+            let valorTotalDiariaUnico = 0;
+            let placasComFallback = 0;
+            
+            placasComDiariaDiaAtual.forEach(placa => {
+                // Pegar o primeiro registro da placa que tem diária
+                const registroComDiaria = dadosDoDiaAtual.find(d => 
+                    d.placa === placa && 
+                    (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && 
+                    parseInt(d.diaria) > 0
+                );
+                
+                if (registroComDiaria) {
+                    let valorDiaria = converterValorMonetario(registroComDiaria.valorDiaria);
+                    
+                    // 💰 APLICAR FALLBACK PARA PLACAS NÃO DEDICADAS SEM VALOR
+                    if (registroComDiaria.dedicada === 'NÃO' && valorDiaria === 0 && valorPadraoNaoDedicada > 0) {
+                        valorDiaria = valorPadraoNaoDedicada;
+                        placasComFallback++;
+                        console.log(`💰 Aplicado valor fallback R$ ${valorPadraoNaoDedicada} para placa não dedicada ${placa}`);
+                    }
+                    
+                    valorTotalDiariaUnico += valorDiaria;
+                }
+            });
+            
+            console.log(`💰 Valor total diárias: R$ ${valorTotalDiariaUnico.toFixed(2)} (${placasComFallback} placas usaram fallback)`);
+            
+            // 📊 ATUALIZAR TODOS OS CARDS COM PLACAS ÚNICAS
+            document.getElementById('totalTransito').textContent = placasTransitoUnicas;
+            document.getElementById('totalAguardando').textContent = placasAguardandoUnicas;
+            document.getElementById('totalDesovando').textContent = placasDesovandoUnicas;
+            document.getElementById('totalGerandoDiaria').textContent = placasGerandoDiariaUnicas;
+            document.getElementById('totalDescarregado').textContent = placasDescarregadoUnicas;
+            document.getElementById('totalVeiculos').textContent = placasMovimentacaoTotalUnicas;
+            document.getElementById('valorTotalDiaria').textContent = formatarValor(valorTotalDiariaUnico);
+            
+            // 🎨 APLICAR EFEITO DE ATUALIZAÇÃO NOS CARDS
+            const cards = document.querySelectorAll('.stat-card');
+            cards.forEach(card => {
+                card.classList.add('updated');
+                setTimeout(() => card.classList.remove('updated'), 1200);
+            });
+            
+            // 📋 LOG DETALHADO PARA VERIFICAÇÃO
+            console.log(`📊 CARDS PROFISSIONAIS ATUALIZADOS - PLACAS ÚNICAS:`, {
+                emTransito: `${placasTransitoUnicas} placas únicas (histórico completo)`,
+                aguardando: `${placasAguardandoUnicas} placas únicas (histórico completo)`,
+                desovando: `${placasDesovandoUnicas} placas únicas (dia atual: ${dataAtual})`,
+                gerandoDiaria: `${placasGerandoDiariaUnicas} placas únicas (dia atual + AGUARDANDO/DESOVANDO + diária > 0)`,
+                descarregado: `${placasDescarregadoUnicas} placas únicas (dia atual: ${dataAtual})`,
+                movimentacaoTotal: `${placasMovimentacaoTotalUnicas} placas únicas movimentadas (dia atual)`,
+                valorDiaria: `${formatarValor(valorTotalDiariaUnico)} (${placasComFallback} placas usaram fallback de R$ ${valorPadraoNaoDedicada})`
+            });
+        }
+
         // ========== FUNÇÕES AUXILIARES ==========
 
         function converterDataParaISO(dataBr) {
@@ -2326,6 +2734,48 @@
                 return `${ano}-${mes}-${dia}`;
             } catch (error) {
                 return null;
+            }
+        }
+
+        function converterValorMonetario(valor) {
+            try {
+                if (!valor || valor === null || valor === undefined) return 0;
+                if (typeof valor === 'number') return isNaN(valor) || !isFinite(valor) ? 0 : valor;
+                
+                let valorStr = valor.toString().trim();
+                if (valorStr === '' || valorStr === '-') return 0;
+                
+                valorStr = valorStr.replace(/R\$\s*/g, '').replace(/[^\d.,\-]/g, '').trim();
+                if (valorStr === '') return 0;
+                
+                if (valorStr.includes(',')) {
+                    if (valorStr.includes('.') && valorStr.lastIndexOf('.') < valorStr.lastIndexOf(',')) {
+                        valorStr = valorStr.replace(/\./g, '').replace(',', '.');
+                    } else {
+                        valorStr = valorStr.replace(',', '.');
+                    }
+                } else if (valorStr.includes('.')) {
+                    const partes = valorStr.split('.');
+                    if (partes.length > 2 || (partes.length === 2 && partes[1].length === 3)) {
+                        valorStr = partes.join('');
+                    }
+                }
+                
+                const numero = parseFloat(valorStr);
+                return isNaN(numero) || !isFinite(numero) ? 0 : numero;
+            } catch (error) {
+                return 0;
+            }
+        }
+
+        function formatarValor(valor) {
+            try {
+                if (typeof valor !== 'number' || isNaN(valor) || !isFinite(valor)) {
+                    return 'R$ 0,00';
+                }
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+            } catch (error) {
+                return 'R$ 0,00';
             }
         }
 
@@ -2435,24 +2885,6 @@
             tbody.innerHTML = html;
         }
 
-        function atualizarEstatisticas() {
-            const total = dadosPatio.length;
-            const aguardando = dadosPatio.filter(d => d.status === 'AGUARDANDO').length;
-            const transito = dadosPatio.filter(d => d.status === 'TRÂNSITO').length;
-            const descarregado = dadosPatio.filter(d => d.status === 'DESCARREGADO').length;
-            const desovando = dadosPatio.filter(d => d.status === 'DESOVANDO').length;
-            const gerandoDiaria = dadosPatio.filter(d => 
-                (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && parseInt(d.diaria) > 0
-            ).length;
-            
-            document.getElementById('totalVeiculos').textContent = total;
-            document.getElementById('totalAguardando').textContent = aguardando;
-            document.getElementById('totalTransito').textContent = transito;
-            document.getElementById('totalDescarregado').textContent = descarregado;
-            document.getElementById('totalDesovando').textContent = desovando;
-            document.getElementById('totalGerandoDiaria').textContent = gerandoDiaria;
-        }
-
         function popularFiltros() {
             const origens = [...new Set(dadosPatio.map(d => d.origem))].filter(Boolean).sort();
             const selectOrigem = document.getElementById('filterOrigem');
@@ -2516,7 +2948,7 @@
         // ========== SISTEMA PRINCIPAL ==========
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🛡️ INICIANDO SISTEMA COM IMPORTAÇÃO BLINDADA...');
+            console.log('🎨 INICIANDO SISTEMA COM CARDS PROFISSIONAIS...');
             inicializarSupabase();
             setTimeout(() => inicializarSistema(), 1000);
         });
@@ -2577,7 +3009,7 @@
                 
                 iniciarSistema();
                 
-                mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n🛡️ Sistema blindado ativo!`);
+                mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n🎨 Cards profissionais ativados\n🔢 Contagem de placas únicas\n💰 Valor diária com fallback\n📅 Data: ${obterDataAtual()}`);
             } else {
                 alert('❌ Usuário ou senha incorretos!');
                 localStorage.removeItem('credenciaisLembradas');
@@ -2663,6 +3095,19 @@
                 return;
             }
             
+            const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
+            
+            if (usuarioLogado.nivel === 'master') {
+                document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - ACESSO MASTER';
+                document.getElementById('createUserSection').style.display = 'block';
+                pollingIndicatorPanel.style.display = 'block';
+            } else {
+                document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - ACESSO ADMINISTRADOR (Leitura)';
+                document.getElementById('createUserSection').style.display = 'none';
+                pollingIndicatorPanel.style.display = 'none';
+            }
+            
+            carregarListaUsuarios();
             document.getElementById('userPanel').style.display = 'flex';
         }
 
@@ -2670,9 +3115,23 @@
             document.getElementById('userPanel').style.display = 'none';
         }
 
+        function carregarListaUsuarios() {
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            const lista = document.getElementById('userList');
+            
+            lista.innerHTML = usuarios.map(user => `
+                <div class="user-item">
+                    <div>
+                        <strong>${user.nome}</strong><br>
+                        <small>Login: ${user.login}</small>
+                    </div>
+                    <span class="user-level level-${user.nivel}">${user.nivel}</span>
+                </div>
+            `).join('');
+        }
+
         async function criarUsuario(event) {
             event.preventDefault();
-            // Implementação básica para não quebrar
             mostrarAlerta('info', '⚠️ Funcionalidade temporariamente simplificada');
         }
 
@@ -2709,6 +3168,9 @@
             } else {
                 atualizarInterface();
             }
+            
+            const dataAtual = obterDataAtual();
+            mostrarAlerta('info', `📅 Filtros limpos!\n🔢 Cards contam PLACAS ÚNICAS\n💰 Valor diária com fallback\n📊 Data: ${dataAtual}`);
         }
 
         async function limparArquivo() {
@@ -2757,23 +3219,40 @@
         }
 
         function mostrarDetalhesPolling() {
+            const dataAtual = obterDataAtual();
+            const dadosDia = dadosPatio.filter(item => item.dataChegada === dataAtual || item.dataDescarga === dataAtual);
+            const valorPadrao = obterValorPadraoNaoDedicada();
+            
+            // Contagem de placas únicas para demonstração
+            const placasUnicasTransito = [...new Set(dadosPatio.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
+            const placasUnicasAguardando = [...new Set(dadosPatio.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
+            const placasUnicasDia = [...new Set(dadosDia.map(d => d.placa))].length;
+            
             const info = `
-🛡️ SISTEMA BLINDADO ATIVO
+🎨 SISTEMA COM CARDS PROFISSIONAIS
 
-📊 Estatísticas:
-• Registros: ${dadosPatio.length}
-• Dados importados: ${dadosImportadosRecentemente.length}
-• Sistema bloqueado: ${importBlocked ? 'SIM' : 'NÃO'}
-• Dados protegidos: ${forceShowImported ? 'SIM' : 'NÃO'}
+📈 HISTÓRICO COMPLETO (placas únicas):
+• Em Trânsito: ${placasUnicasTransito} placas únicas
+• Aguardando: ${placasUnicasAguardando} placas únicas
 
-🔒 PROTEÇÕES ATIVAS:
-• Bloqueio durante importação
-• Dados forçados na tabela
-• Múltiplos backups locais
-• Renderização garantida
-• Zero conflitos de polling
+📅 DIA ATUAL (${dataAtual}) - placas únicas:
+• Desovando: ${[...new Set(dadosDia.filter(d => d.status === 'DESOVANDO').map(d => d.placa))].length} placas
+• Gerando Diária: ${[...new Set(dadosDia.filter(d => (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && parseInt(d.diaria) > 0).map(d => d.placa))].length} placas
+• Descarregado: ${[...new Set(dadosDia.filter(d => d.status === 'DESCARREGADO').map(d => d.placa))].length} placas
+• Movimentação Total: ${placasUnicasDia} placas movimentadas
 
-✅ RESULTADO: DADOS NÃO SOMEM MAIS!
+💰 VALOR DIÁRIA FALLBACK:
+• Valor padrão não dedicada: R$ ${valorPadrao.toFixed(2)}
+• Aplicado para placas não dedicadas sem valor
+
+🎨 MELHORIAS VISUAIS:
+• Design profissional e corporativo
+• Ícones e cores elegantes
+• Animações suaves de hover
+• Tipografia melhorada
+• Descrições nos cards
+
+✅ SISTEMA COMPLETO E PROFISSIONAL!
             `;
             
             alert(info);
@@ -2811,7 +3290,7 @@
             }
         }, 2000); // Verificar a cada 2 segundos
 
-        console.log('🛡️ SISTEMA BLINDADO INICIALIZADO - DADOS NÃO PODEM MAIS SUMIR!');
+        console.log('🎨 SISTEMA INICIADO - CARDS PROFISSIONAIS + PLACAS ÚNICAS + VALOR FALLBACK!');
     </script>
 </body>
 </html>
