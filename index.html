@@ -889,21 +889,21 @@
             transform: none;
         }
 
-        /* ========== CARDS PROFISSIONAIS ========== */
+        /* ========== CARDS COMPACTOS E PROFISSIONAIS ========== */
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            padding: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 15px;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
 
         .stat-card {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 12px 15px;
+            border-radius: 8px;
             border: none;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -921,89 +921,72 @@
         }
 
         .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
 
         .stat-card.updated {
-            animation: cardProfessionalPulse 1.2s ease;
+            animation: cardCompactPulse 1s ease;
         }
 
-        @keyframes cardProfessionalPulse {
-            0% { transform: scale(1); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-            50% { transform: scale(1.05); box-shadow: 0 25px 50px rgba(59, 130, 246, 0.25); }
-            100% { transform: scale(1); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        @keyframes cardCompactPulse {
+            0% { transform: scale(1); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+            50% { transform: scale(1.03); box-shadow: 0 20px 35px rgba(59, 130, 246, 0.2); }
+            100% { transform: scale(1); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
         }
 
         /* CORES PROFISSIONAIS DOS CARDS */
         .stat-card.transito::before { background: linear-gradient(90deg, #8e44ad 0%, #9b59b6 100%); }
         .stat-card.aguardando::before { background: linear-gradient(90deg, #f39c12 0%, #ff8c00 100%); }
         .stat-card.desovando::before { background: linear-gradient(90deg, #17a2b8 0%, #20c997 100%); }
-        .stat-card.gerando-diaria::before { background: linear-gradient(90deg, #dc3545 0%, #e74c3c 100%); }
+        .stat-card.diarias-geradas::before { background: linear-gradient(90deg, #dc3545 0%, #e74c3c 100%); }
         .stat-card.descarregado::before { background: linear-gradient(90deg, #28a745 0%, #20c997 100%); }
         .stat-card.total::before { background: linear-gradient(90deg, #007bff 0%, #4dabf7 100%); }
 
-        .stat-card .card-icon {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
-            opacity: 0.15;
-        }
-
         .stat-card .label {
-            font-size: 14px;
+            font-size: 13px;
             color: #6c757d;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             position: relative;
             z-index: 2;
         }
 
         .stat-card .value {
-            font-size: 36px;
+            font-size: 28px;
             font-weight: 700;
             color: #2c3e50;
-            margin-bottom: 8px;
+            margin-bottom: 0;
             position: relative;
             z-index: 2;
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         .stat-card .sub-value {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #dc3545;
-            margin-top: 8px;
+            margin-top: 6px;
             position: relative;
             z-index: 2;
             background: rgba(220, 53, 69, 0.1);
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 3px 6px;
+            border-radius: 4px;
             display: inline-block;
-        }
-
-        .stat-card .card-description {
-            font-size: 11px;
-            color: #95a5a6;
-            margin-top: 8px;
-            font-style: italic;
-            position: relative;
-            z-index: 2;
         }
 
         /* HOVER EFFECTS PROFISSIONAIS */
         .stat-card.transito:hover::before { background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%); }
         .stat-card.aguardando:hover::before { background: linear-gradient(90deg, #ff8c00 0%, #f39c12 100%); }
         .stat-card.desovando:hover::before { background: linear-gradient(90deg, #20c997 0%, #17a2b8 100%); }
-        .stat-card.gerando-diaria:hover::before { background: linear-gradient(90deg, #e74c3c 0%, #dc3545 100%); }
+        .stat-card.diarias-geradas:hover::before { background: linear-gradient(90deg, #e74c3c 0%, #dc3545 100%); }
         .stat-card.descarregado:hover::before { background: linear-gradient(90deg, #20c997 0%, #28a745 100%); }
         .stat-card.total:hover::before { background: linear-gradient(90deg, #4dabf7 0%, #007bff 100%); }
 
         .total-diarias-info {
-            padding: 18px 25px;
+            padding: 15px 20px;
             background: linear-gradient(135deg, #6c5ce7 0%, #7c4dff 100%);
             color: white;
             text-align: center;
@@ -1413,17 +1396,21 @@
             }
             
             .stats {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 15px;
-                padding: 15px;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 12px;
+                padding: 12px;
             }
             
             .stat-card {
-                padding: 15px;
+                padding: 10px 12px;
             }
             
             .stat-card .value {
-                font-size: 28px;
+                font-size: 24px;
+            }
+            
+            .stat-card .label {
+                font-size: 12px;
             }
         }
 
@@ -1463,6 +1450,12 @@
             .controls-buttons button {
                 font-size: 10px;
                 padding: 5px 10px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 12px;
+                padding: 12px;
             }
         }
 
@@ -1590,7 +1583,7 @@
 
     <!-- BANNER DE SUCESSO DA IMPORTAÇÃO -->
     <div class="import-success-banner" id="importSuccessBanner">
-        🎉 DADOS IMPORTADOS COM SUCESSO - CARDS PROFISSIONAIS ATUALIZADOS!
+        🎉 DADOS IMPORTADOS COM SUCESSO - FILTRO DATA DESCARREGADO ATIVO!
     </div>
 
     <!-- VISUALIZADOR DE ÚLTIMA ATUALIZAÇÃO -->
@@ -1834,44 +1827,32 @@
             📊 <span id="totalDiariasTexto">Total de diárias geradas no período: 0</span>
         </div>
 
-        <!-- CARDS PROFISSIONAIS -->
+        <!-- CARDS COMPACTOS COM "DIÁRIAS GERADAS" -->
         <div class="stats">
             <div class="stat-card transito">
-                <div class="card-icon">🚚</div>
                 <div class="label">Em Trânsito</div>
                 <div class="value" id="totalTransito">0</div>
-                <div class="card-description">Placas únicas - histórico completo</div>
             </div>
             <div class="stat-card aguardando">
-                <div class="card-icon">⏳</div>
                 <div class="label">Aguardando</div>
                 <div class="value" id="totalAguardando">0</div>
-                <div class="card-description">Placas únicas - histórico completo</div>
             </div>
             <div class="stat-card desovando">
-                <div class="card-icon">🚛</div>
                 <div class="label">Desovando</div>
                 <div class="value" id="totalDesovando">0</div>
-                <div class="card-description">Placas únicas - dia atual</div>
             </div>
-            <div class="stat-card gerando-diaria">
-                <div class="card-icon">💰</div>
-                <div class="label">Gerando Diária</div>
+            <div class="stat-card diarias-geradas">
+                <div class="label">Diárias Geradas</div>
                 <div class="value" id="totalGerandoDiaria">0</div>
                 <div class="sub-value" id="valorTotalDiaria">R$ 0,00</div>
-                <div class="card-description">Placas únicas - dia atual</div>
             </div>
             <div class="stat-card descarregado">
-                <div class="card-icon">✅</div>
                 <div class="label">Descarregado</div>
                 <div class="value" id="totalDescarregado">0</div>
-                <div class="card-description">Placas únicas - dia atual</div>
             </div>
             <div class="stat-card total">
-                <div class="card-icon">📈</div>
                 <div class="label">Movimentação Total</div>
                 <div class="value" id="totalVeiculos">0</div>
-                <div class="card-description">Placas únicas - dia atual</div>
             </div>
         </div>
 
@@ -2051,7 +2032,7 @@
             
             if (placaNaoDedicadaComValor) {
                 const valor = converterValorMonetario(placaNaoDedicadaComValor.valorDiaria);
-                console.log(`💰 Valor padrão não dedicada encontrado: ${placaNaoDedicadaComValor.valorDiaria} (R$ ${valor}) da placa ${placaNaoDedicadaComValor.placa}`);
+                console.log(`💰 Valor padrão não dedicada encontrado: ${placaNaoDedicadaComValor.valorDiaria} (R$ ${valor.toFixed(2)}) da placa ${placaNaoDedicadaComValor.placa}`);
                 return valor;
             }
             
@@ -2559,7 +2540,7 @@
                 
                 // Banner de sucesso
                 const banner = document.getElementById('importSuccessBanner');
-                banner.textContent = `🎉 ${mensagem} - CARDS PROFISSIONAIS COM PLACAS ÚNICAS!`;
+                banner.textContent = `🎉 ${mensagem} - FILTRO DATA DESCARREGADO ATIVO!`;
                 banner.classList.add('show');
                 
                 setTimeout(() => banner.classList.remove('show'), 10000);
@@ -2569,7 +2550,7 @@
                 const timestampLocal = agora.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
                 document.getElementById('updateTimestamp').textContent = `📅 Importação: ${timestampLocal}`;
                 
-                mostrarAlerta('success', `🎉 IMPORTAÇÃO COM CARDS PROFISSIONAIS!\n\n📊 ${mensagem}\n✅ Dados FORÇADOS na tabela\n🎨 Cards com design profissional\n🔢 Contagem de placas únicas\n💰 Valor diária com fallback\n\n🌟 SISTEMA COMPLETO!`);
+                mostrarAlerta('success', `🎉 IMPORTAÇÃO COM FILTRO PERFEITO!\n\n📊 ${mensagem}\n✅ Filtro de data para DESCARREGADO ativo\n🧮 Soma correta de diárias por placa\n📅 AGUARDANDO/DESOVANDO: sempre contam\n📅 DESCARREGADO: só se data = hoje\n\n🌟 LÓGICA PERFEITA!`);
             } else {
                 mostrarAlerta('error', `❌ Falha na importação: ${mensagem}`);
             }
@@ -2595,15 +2576,15 @@
             }, 20000); // 20 SEGUNDOS DE PROTEÇÃO
         }
 
-        // ========== ESTATÍSTICAS PROFISSIONAIS - PLACAS ÚNICAS + VALOR FALLBACK ==========
+        // ========== ESTATÍSTICAS FINAIS - FILTRO DATA PARA DESCARREGADO ==========
         function atualizarEstatisticas(dadosFiltrados = null) {
-            console.log('📊 Atualizando estatísticas - PLACAS ÚNICAS + VALOR FALLBACK...');
+            console.log('📅 Atualizando estatísticas - FILTRO DATA PARA DESCARREGADO...');
             
             const dataAtual = obterDataAtual();
             console.log(`📅 Data atual: ${dataAtual}`);
             console.log(`📋 Total de registros no sistema: ${dadosPatio.length}`);
             
-            // 💰 OBTER VALOR PADRÃO PARA PLACAS NÃO DEDICADAS SEM VALOR
+            // 💰 OBTER VALOR PADRÃO PARA FALLBACK
             const valorPadraoNaoDedicada = obterValorPadraoNaoDedicada();
             
             // 🚚 EM TRÂNSITO - PLACAS ÚNICAS (HISTÓRICO COMPLETO)
@@ -2620,7 +2601,7 @@
                     .map(d => d.placa)
             )].length;
             
-            // 📅 DADOS DO DIA ATUAL
+            // 📅 DADOS DO DIA ATUAL (para outros cards exceto Diárias Geradas)
             const dadosDoDiaAtual = dadosPatio.filter(item => {
                 return item.dataChegada === dataAtual || item.dataDescarga === dataAtual;
             });
@@ -2631,16 +2612,6 @@
             const placasDesovandoUnicas = [...new Set(
                 dadosDoDiaAtual
                     .filter(d => d.status === 'DESOVANDO')
-                    .map(d => d.placa)
-            )].length;
-            
-            // 💰 GERANDO DIÁRIA - PLACAS ÚNICAS DO DIA ATUAL (status específico + diária > 0)
-            const placasGerandoDiariaUnicas = [...new Set(
-                dadosDoDiaAtual
-                    .filter(d => 
-                        (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && 
-                        parseInt(d.diaria) > 0
-                    )
                     .map(d => d.placa)
             )].length;
             
@@ -2656,68 +2627,121 @@
                 dadosDoDiaAtual.map(d => d.placa)
             )].length;
             
-            // 💵 CALCULAR VALOR TOTAL DAS DIÁRIAS (POR PLACA ÚNICA COM VALOR FALLBACK)
-            const placasComDiariaDiaAtual = [...new Set(
-                dadosDoDiaAtual
-                    .filter(d => 
-                        (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && 
-                        parseInt(d.diaria) > 0
-                    )
-                    .map(d => d.placa)
-            )];
-            
-            let valorTotalDiariaUnico = 0;
-            let placasComFallback = 0;
-            
-            placasComDiariaDiaAtual.forEach(placa => {
-                // Pegar o primeiro registro da placa que tem diária
-                const registroComDiaria = dadosDoDiaAtual.find(d => 
-                    d.placa === placa && 
-                    (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && 
-                    parseInt(d.diaria) > 0
-                );
+            // 💰 DIÁRIAS GERADAS - COM FILTRO ESPECÍFICO PARA DESCARREGADO
+            const placasComDiariaFiltradas = dadosPatio.filter(d => {
+                const diariaValida = parseInt(d.diaria) > 0;
                 
-                if (registroComDiaria) {
-                    let valorDiaria = converterValorMonetario(registroComDiaria.valorDiaria);
-                    
-                    // 💰 APLICAR FALLBACK PARA PLACAS NÃO DEDICADAS SEM VALOR
-                    if (registroComDiaria.dedicada === 'NÃO' && valorDiaria === 0 && valorPadraoNaoDedicada > 0) {
-                        valorDiaria = valorPadraoNaoDedicada;
-                        placasComFallback++;
-                        console.log(`💰 Aplicado valor fallback R$ ${valorPadraoNaoDedicada} para placa não dedicada ${placa}`);
-                    }
-                    
-                    valorTotalDiariaUnico += valorDiaria;
+                if (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') {
+                    // AGUARDANDO e DESOVANDO: sempre conta se tem diária
+                    return diariaValida;
+                } else if (d.status === 'DESCARREGADO') {
+                    // DESCARREGADO: só conta se dataDescarga = dia atual
+                    return diariaValida && d.dataDescarga === dataAtual;
+                }
+                
+                return false; // Outros status não contam
+            });
+            
+            console.log(`🔍 Placas filtradas para Diárias Geradas: ${placasComDiariaFiltradas.length} registros`);
+            
+            // 🧮 AGRUPAR POR PLACA E SOMAR DIÁRIAS (COM FILTRO)
+            const gruposPorPlacaFiltradas = {};
+            placasComDiariaFiltradas.forEach(item => {
+                const placa = item.placa;
+                
+                if (!gruposPorPlacaFiltradas[placa]) {
+                    gruposPorPlacaFiltradas[placa] = {
+                        placa: placa,
+                        registros: [],
+                        somaDiarias: 0,
+                        valorDiaria: null,
+                        valorTotal: null,
+                        status: item.status
+                    };
+                }
+                
+                gruposPorPlacaFiltradas[placa].registros.push(item);
+                gruposPorPlacaFiltradas[placa].somaDiarias += parseInt(item.diaria) || 0;
+                
+                // Pegar o primeiro valor diária e valor total encontrado
+                if (!gruposPorPlacaFiltradas[placa].valorDiaria && item.valorDiaria) {
+                    gruposPorPlacaFiltradas[placa].valorDiaria = item.valorDiaria;
+                }
+                if (!gruposPorPlacaFiltradas[placa].valorTotal && item.valorTotal) {
+                    gruposPorPlacaFiltradas[placa].valorTotal = item.valorTotal;
                 }
             });
             
-            console.log(`💰 Valor total diárias: R$ ${valorTotalDiariaUnico.toFixed(2)} (${placasComFallback} placas usaram fallback)`);
+            const placasDiariasGeradas = Object.keys(gruposPorPlacaFiltradas).length;
             
-            // 📊 ATUALIZAR TODOS OS CARDS COM PLACAS ÚNICAS
+            // 💵 CALCULAR VALOR TOTAL CORRETO COM FILTRO DE DATA
+            let valorTotalComFiltroData = 0;
+            let placasUsaramValorTotal = 0;
+            let placasUsaramCalculado = 0;
+            let placasUsaramFallback = 0;
+            
+            console.log(`🧮 Calculando valor para ${placasDiariasGeradas} placas únicas (COM FILTRO DATA DESCARREGADO)...`);
+            
+            Object.values(gruposPorPlacaFiltradas).forEach(grupo => {
+                const placa = grupo.placa;
+                const somaDiarias = grupo.somaDiarias;
+                const status = grupo.status;
+                const valorTotalExistente = converterValorMonetario(grupo.valorTotal);
+                const valorDiariaExistente = converterValorMonetario(grupo.valorDiaria);
+                
+                let valorParaUsar = 0;
+                
+                // 💰 LÓGICA DE PRIORIDADE COM SOMA CORRETA
+                if (valorTotalExistente > 0) {
+                    // PRIORIDADE 1: Usar valorTotal se existe
+                    valorParaUsar = valorTotalExistente;
+                    placasUsaramValorTotal++;
+                    console.log(`💰 Placa ${placa} (${status}): PRIORIDADE 1 - valorTotal R$ ${valorTotalExistente.toFixed(2)}`);
+                    
+                } else if (valorDiariaExistente > 0) {
+                    // PRIORIDADE 2: SOMA_DIARIAS × valorDiaria
+                    valorParaUsar = somaDiarias * valorDiariaExistente;
+                    placasUsaramCalculado++;
+                    console.log(`💰 Placa ${placa} (${status}): PRIORIDADE 2 - SOMA ${somaDiarias} × ${valorDiariaExistente.toFixed(2)} = R$ ${valorParaUsar.toFixed(2)}`);
+                    
+                } else if (valorPadraoNaoDedicada > 0) {
+                    // PRIORIDADE 3: SOMA_DIARIAS × valorPadraoNaoDedicada
+                    valorParaUsar = somaDiarias * valorPadraoNaoDedicada;
+                    placasUsaramFallback++;
+                    console.log(`💰 Placa ${placa} (${status}): PRIORIDADE 3 - SOMA ${somaDiarias} × ${valorPadraoNaoDedicada.toFixed(2)} = R$ ${valorParaUsar.toFixed(2)}`);
+                }
+                
+                valorTotalComFiltroData += valorParaUsar;
+            });
+            
+            console.log(`📅 VALOR TOTAL COM FILTRO DATA DESCARREGADO: R$ ${valorTotalComFiltroData.toFixed(2)}`);
+            console.log(`📊 ESTATÍSTICAS: ${placasUsaramValorTotal} valorTotal + ${placasUsaramCalculado} calculado + ${placasUsaramFallback} fallback`);
+            
+            // 📊 ATUALIZAR TODOS OS CARDS
             document.getElementById('totalTransito').textContent = placasTransitoUnicas;
             document.getElementById('totalAguardando').textContent = placasAguardandoUnicas;
             document.getElementById('totalDesovando').textContent = placasDesovandoUnicas;
-            document.getElementById('totalGerandoDiaria').textContent = placasGerandoDiariaUnicas;
+            document.getElementById('totalGerandoDiaria').textContent = placasDiariasGeradas; // ← COM FILTRO DATA DESCARREGADO
             document.getElementById('totalDescarregado').textContent = placasDescarregadoUnicas;
             document.getElementById('totalVeiculos').textContent = placasMovimentacaoTotalUnicas;
-            document.getElementById('valorTotalDiaria').textContent = formatarValor(valorTotalDiariaUnico);
+            document.getElementById('valorTotalDiaria').textContent = formatarValor(valorTotalComFiltroData); // ← VALOR COM FILTRO DATA
             
             // 🎨 APLICAR EFEITO DE ATUALIZAÇÃO NOS CARDS
             const cards = document.querySelectorAll('.stat-card');
             cards.forEach(card => {
                 card.classList.add('updated');
-                setTimeout(() => card.classList.remove('updated'), 1200);
+                setTimeout(() => card.classList.remove('updated'), 1000);
             });
             
             // 📋 LOG DETALHADO PARA VERIFICAÇÃO
-            console.log(`📊 CARDS PROFISSIONAIS ATUALIZADOS - PLACAS ÚNICAS:`, {
+            console.log(`📊 CARDS FINAIS - FILTRO DATA DESCARREGADO ATIVO:`, {
                 emTransito: `${placasTransitoUnicas} placas únicas (histórico completo)`,
                 aguardando: `${placasAguardandoUnicas} placas únicas (histórico completo)`,
                 desovando: `${placasDesovandoUnicas} placas únicas (dia atual: ${dataAtual})`,
-                gerandoDiaria: `${placasGerandoDiariaUnicas} placas únicas (dia atual + AGUARDANDO/DESOVANDO + diária > 0)`,
+                diariasGeradas: `${placasDiariasGeradas} placas únicas (AGUARDANDO/DESOVANDO sempre + DESCARREGADO só se dataDescarga=${dataAtual})`,
                 descarregado: `${placasDescarregadoUnicas} placas únicas (dia atual: ${dataAtual})`,
                 movimentacaoTotal: `${placasMovimentacaoTotalUnicas} placas únicas movimentadas (dia atual)`,
-                valorDiaria: `${formatarValor(valorTotalDiariaUnico)} (${placasComFallback} placas usaram fallback de R$ ${valorPadraoNaoDedicada})`
+                valorTotal: `${formatarValor(valorTotalComFiltroData)} (COM FILTRO DATA: ${placasUsaramValorTotal} valorTotal + ${placasUsaramCalculado} calculado + ${placasUsaramFallback} fallback)`
             });
         }
 
@@ -2948,7 +2972,7 @@
         // ========== SISTEMA PRINCIPAL ==========
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎨 INICIANDO SISTEMA COM CARDS PROFISSIONAIS...');
+            console.log('📅✅ INICIANDO SISTEMA COM FILTRO DATA DESCARREGADO...');
             inicializarSupabase();
             setTimeout(() => inicializarSistema(), 1000);
         });
@@ -3009,7 +3033,7 @@
                 
                 iniciarSistema();
                 
-                mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n🎨 Cards profissionais ativados\n🔢 Contagem de placas únicas\n💰 Valor diária com fallback\n📅 Data: ${obterDataAtual()}`);
+                mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n📅 FILTRO PERFEITO ATIVO:\n• AGUARDANDO: sempre conta\n• DESOVANDO: sempre conta\n• DESCARREGADO: só se dataDescarga = ${obterDataAtual()}\n🧮 Soma correta de diárias por placa\n💰 Valor real das múltiplas notas`);
             } else {
                 alert('❌ Usuário ou senha incorretos!');
                 localStorage.removeItem('credenciaisLembradas');
@@ -3170,7 +3194,7 @@
             }
             
             const dataAtual = obterDataAtual();
-            mostrarAlerta('info', `📅 Filtros limpos!\n🔢 Cards contam PLACAS ÚNICAS\n💰 Valor diária com fallback\n📊 Data: ${dataAtual}`);
+            mostrarAlerta('info', `📅 Filtros limpos!\n✅ FILTRO PERFEITO ATIVO:\n• AGUARDANDO/DESOVANDO: sempre\n• DESCARREGADO: só se data = ${dataAtual}\n🧮 Soma correta por placa`);
         }
 
         async function limparArquivo() {
@@ -3223,36 +3247,54 @@
             const dadosDia = dadosPatio.filter(item => item.dataChegada === dataAtual || item.dataDescarga === dataAtual);
             const valorPadrao = obterValorPadraoNaoDedicada();
             
-            // Contagem de placas únicas para demonstração
+            // Contagem com filtro correto
             const placasUnicasTransito = [...new Set(dadosPatio.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
             const placasUnicasAguardando = [...new Set(dadosPatio.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
             const placasUnicasDia = [...new Set(dadosDia.map(d => d.placa))].length;
             
+            // Diárias geradas com filtro correto
+            const placasComFiltroCorreto = dadosPatio.filter(d => {
+                const diariaValida = parseInt(d.diaria) > 0;
+                if (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') {
+                    return diariaValida;
+                } else if (d.status === 'DESCARREGADO') {
+                    return diariaValida && d.dataDescarga === dataAtual;
+                }
+                return false;
+            });
+            const diariasGeradasFiltro = [...new Set(placasComFiltroCorreto.map(d => d.placa))].length;
+            
             const info = `
-🎨 SISTEMA COM CARDS PROFISSIONAIS
+📅✅ SISTEMA FINAL - FILTRO DATA DESCARREGADO PERFEITO
 
 📈 HISTÓRICO COMPLETO (placas únicas):
 • Em Trânsito: ${placasUnicasTransito} placas únicas
 • Aguardando: ${placasUnicasAguardando} placas únicas
 
-📅 DIA ATUAL (${dataAtual}) - placas únicas:
-• Desovando: ${[...new Set(dadosDia.filter(d => d.status === 'DESOVANDO').map(d => d.placa))].length} placas
-• Gerando Diária: ${[...new Set(dadosDia.filter(d => (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') && parseInt(d.diaria) > 0).map(d => d.placa))].length} placas
-• Descarregado: ${[...new Set(dadosDia.filter(d => d.status === 'DESCARREGADO').map(d => d.placa))].length} placas
-• Movimentação Total: ${placasUnicasDia} placas movimentadas
+📅 DIA ATUAL (${dataAtual}):
+• Desovando: ${[...new Set(dadosDia.filter(d => d.status === 'DESOVANDO').map(d => d.placa))].length} placas (dia atual)
+• Descarregado: ${[...new Set(dadosDia.filter(d => d.status === 'DESCARREGADO').map(d => d.placa))].length} placas (dia atual)
+• Movimentação Total: ${placasUnicasDia} placas (dia atual)
 
-💰 VALOR DIÁRIA FALLBACK:
-• Valor padrão não dedicada: R$ ${valorPadrao.toFixed(2)}
-• Aplicado para placas não dedicadas sem valor
+💰 DIÁRIAS GERADAS - FILTRO CORRETO:
+• Total: ${diariasGeradasFiltro} placas únicas
+• AGUARDANDO: sempre conta (se diária > 0)
+• DESOVANDO: sempre conta (se diária > 0)
+• DESCARREGADO: SÓ se dataDescarga = ${dataAtual}
 
-🎨 MELHORIAS VISUAIS:
-• Design profissional e corporativo
-• Ícones e cores elegantes
-• Animações suaves de hover
-• Tipografia melhorada
-• Descrições nos cards
+📋 EXEMPLO FUNCIONANDO:
+• Placa chegou 12/01, descarregada 16/01: CONTA ✅
+• Placa chegou 12/01, descarregada 15/01: NÃO CONTA ❌
+• Placa AGUARDANDO: sempre conta ✅
+• Placa DESOVANDO: sempre conta ✅
 
-✅ SISTEMA COMPLETO E PROFISSIONAL!
+🧮 SOMA CORRETA POR PLACA MANTIDA:
+• Agrupa múltiplas notas da mesma placa
+• Soma todas as diárias da placa
+• Multiplica: SOMA_DIARIAS × valorDiaria
+• Valor real das múltiplas notas fiscais
+
+✅ SISTEMA PERFEITO E FINALIZADO!
             `;
             
             alert(info);
@@ -3290,7 +3332,7 @@
             }
         }, 2000); // Verificar a cada 2 segundos
 
-        console.log('🎨 SISTEMA INICIADO - CARDS PROFISSIONAIS + PLACAS ÚNICAS + VALOR FALLBACK!');
+        console.log('📅✅ SISTEMA INICIADO - FILTRO DATA DESCARREGADO PERFEITO!');
     </script>
 </body>
 </html>
