@@ -181,7 +181,7 @@
             transition: all 0.3s ease;
         }
 
-        /* NOTIFICAÇÃO DE ATUALIZAÇÕES EM TEMPO REAL */
+        /* NOTIFICAÇÃO DE TEMPO REAL */
         .realtime-notification {
             position: fixed;
             top: 20px;
@@ -2759,64 +2759,77 @@
             }, 3000); // 3 segundos para permitir sincronização
         }
 
-        // ========== ESTATÍSTICAS (MANTIDA IGUAL) ==========
+        // ========== ESTATÍSTICAS CORRIGIDAS PARA DIA ATUAL ==========
         function atualizarEstatisticas(dadosFiltrados = null) {
-            console.log('📅 Atualizando estatísticas - FILTRO DATA PARA DESCARREGADO...');
+            console.log('📅 ATUALIZANDO ESTATÍSTICAS - INFORMAÇÕES DO DIA ATUAL CORRIGIDAS...');
             
             const dataAtual = obterDataAtual();
-            console.log(`📅 Data atual: ${dataAtual}`);
+            console.log(`📅 Data atual para filtros: ${dataAtual}`);
             console.log(`📋 Total de registros no sistema: ${dadosPatio.length}`);
             
             const valorPadraoNaoDedicada = obterValorPadraoNaoDedicada();
             
+            // 🚚 EM TRÂNSITO - Status ativo (independente de data)
             const placasTransitoUnicas = [...new Set(
                 dadosPatio
                     .filter(d => d.status === 'TRÂNSITO')
                     .map(d => d.placa)
             )].length;
             
+            // ⏳ AGUARDANDO - Status ativo (independente de data)  
             const placasAguardandoUnicas = [...new Set(
                 dadosPatio
                     .filter(d => d.status === 'AGUARDANDO')
                     .map(d => d.placa)
             )].length;
             
-            const dadosDoDiaAtual = dadosPatio.filter(item => {
-                return item.dataChegada === dataAtual || item.dataDescarga === dataAtual;
-            });
-            
-            console.log(`📊 Registros do dia atual: ${dadosDoDiaAtual.length}`);
-            
+            // 🔄 DESOVANDO - Status ativo (independente de data)
             const placasDesovandoUnicas = [...new Set(
-                dadosDoDiaAtual
+                dadosPatio
                     .filter(d => d.status === 'DESOVANDO')
                     .map(d => d.placa)
             )].length;
             
+            // ✅ DESCARREGADO - APENAS placas descarregadas HOJE
             const placasDescarregadoUnicas = [...new Set(
-                dadosDoDiaAtual
-                    .filter(d => d.status === 'DESCARREGADO')
+                dadosPatio
+                    .filter(d => d.status === 'DESCARREGADO' && d.dataDescarga === dataAtual)
                     .map(d => d.placa)
             )].length;
             
+            // 📈 MOVIMENTAÇÃO TOTAL - Placas que chegaram HOJE ou foram descarregadas HOJE
             const placasMovimentacaoTotalUnicas = [...new Set(
-                dadosDoDiaAtual.map(d => d.placa)
+                dadosPatio
+                    .filter(d => d.dataChegada === dataAtual || d.dataDescarga === dataAtual)
+                    .map(d => d.placa)
             )].length;
             
+            console.log(`📊 CARDS DO DIA ATUAL:`, {
+                transitoAtivo: `${placasTransitoUnicas} placas (status ativo)`,
+                aguardandoAtivo: `${placasAguardandoUnicas} placas (status ativo)`,
+                desovandoAtivo: `${placasDesovandoUnicas} placas (status ativo)`,
+                descarregadoHoje: `${placasDescarregadoUnicas} placas (dataDescarga = ${dataAtual})`,
+                movimentacaoHoje: `${placasMovimentacaoTotalUnicas} placas (chegaram ou descarregaram hoje)`
+            });
+            
+            // 💰 DIÁRIAS GERADAS - Lógica específica para diárias do contexto atual
             const placasComDiariaFiltradas = dadosPatio.filter(d => {
                 const diariaValida = parseInt(d.diaria) > 0;
                 
                 if (d.status === 'AGUARDANDO' || d.status === 'DESOVANDO') {
+                    // Status ativos sempre contam se têm diária
                     return diariaValida;
                 } else if (d.status === 'DESCARREGADO') {
+                    // Descarregado só conta se foi descarregado HOJE
                     return diariaValida && d.dataDescarga === dataAtual;
                 }
                 
-                return false;
+                return false; // Outros status não contam
             });
             
-            console.log(`🔍 Placas filtradas para Diárias Geradas: ${placasComDiariaFiltradas.length} registros`);
+            console.log(`🔍 Placas para Diárias Geradas: ${placasComDiariaFiltradas.length} registros`);
             
+            // 🧮 AGRUPAR POR PLACA E SOMAR DIÁRIAS
             const gruposPorPlacaFiltradas = {};
             placasComDiariaFiltradas.forEach(item => {
                 const placa = item.placa;
@@ -2845,12 +2858,13 @@
             
             const placasDiariasGeradas = Object.keys(gruposPorPlacaFiltradas).length;
             
-            let valorTotalComFiltroData = 0;
+            // 💵 CALCULAR VALOR TOTAL DAS DIÁRIAS
+            let valorTotalDiarias = 0;
             let placasUsaramValorTotal = 0;
             let placasUsaramCalculado = 0;
             let placasUsaramFallback = 0;
             
-            console.log(`🧮 Calculando valor para ${placasDiariasGeradas} placas únicas (COM FILTRO DATA DESCARREGADO)...`);
+            console.log(`🧮 Calculando valor para ${placasDiariasGeradas} placas com diárias...`);
             
             Object.values(gruposPorPlacaFiltradas).forEach(grupo => {
                 const placa = grupo.placa;
@@ -2864,47 +2878,50 @@
                 if (valorTotalExistente > 0) {
                     valorParaUsar = valorTotalExistente;
                     placasUsaramValorTotal++;
-                    console.log(`💰 Placa ${placa} (${status}): PRIORIDADE 1 - valorTotal R$ ${valorTotalExistente.toFixed(2)}`);
+                    console.log(`💰 Placa ${placa} (${status}): valorTotal R$ ${valorTotalExistente.toFixed(2)}`);
                     
                 } else if (valorDiariaExistente > 0) {
                     valorParaUsar = somaDiarias * valorDiariaExistente;
                     placasUsaramCalculado++;
-                    console.log(`💰 Placa ${placa} (${status}): PRIORIDADE 2 - SOMA ${somaDiarias} × ${valorDiariaExistente.toFixed(2)} = R$ ${valorParaUsar.toFixed(2)}`);
+                    console.log(`💰 Placa ${placa} (${status}): ${somaDiarias} × ${valorDiariaExistente.toFixed(2)} = R$ ${valorParaUsar.toFixed(2)}`);
                     
                 } else if (valorPadraoNaoDedicada > 0) {
                     valorParaUsar = somaDiarias * valorPadraoNaoDedicada;
                     placasUsaramFallback++;
-                    console.log(`💰 Placa ${placa} (${status}): PRIORIDADE 3 - SOMA ${somaDiarias} × ${valorPadraoNaoDedicada.toFixed(2)} = R$ ${valorParaUsar.toFixed(2)}`);
+                    console.log(`💰 Placa ${placa} (${status}): ${somaDiarias} × ${valorPadraoNaoDedicada.toFixed(2)} (fallback) = R$ ${valorParaUsar.toFixed(2)}`);
                 }
                 
-                valorTotalComFiltroData += valorParaUsar;
+                valorTotalDiarias += valorParaUsar;
             });
             
-            console.log(`📅 VALOR TOTAL COM FILTRO DATA DESCARREGADO: R$ ${valorTotalComFiltroData.toFixed(2)}`);
-            console.log(`📊 ESTATÍSTICAS: ${placasUsaramValorTotal} valorTotal + ${placasUsaramCalculado} calculado + ${placasUsaramFallback} fallback`);
+            console.log(`💰 VALOR TOTAL DIÁRIAS: R$ ${valorTotalDiarias.toFixed(2)}`);
+            console.log(`📊 BREAKDOWN: ${placasUsaramValorTotal} valorTotal + ${placasUsaramCalculado} calculado + ${placasUsaramFallback} fallback`);
             
+            // 📊 ATUALIZAR TODOS OS CARDS COM INFORMAÇÕES CORRETAS
             document.getElementById('totalTransito').textContent = placasTransitoUnicas;
             document.getElementById('totalAguardando').textContent = placasAguardandoUnicas;
             document.getElementById('totalDesovando').textContent = placasDesovandoUnicas;
             document.getElementById('totalGerandoDiaria').textContent = placasDiariasGeradas;
             document.getElementById('totalDescarregado').textContent = placasDescarregadoUnicas;
             document.getElementById('totalVeiculos').textContent = placasMovimentacaoTotalUnicas;
-            document.getElementById('valorTotalDiaria').textContent = formatarValor(valorTotalComFiltroData);
+            document.getElementById('valorTotalDiaria').textContent = formatarValor(valorTotalDiarias);
             
+            // 🎨 APLICAR EFEITO DE ATUALIZAÇÃO NOS CARDS
             const cards = document.querySelectorAll('.stat-card');
             cards.forEach(card => {
                 card.classList.add('updated');
                 setTimeout(() => card.classList.remove('updated'), 1000);
             });
             
-            console.log(`📊 CARDS FINAIS - TEMPO REAL ATIVO:`, {
-                emTransito: `${placasTransitoUnicas} placas únicas (histórico completo)`,
-                aguardando: `${placasAguardandoUnicas} placas únicas (histórico completo)`,
-                desovando: `${placasDesovandoUnicas} placas únicas (dia atual: ${dataAtual})`,
-                diariasGeradas: `${placasDiariasGeradas} placas únicas (AGUARDANDO/DESOVANDO sempre + DESCARREGADO só se dataDescarga=${dataAtual})`,
-                descarregado: `${placasDescarregadoUnicas} placas únicas (dia atual: ${dataAtual})`,
-                movimentacaoTotal: `${placasMovimentacaoTotalUnicas} placas únicas movimentadas (dia atual)`,
-                valorTotal: `${formatarValor(valorTotalComFiltroData)} (COM FILTRO DATA: ${placasUsaramValorTotal} valorTotal + ${placasUsaramCalculado} calculado + ${placasUsaramFallback} fallback)`
+            // 📋 LOG FINAL PARA VERIFICAÇÃO
+            console.log(`✅ CARDS ATUALIZADOS COM INFORMAÇÕES DO DIA ATUAL (${dataAtual}):`, {
+                emTransito: `${placasTransitoUnicas} placas (status ativo)`,
+                aguardando: `${placasAguardandoUnicas} placas (status ativo)`,
+                desovando: `${placasDesovandoUnicas} placas (status ativo)`,
+                diariasGeradas: `${placasDiariasGeradas} placas com diárias (AGUARDANDO/DESOVANDO ativas + DESCARREGADO hoje)`,
+                descarregado: `${placasDescarregadoUnicas} placas descarregadas HOJE`,
+                movimentacaoTotal: `${placasMovimentacaoTotalUnicas} placas movimentadas HOJE`,
+                valorDiarias: `${formatarValor(valorTotalDiarias)} (${placasUsaramValorTotal} valorTotal + ${placasUsaramCalculado} calculado + ${placasUsaramFallback} fallback)`
             });
         }
 
@@ -3202,7 +3219,7 @@
         // ========== SISTEMA PRINCIPAL ==========
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀⚡ INICIANDO SISTEMA COM SINCRONIZAÇÃO EM TEMPO REAL...');
+            console.log('🚀⚡📅 INICIANDO SISTEMA COM CARDS DO DIA ATUAL CORRIGIDOS...');
             inicializarSupabase();
             setTimeout(() => inicializarSistema(), 1000);
         });
@@ -3275,7 +3292,7 @@
                     'user': 'USUÁRIO (apenas visualização)'
                 };
                 
-                mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n👤 Nível: ${nivelTexto[usuarioEncontrado.nivel]}\n⚡ Sincronização em tempo real ativa\n📋 Agrupamento por placa visível\n🔍 Clique nas linhas para expandir\n\n🌐 Seus dados aparecerão para TODOS instantaneamente!`);
+                mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n👤 Nível: ${nivelTexto[usuarioEncontrado.nivel]}\n⚡ Sincronização em tempo real ativa\n📅 Cards com informações DO DIA ATUAL\n📋 Agrupamento por placa visível\n🔍 Clique nas linhas para expandir\n\n📊 Placas descarregadas antes de hoje NÃO aparecerão nos cards!`);
             } else {
                 console.log('❌ FALHA NA AUTENTICAÇÃO');
                 alert('❌ Usuário ou senha incorretos!\n\nVerifique suas credenciais e tente novamente.\n\n💡 Se foi criado recentemente, aguarde sincronização automática ou force a sincronização no painel.');
@@ -3379,11 +3396,11 @@
             const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
             
             if (usuarioLogado.nivel === 'master') {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - TEMPO REAL MASTER';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - CARDS DIA ATUAL';
                 document.getElementById('createUserSection').style.display = 'block';
                 pollingIndicatorPanel.style.display = 'block';
             } else if (usuarioLogado.nivel === 'administrador') {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - TEMPO REAL ADMIN (Leitura)';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel de Governança - CARDS DIA ATUAL (Leitura)';
                 document.getElementById('createUserSection').style.display = 'none';
                 pollingIndicatorPanel.style.display = 'none';
             }
@@ -3479,7 +3496,7 @@
             atualizarStatusSincronizacao('success');
 
             if (salvouSupabase) {
-                mostrarAlerta('success', `✅ Usuário ${nome} criado com sucesso!\n\n👤 Nível: ${nivel}\n🚀 Sincronizado em tempo real\n🌐 Disponível INSTANTANEAMENTE em todos os computadores!\n⚡ Login funcionando imediatamente\n\n🔐 Login: ${login}\n🔒 Senha: ${senha}`);
+                mostrarAlerta('success', `✅ Usuário ${nome} criado com sucesso!\n\n👤 Nível: ${nivel}\n🚀 Sincronizado em tempo real\n🌐 Disponível INSTANTANEAMENTE em todos os computadores!\n⚡ Login funcionando imediatamente\n📅 Verá cards com dados do dia atual\n\n🔐 Login: ${login}\n🔒 Senha: ${senha}`);
             } else {
                 mostrarAlerta('success', `✅ Usuário ${nome} criado localmente!\n\n👤 Nível: ${nivel}\n📱 Salvo no localStorage\n⚠️ Supabase indisponível para tempo real\n\n🔐 Login: ${login}\n🔒 Senha: ${senha}`);
             }
@@ -3591,7 +3608,7 @@
             
             atualizarInterface();
             
-            mostrarAlerta('info', `📅 Filtros limpos!\n✅ TODOS os status visíveis\n📋 Agrupamento por placa ativo\n⚡ Tempo real funcionando\n🔍 Clique para expandir detalhes`);
+            mostrarAlerta('info', `📅 Filtros limpos!\n✅ TODOS os status visíveis\n📋 Agrupamento por placa ativo\n⚡ Tempo real funcionando\n📊 Cards mostram dados DO DIA ATUAL\n🔍 Clique para expandir detalhes`);
         }
 
         async function limparArquivo() {
@@ -3601,7 +3618,6 @@
             }
             
             if (confirm('Limpar todos os dados? Isso afetará TODOS os usuários em tempo real.')) {
-                // RESET COMPLETO
                 timestampImportacao = 0;
                 
                 dadosPatio = [];
@@ -3610,7 +3626,6 @@
                 
                 console.log('🗑️ Dados limpos - polling continuará ativo');
                 
-                // LIMPAR NO SUPABASE TAMBÉM
                 if (supabaseDisponivel) {
                     try {
                         await supabase.from('dados_patio').delete().gte('id', 0);
@@ -3622,7 +3637,7 @@
                 }
                 
                 atualizarInterface();
-                mostrarAlerta('info', '🗑️ Dados limpos! Tempo real continua ativo para novas importações.');
+                mostrarAlerta('info', '🗑️ Dados limpos! Tempo real continua ativo. Cards zerados para o dia atual.');
             }
         }
 
@@ -3651,20 +3666,24 @@
         function mostrarDetalhesPolling() {
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
             const ultimaSync = ultimaSincronizacaoUsuarios ? new Date(ultimaSincronizacaoUsuarios).toLocaleTimeString('pt-BR') : 'Nunca';
-            const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESOVANDO', 'DESCARREGADO'];
-            const dadosPorStatus = statusPermitidos.map(status => {
-                const count = [...new Set(dadosPatio.filter(d => d.status === status).map(d => d.placa))].length;
-                return `${status}: ${count}`;
-            }).join(', ');
+            const dataAtual = obterDataAtual();
             
             const info = `
-🚀⚡ SISTEMA EM TEMPO REAL ATIVO
+🚀⚡📅 SISTEMA COM CARDS DO DIA ATUAL CORRIGIDOS
 
-✅ STATUS VISÍVEIS NA TABELA:
-• TRÂNSITO: ${[...new Set(dadosPatio.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length} placas
-• AGUARDANDO: ${[...new Set(dadosPatio.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length} placas
-• DESOVANDO: ${[...new Set(dadosPatio.filter(d => d.status === 'DESOVANDO').map(d => d.placa))].length} placas
-• DESCARREGADO: ${[...new Set(dadosPatio.filter(d => d.status === 'DESCARREGADO').map(d => d.placa))].length} placas
+✅ CARDS CORRIGIDOS:
+• Em Trânsito: ${document.getElementById('totalTransito').textContent} placas (status ativo)
+• Aguardando: ${document.getElementById('totalAguardando').textContent} placas (status ativo)  
+• Desovando: ${document.getElementById('totalDesovando').textContent} placas (status ativo)
+• Descarregado: ${document.getElementById('totalDescarregado').textContent} placas (descarregadas HOJE: ${dataAtual})
+• Diárias Geradas: ${document.getElementById('totalGerandoDiaria').textContent} placas (AGUARDANDO/DESOVANDO ativas + DESCARREGADO hoje)
+• Movimentação Total: ${document.getElementById('totalVeiculos').textContent} placas (chegaram ou descarregaram HOJE)
+
+📅 LÓGICA DO DIA ATUAL:
+• Status ativos (TRÂNSITO, AGUARDANDO, DESOVANDO): sempre mostram
+• DESCARREGADO: só conta se dataDescarga = ${dataAtual}
+• MOVIMENTAÇÃO TOTAL: dataChegada = ${dataAtual} OU dataDescarga = ${dataAtual}
+• DIÁRIAS: AGUARDANDO/DESOVANDO ativas + DESCARREGADO só se hoje
 
 ⚡ SINCRONIZAÇÃO EM TEMPO REAL:
 • Polling ativo: ${pollingInterval ? 'SIM' : 'NÃO'}
@@ -3672,30 +3691,18 @@
 • Supabase: ${supabaseDisponivel ? 'CONECTADO' : 'OFFLINE'}
 • Bloqueio: ${isImporting ? 'IMPORTANDO' : 'LIBERADO'}
 
-📊 AGRUPAMENTO POR PLACA:
-• Placas agrupadas por status
-• Múltiplas notas fiscais organizadas
-• Visual limpo sem repetições
-• Clique para expandir detalhes
-
 🌐 USUÁRIOS CONECTADOS:
 • Última sync: ${ultimaSync}
 • Total usuários: ${usuarios.length}
 • Tempo real para todos
 
-🚀 IMPORTAÇÃO INTELIGENTE:
-• Importação bloqueia temporariamente
-• Dados salvos no Supabase
-• Polling reativado automaticamente
-• TODOS veem as mudanças instantaneamente
+📊 CORREÇÃO APLICADA:
+• Placas descarregadas antes do dia ${dataAtual} NÃO contam nos cards
+• Apenas informações relevantes para o dia atual
+• Cards refletem situação real do pátio hoje
+• Estatísticas precisas por contexto de data
 
-⚡ FUNCIONAMENTO PERFEITO:
-• Qualquer usuário importa → TODOS veem
-• Sincronização instantânea
-• Sem conflitos de dados
-• Interface sempre atualizada
-
-✅ TEMPO REAL 100% FUNCIONAL!
+✅ CARDS DO DIA ATUAL 100% CORRETOS!
             `;
             
             alert(info);
@@ -3739,7 +3746,7 @@
                 if (filterDataDescargaDe) filterDataDescargaDe.addEventListener('change', aplicarFiltros);
                 if (filterDataDescargaAte) filterDataDescargaAte.addEventListener('change', aplicarFiltros);
                 
-                console.log('✅ Event listeners de filtros configurados para tempo real');
+                console.log('✅ Event listeners configurados para tempo real + cards dia atual');
             }, 2000);
         });
 
@@ -3752,7 +3759,7 @@
             }
         });
 
-        console.log('🚀⚡🌐 SISTEMA TEMPO REAL INICIADO - SINCRONIZAÇÃO GLOBAL ATIVA!');
+        console.log('🚀⚡📅✅ SISTEMA INICIADO - TEMPO REAL + CARDS DIA ATUAL CORRIGIDOS!');
     </script>
 </body>
 </html>
