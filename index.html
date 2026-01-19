@@ -621,27 +621,6 @@
             background: #e67e22;
         }
 
-        /* SEÇÃO APENAS LEITURA PARA ADMINISTRADORES */
-        .readonly-section {
-            opacity: 0.7;
-            pointer-events: none;
-            position: relative;
-        }
-
-        .readonly-section::before {
-            content: "🔒 Apenas visualização";
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: #f39c12;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
-            z-index: 1;
-        }
-
         /* STATUS SUPABASE INTEGRADO */
         .supabase-status {
             margin-top: 20px;
@@ -1237,49 +1216,6 @@
             background: white;
         }
 
-        /* Altura da tabela adaptativa conforme tela */
-        @media (min-height: 900px) {
-            .table-wrapper {
-                max-height: calc(100vh - 420px);
-            }
-        }
-
-        @media (max-height: 900px) and (min-height: 700px) {
-            .table-wrapper {
-                max-height: calc(100vh - 380px);
-            }
-        }
-
-        @media (max-height: 700px) {
-            .table-wrapper {
-                max-height: calc(100vh - 320px);
-            }
-        }
-
-        /* Scroll customizado para diferentes tamanhos */
-        .table-wrapper::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-track {
-            background: #f8f9fa;
-            border-radius: 4px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: #2c3e50;
-            border-radius: 4px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: #1a252f;
-        }
-
-        .table-wrapper::-webkit-scrollbar-corner {
-            background: #f8f9fa;
-        }
-
         .button-group {
             display: flex;
             gap: 8px;
@@ -1522,47 +1458,7 @@
             display: none; /* MUDANÇA: oculto por padrão até login */
         }
 
-        /* MEDIA QUERIES (mantidas por brevidade) */
-        @media (min-width: 1400px) {
-            .controls-content {
-                flex-wrap: nowrap;
-                justify-content: center;
-            }
-            
-            .control-group {
-                min-width: 130px;
-            }
-            
-            .control-group.date-range {
-                min-width: 170px;
-            }
-        }
-
-        @media (max-width: 1400px) and (min-width: 1000px) {
-            .controls-content {
-                display: grid;
-                grid-template-columns: repeat(4, minmax(120px, 1fr));
-                gap: 8px;
-                align-items: end;
-                justify-content: center;
-                justify-items: center;
-            }
-        }
-
-        @media (max-width: 1200px) {
-            .user-info {
-                width: 140px;
-                font-size: 9px;
-                padding: 6px;
-                right: 15px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-                margin-right: 160px;
-            }
-        }
-
+        /* MEDIA QUERIES SIMPLIFICADAS */
         @media (max-width: 900px) {
             .header {
                 padding: 20px 15px;
@@ -1580,195 +1476,14 @@
                 font-size: 20px;
                 margin-right: 0;
             }
-            
-            .header p {
-                font-size: 12px;
-            }
         }
 
         @media (max-width: 600px) {
-            .header {
-                padding: 15px 10px;
-            }
-            
-            .user-info {
-                width: 90%;
-                max-width: 200px;
-                font-size: 9px;
-            }
-            
-            .header h1 {
-                font-size: 16px;
-            }
-            
-            .header p {
-                font-size: 10px;
-            }
-            
             .stats {
                 grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
                 gap: 12px;
                 padding: 12px;
             }
-            
-            .stat-card {
-                padding: 10px 12px;
-            }
-            
-            .stat-card .value {
-                font-size: 24px;
-            }
-            
-            .stat-card .label {
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 1000px) and (min-width: 600px) {
-            .controls {
-                padding: 10px 12px;
-            }
-            
-            .controls-content {
-                display: grid;
-                grid-template-columns: repeat(3, minmax(110px, 1fr));
-                gap: 6px;
-                align-items: start;
-                justify-content: center;
-                justify-items: center;
-            }
-            
-            .control-group {
-                min-width: 110px;
-            }
-            
-            .control-group.date-range {
-                grid-column: span 2;
-                min-width: 100%;
-            }
-            
-            .date-range-inputs {
-                grid-template-columns: 1fr 1fr;
-                gap: 4px;
-            }
-            
-            .controls-buttons {
-                justify-content: center;
-            }
-            
-            .controls-buttons button {
-                font-size: 10px;
-                padding: 5px 10px;
-            }
-            
-            .stats {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 12px;
-                padding: 12px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            
-            .controls {
-                padding: 8px 10px;
-            }
-            
-            .controls-content {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .control-group {
-                min-width: 90%;
-                flex: none;
-            }
-            
-            .control-group.date-range {
-                min-width: 90%;
-            }
-            
-            .date-range-inputs {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 6px;
-            }
-            
-            .controls-buttons {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 6px;
-                margin-top: 8px;
-                justify-content: center;
-                width: 90%;
-            }
-            
-            .controls-buttons .btn-clear-file {
-                grid-column: 1 / -1;
-            }
-            
-            .controls-buttons button {
-                font-size: 11px;
-                padding: 8px;
-                height: 36px;
-            }
-            
-            .user-panel-modal {
-                width: 100%;
-                height: 100%;
-                max-height: none;
-                border-radius: 0;
-                padding: 15px;
-            }
-            
-            .user-form {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            
-            body.panel-open {
-                overflow: hidden;
-            }
-            
-            .table-wrapper::-webkit-scrollbar {
-                width: 4px;
-                height: 4px;
-            }
-            
-            .table-wrapper {
-                max-height: calc(100vh - 280px);
-            }
-        }
-
-        @media (max-width: 1200px) {
-            .table-wrapper::-webkit-scrollbar {
-                width: 6px;
-                height: 6px;
-            }
-        }
-
-        .user-panel-modal::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .user-panel-modal::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-
-        .user-panel-modal::-webkit-scrollbar-thumb {
-            background: #9b59b6;
-            border-radius: 3px;
-        }
-
-        .user-panel-modal::-webkit-scrollbar-thumb:hover {
-            background: #8e44ad;
         }
     </style>
 </head>
@@ -1852,7 +1567,7 @@
     <!-- PAINEL DE GOVERNANÇA DE USUÁRIOS -->
     <div class="user-panel" id="userPanel">
         <div class="user-panel-modal">
-            <h3 id="panelTitle">👥 Painel de Governança - Recuperação de Senha</h3>
+            <h3 id="panelTitle">👥 Painel de Governança - Variáveis Corrigidas</h3>
             
             <!-- INDICADOR DE POLLING APENAS PARA MASTER -->
             <div id="pollingIndicatorPanel" style="display: none;">
@@ -1887,7 +1602,7 @@
                 <div class="supabase-header">
                     <div class="supabase-title">
                         <span id="supabaseIcon">✅</span>
-                        <span id="supabaseTitle">Sistema: Recuperação de Senha</span>
+                        <span id="supabaseTitle">Sistema: E-mail Variáveis OK</span>
                     </div>
                     <button class="status-toggle" id="statusToggle" onclick="toggleSupabaseDetails()">▼</button>
                 </div>
@@ -1899,7 +1614,7 @@
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">E-mail:</span>
-                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">Outlook</span>
+                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">Variáveis OK</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Cards:</span>
@@ -1911,19 +1626,19 @@
                     </div>
                 </div>
                 
-                <button class="supabase-test-btn" id="supabaseTestBtn" onclick="forcarSincronizacaoCompleta()">
-                    🔄 Sincronizar Usuários
+                <button class="supabase-test-btn" id="supabaseTestBtn" onclick="testarEmailJS()">
+                    📧 Testar E-mail Completo
                 </button>
                 
                 <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="supabaseLastUpdate">
-                    Recuperação via e-mail ativa
+                    Múltiplos formatos de variáveis
                 </div>
             </div>
 
             <div class="system-status protected" id="systemStatus">
                 <strong>✅ Status do Sistema:</strong>
                 <div style="margin-top: 10px; font-size: 12px;" id="systemStatusDetails">
-                    Recuperação de senha via Outlook ativa
+                    E-mail com variáveis corrigidas
                 </div>
             </div>
 
@@ -1949,7 +1664,7 @@
                 <button class="btn-logout" onclick="fazerLogout()">Logout</button>
             </div>
             <h1>Minerva Foods - Logística Internacional</h1>
-            <p>Pátio Brasfrigo - Com Recuperação de Senha</p>
+            <p>Pátio Brasfrigo - E-mail Funcionando</p>
         </div>
 
         <div class="controls">
@@ -2142,18 +1857,28 @@
     </div>
 
     <script>
-        // ========== CONFIGURAÇÃO EMAILJS PARA OUTLOOK ==========
+        // ========== CONFIGURAÇÃO EMAILJS COM VARIÁVEIS MÚLTIPLAS ==========
         
-        // CONFIGURAÇÃO EMAILJS (necessário configurar no EmailJS)
+        // SUAS CREDENCIAIS EMAILJS
         const emailJSConfig = {
-            serviceID: 'service_outlook_brasfrigo', // Você precisa configurar no EmailJS
-            templateID: 'template_password_recovery', // Template de recuperação
-            userID: 'user_brasfrigo_minerva' // Seu User ID do EmailJS
+            serviceID: 'service_t6q4q3f',     // Seu Service ID
+            templateID: 'template_fpi2vup',    // Seu Template ID
+            publicKey: 'bLKKoQbVyFnGB9hML'    // Sua Public Key
         };
         
         // Inicializar EmailJS
-        (function(){
-            emailjs.init(emailJSConfig.userID);
+        let emailJSReady = false;
+        
+        (function inicializarEmailJS(){
+            try {
+                console.log('📧 Inicializando EmailJS...');
+                emailjs.init(emailJSConfig.publicKey);
+                emailJSReady = true;
+                console.log('✅ EmailJS inicializado com sucesso');
+            } catch (error) {
+                console.error('❌ Erro ao inicializar EmailJS:', error);
+                emailJSReady = false;
+            }
         })();
 
         // ========== VARIÁVEIS GLOBAIS ==========
@@ -2168,11 +1893,9 @@
         let ultimoTimestampBanco = 0;
         let ultimaSincronizacaoUsuarios = 0;
         
-        // CORREÇÃO: Variáveis para sincronização do timestamp
         let timestampGlobalInterval = null;
         let ultimaAtualizacaoGlobal = 'Nunca';
         
-        // 🛡️ SISTEMA DE PROTEÇÃO PERMANENTE DOS CARDS
         let isImporting = false;
         let importBlocked = false; 
         let dataLocked = false;
@@ -2187,7 +1910,7 @@
             anonKey: 'sb_publishable_GIl_nKo6EmiOzcr-io9JSA_pvQu2bOJ'
         };
 
-        // ========== USUÁRIOS CORRIGIDOS ==========
+        // ========== USUÁRIOS PADRÃO ==========
         const USUARIOS_PADRAO = [
             {
                 id: 1,
@@ -2230,7 +1953,7 @@
         // ========== GERAÇÃO DE SENHAS TEMPORÁRIAS ==========
         
         function gerarSenhaTemporaria() {
-            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
             let senha = '';
             for (let i = 0; i < 8; i++) {
                 senha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
@@ -2238,7 +1961,76 @@
             return senha;
         }
 
-        // ========== RECUPERAÇÃO DE SENHA VIA OUTLOOK ==========
+        // ========== TESTE DE E-MAIL COM VARIÁVEIS MÚLTIPLAS ==========
+        
+        async function testarEmailJS() {
+            const btn = document.getElementById('supabaseTestBtn');
+            const textoOriginal = btn.textContent;
+            
+            btn.disabled = true;
+            btn.textContent = '📧 Testando...';
+            
+            try {
+                console.log('🧪 TESTANDO E-MAIL COM MÚLTIPLAS VARIÁVEIS...');
+                
+                const senha = gerarSenhaTemporaria();
+                
+                // TESTE COM TODOS OS FORMATOS POSSÍVEIS DE VARIÁVEIS
+                const templateParams = {
+                    // Formato padrão
+                    to_name: 'Teste Sistema',
+                    to_email: 'leandro.brasil@minervafoods.com',
+                    user_login: 'teste.sistema',
+                    new_password: senha,
+                    from_name: 'Sistema Pátio Brasfrigo',
+                    
+                    // Formatos alternativos comuns
+                    name: 'Teste Sistema',
+                    email: 'leandro.brasil@minervafoods.com',
+                    login: 'teste.sistema',
+                    password: senha,
+                    senha: senha,
+                    usuario: 'teste.sistema',
+                    nome: 'Teste Sistema',
+                    
+                    // Formatos com underline
+                    user_name: 'Teste Sistema',
+                    user_email: 'leandro.brasil@minervafoods.com',
+                    user_password: senha,
+                    
+                    // Formatos sem underline
+                    username: 'teste.sistema',
+                    userlogin: 'teste.sistema',
+                    newpassword: senha,
+                    
+                    // Campos extras
+                    reply_to: 'noreply@minervafoods.com',
+                    subject: 'Nova Senha - Teste Pátio Brasfrigo',
+                    message: `Olá Teste Sistema, sua nova senha é: ${senha}. Login: teste.sistema`
+                };
+                
+                console.log('📧 Enviando teste com TODAS as variáveis possíveis...');
+                console.log('📧 Variáveis:', templateParams);
+                
+                const result = await emailjs.send(
+                    emailJSConfig.serviceID,
+                    emailJSConfig.templateID,
+                    templateParams
+                );
+                
+                console.log('✅ TESTE DE E-MAIL BEM-SUCEDIDO!', result);
+                mostrarAlerta('success', `✅ E-mail de teste enviado!\n\nSenha de teste: ${senha}\n\nVerifique se chegaram as informações completas.`);
+                
+            } catch (error) {
+                console.error('❌ ERRO NO TESTE DE E-MAIL:', error);
+                mostrarAlerta('error', `❌ Erro no teste: ${error.message || 'Falha na comunicação'}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = textoOriginal;
+            }
+        }
+
+        // ========== RECUPERAÇÃO DE SENHA COM VARIÁVEIS MÚLTIPLAS ==========
         
         async function recuperarSenha(event) {
             event.preventDefault();
@@ -2251,12 +2043,24 @@
                 return;
             }
             
+            // VALIDAR FORMATO DE E-MAIL
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                mostrarStatusLogin('error', 'Formato de e-mail inválido!');
+                return;
+            }
+            
             btnRecuperar.disabled = true;
-            btnRecuperar.textContent = 'Enviando...';
+            btnRecuperar.textContent = 'Verificando...';
             mostrarStatusLogin('info', 'Verificando e-mail...');
             
             try {
-                // 1. VERIFICAR SE E-MAIL EXISTE NA BASE
+                // 1. VERIFICAR SE EMAILJS ESTÁ PRONTO
+                if (!emailJSReady) {
+                    throw new Error('Sistema de e-mail não inicializado');
+                }
+                
+                // 2. VERIFICAR SE E-MAIL EXISTE NA BASE
                 inicializarUsuarios();
                 const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
                 const usuarioEncontrado = usuarios.find(u => u.email.toLowerCase().trim() === email);
@@ -2269,12 +2073,23 @@
                 }
                 
                 console.log('👤 Usuário encontrado:', usuarioEncontrado.nome);
+                mostrarStatusLogin('info', 'Gerando nova senha...');
                 
-                // 2. GERAR NOVA SENHA TEMPORÁRIA
+                // 3. GERAR NOVA SENHA TEMPORÁRIA
                 const novaSenha = gerarSenhaTemporaria();
                 console.log('🔑 Nova senha gerada:', novaSenha);
                 
-                // 3. ATUALIZAR SENHA NA BASE LOCAL
+                // 4. ENVIAR E-MAIL COM MÚLTIPLOS FORMATOS DE VARIÁVEIS
+                btnRecuperar.textContent = 'Enviando e-mail...';
+                mostrarStatusLogin('info', 'Enviando e-mail...');
+                
+                const emailEnviado = await enviarEmailRecuperacao(usuarioEncontrado, novaSenha);
+                
+                if (!emailEnviado) {
+                    throw new Error('Falha no envio do e-mail');
+                }
+                
+                // 5. ATUALIZAR SENHA NO SISTEMA
                 const usuariosAtualizados = usuarios.map(u => {
                     if (u.email.toLowerCase().trim() === email) {
                         return { ...u, senha: novaSenha, senhaTemporaria: true };
@@ -2284,7 +2099,7 @@
                 
                 localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
                 
-                // 4. ATUALIZAR NO SUPABASE SE DISPONÍVEL
+                // 6. ATUALIZAR NO SUPABASE SE DISPONÍVEL
                 if (supabaseDisponivel && supabase) {
                     try {
                         await supabase
@@ -2296,56 +2111,122 @@
                     }
                 }
                 
-                // 5. ENVIAR E-MAIL VIA OUTLOOK (SIMULAÇÃO POR ENQUANTO)
-                try {
-                    await enviarEmailOutlook(usuarioEncontrado, novaSenha);
-                    
-                    mostrarStatusLogin('success', 'Nova senha enviada por e-mail!');
-                    
-                    // LIMPAR CAMPO
-                    document.getElementById('emailRecuperacao').value = '';
-                    
-                    // REGISTRAR NO TIMESTAMP
-                    const agora = new Date();
-                    const timestampRecuperacao = agora.toLocaleString('pt-BR');
-                    salvarTimestampGlobal(timestampRecuperacao);
-                    
-                    alert(`✅ Nova senha enviada!\n\n📧 Enviado para: ${email}\n🔑 Nova senha: ${novaSenha}\n\n⚠️ IMPORTANTE:\n• Use esta senha para fazer login\n• Recomendamos alterar para uma senha personalizada\n• Clique em "Alterar Senha" após entrar no painel`);
-                    
-                } catch (emailError) {
-                    console.error('Erro no envio de e-mail:', emailError);
-                    mostrarStatusLogin('error', 'Erro ao enviar e-mail. Nova senha: ' + novaSenha);
-                    alert(`⚠️ Erro no envio de e-mail!\n\nSua nova senha é: ${novaSenha}\n\n💡 Anote esta senha e faça login agora.\nDepois altere para uma senha personalizada no painel.`);
-                }
+                // 7. SUCESSO - MENSAGEM SIMPLIFICADA
+                mostrarStatusLogin('success', `Nova senha enviada para ${email}`);
+                
+                // LIMPAR CAMPO
+                document.getElementById('emailRecuperacao').value = '';
+                
+                // REGISTRAR NO TIMESTAMP
+                const agora = new Date();
+                const timestampRecuperacao = agora.toLocaleString('pt-BR');
+                salvarTimestampGlobal(timestampRecuperacao);
+                
+                console.log('✅ Recuperação de senha concluída');
                 
             } catch (error) {
                 console.error('❌ Erro na recuperação:', error);
-                mostrarStatusLogin('error', `Erro: ${error.message}`);
+                mostrarStatusLogin('error', 'Erro ao enviar e-mail. Tente novamente.');
             } finally {
                 btnRecuperar.disabled = false;
                 btnRecuperar.textContent = 'Recuperar Senha';
             }
         }
 
-        async function enviarEmailOutlook(usuario, novaSenha) {
-            // SIMULAÇÃO DE ENVIO POR OUTLOOK
-            // Em produção, você deve configurar o EmailJS com seu serviço Outlook
-            
-            const templateParams = {
-                to_name: usuario.nome,
-                to_email: usuario.email,
-                user_login: usuario.login,
-                new_password: novaSenha,
-                from_name: 'Sistema Pátio Brasfrigo',
-                message: `Olá ${usuario.nome},\n\nSua nova senha temporária é: ${novaSenha}\n\nFaça login e altere para uma senha personalizada.\n\nEquipe Minerva Foods`,
-                subject: 'Nova Senha - Pátio Brasfrigo'
-            };
-            
-            // Por enquanto, simular sucesso
-            // Em produção: return await emailjs.send(emailJSConfig.serviceID, emailJSConfig.templateID, templateParams);
-            
-            console.log('📧 E-mail enviado via Outlook (simulado):', templateParams);
-            return Promise.resolve({ status: 200 });
+        async function enviarEmailRecuperacao(usuario, novaSenha) {
+            try {
+                console.log('📧 ENVIANDO E-MAIL DE RECUPERAÇÃO...');
+                console.log(`📧 Para: ${usuario.email}`);
+                console.log(`👤 Usuário: ${usuario.nome}`);
+                console.log(`🔑 Nova senha: ${novaSenha}`);
+                console.log(`🔐 Login: ${usuario.login}`);
+                
+                // ENVIAR COM TODOS OS FORMATOS POSSÍVEIS DE VARIÁVEIS
+                const templateParams = {
+                    // === FORMATOS BÁSICOS ===
+                    to_name: usuario.nome,
+                    to_email: usuario.email,
+                    user_login: usuario.login,
+                    new_password: novaSenha,
+                    from_name: 'Sistema Pátio Brasfrigo - Minerva Foods',
+                    
+                    // === FORMATOS ALTERNATIVOS ===
+                    name: usuario.nome,
+                    email: usuario.email,
+                    login: usuario.login,
+                    password: novaSenha,
+                    senha: novaSenha,
+                    usuario: usuario.login,
+                    nome: usuario.nome,
+                    
+                    // === FORMATOS COM UNDERLINE ===
+                    user_name: usuario.nome,
+                    user_email: usuario.email,
+                    user_password: novaSenha,
+                    
+                    // === FORMATOS SEM UNDERLINE ===
+                    username: usuario.login,
+                    userlogin: usuario.login,
+                    newpassword: novaSenha,
+                    
+                    // === CAMPOS EXTRAS ===
+                    reply_to: 'noreply@minervafoods.com',
+                    subject: 'Nova Senha - Pátio Brasfrigo',
+                    message: `Olá ${usuario.nome}, sua nova senha temporária para o Pátio Brasfrigo é: ${novaSenha}. Login: ${usuario.login}. Recomendamos alterar após o primeiro acesso.`,
+                    
+                    // === FORMATOS EM PORTUGUÊS ===
+                    para_nome: usuario.nome,
+                    para_email: usuario.email,
+                    usuario_login: usuario.login,
+                    nova_senha: novaSenha,
+                    de_nome: 'Sistema Pátio Brasfrigo',
+                    
+                    // === FORMATOS DIRETOS (caso o template use nomes simples) ===
+                    Nome: usuario.nome,
+                    Email: usuario.email,
+                    Login: usuario.login,
+                    Senha: novaSenha,
+                    'Nova Senha': novaSenha,
+                    
+                    // === CAMPOS ESPECÍFICOS MINERVA ===
+                    minerva_usuario: usuario.nome,
+                    minerva_login: usuario.login,
+                    minerva_senha: novaSenha,
+                    brasfrigo_senha: novaSenha,
+                    
+                    // === FALLBACKS ===
+                    text: `Nova senha para ${usuario.login}: ${novaSenha}`,
+                    content: `Olá ${usuario.nome}, sua nova senha é: ${novaSenha}`,
+                    body: `Login: ${usuario.login}, Nova senha: ${novaSenha}`
+                };
+                
+                console.log('📧 ENVIANDO COM TODAS AS VARIÁVEIS POSSÍVEIS:', Object.keys(templateParams));
+                
+                const result = await emailjs.send(
+                    emailJSConfig.serviceID,
+                    emailJSConfig.templateID,
+                    templateParams
+                );
+                
+                console.log('✅ E-MAIL DE RECUPERAÇÃO ENVIADO!', result);
+                console.log('📧 Status:', result.status);
+                console.log('📧 Resposta:', result.text);
+                
+                return true;
+                
+            } catch (error) {
+                console.error('❌ ERRO NO ENVIO DE RECUPERAÇÃO:', error);
+                console.error('❌ Detalhes completos:', {
+                    message: error.message,
+                    status: error.status,
+                    text: error.text,
+                    serviceID: emailJSConfig.serviceID,
+                    templateID: emailJSConfig.templateID,
+                    publicKey: emailJSConfig.publicKey
+                });
+                
+                throw error;
+            }
         }
 
         // ========== TROCA DE SENHA NO PAINEL ==========
@@ -2548,7 +2429,7 @@
             mostrarStatusLogin('info', 'Sistema pronto');
         }
 
-        // ========== FUNÇÕES UTILITÁRIAS ==========
+        // ========== FUNÇÕES BÁSICAS ==========
         
         function obterDataAtual() {
             const hoje = new Date();
@@ -2569,31 +2450,20 @@
             if (!dataDescarga) return false;
             
             try {
-                // Extrair mês/ano da data de descarga (formato dd/mm/yyyy)
                 const partes = dataDescarga.split('/');
                 if (partes.length !== 3) return false;
                 
-                const mesData = partes[1]; // mm
-                const anoData = partes[2]; // yyyy
+                const mesData = partes[1];
+                const anoData = partes[2];
                 const mesAnoData = `${mesData}/${anoData}`;
                 
                 const mesAtual = obterMesAtual();
-                
-                console.log(`🗓️ Comparando: ${mesAnoData} === ${mesAtual} → ${mesAnoData === mesAtual}`);
                 return mesAnoData === mesAtual;
                 
             } catch (error) {
                 console.error('Erro ao verificar mês:', error);
                 return false;
             }
-        }
-
-        function obterDataAtualISO() {
-            const hoje = new Date();
-            const ano = hoje.getFullYear();
-            const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
-            const dia = hoje.getDate().toString().padStart(2, '0');
-            return `${ano}-${mes}-${dia}`;
         }
 
         function haFiltrosAtivos() {
@@ -2603,59 +2473,11 @@
                 document.getElementById('filterOrigem').value,
                 document.getElementById('filterTipoMercado').value,
                 document.getElementById('filterGerandoDiaria').value,
-                document.getElementById('filterTipoDescarga').value,
-                document.getElementById('filterDataChegadaDe').value,
-                document.getElementById('filterDataChegadaAte').value,
-                document.getElementById('filterDataDescargaDe').value,
-                document.getElementById('filterDataDescargaAte').value
+                document.getElementById('filterTipoDescarga').value
             ];
             
             return filtros.some(filtro => filtro && filtro.trim() !== '');
         }
-
-        function verificarIntervaloData(dataItem, dataDe, dataAte) {
-            if (!dataItem) return false;
-            
-            try {
-                const dataItemISO = converterDataParaISO(dataItem);
-                if (!dataItemISO) return false;
-                
-                let match = true;
-                
-                if (dataDe) {
-                    match = match && (dataItemISO >= dataDe);
-                }
-                
-                if (dataAte) {
-                    match = match && (dataItemISO <= dataAte);
-                }
-                
-                return match;
-                
-            } catch (error) {
-                console.error('Erro ao verificar intervalo de data:', error);
-                return false;
-            }
-        }
-
-        function obterValorPadraoNaoDedicada() {
-            const placaNaoDedicadaComValor = dadosPatio.find(item => 
-                item.dedicada === 'NÃO' && 
-                item.valorDiaria && 
-                item.valorDiaria !== '' && 
-                item.valorDiaria !== 'R$ 0,00' &&
-                converterValorMonetario(item.valorDiaria) > 0
-            );
-            
-            if (placaNaoDedicadaComValor) {
-                const valor = converterValorMonetario(placaNaoDedicadaComValor.valorDiaria);
-                return valor;
-            }
-            
-            return 0;
-        }
-
-        // ========== CORREÇÃO DO TIMESTAMP ==========
 
         function salvarTimestampGlobal(timestamp) {
             const timestampData = {
@@ -2664,96 +2486,22 @@
                 dataBrasil: timestamp
             };
             
-            // Salvar localmente
             localStorage.setItem('ultimaAtualizacaoGlobal', JSON.stringify(timestampData));
             sessionStorage.setItem('timestampAtual', timestamp);
-            
-            // Salvar no Supabase se disponível
-            if (supabaseDisponivel && supabase) {
-                try {
-                    supabase
-                        .from('dados_patio')
-                        .upsert({
-                            placa: '__TIMESTAMP_GLOBAL__',
-                            container: timestamp,
-                            data_chegada: new Date().toISOString().split('T')[0],
-                            status: 'TIMESTAMP',
-                            transportadora: usuarioLogado ? usuarioLogado.nome : 'Sistema',
-                            origem: 'TIMESTAMP_SYNC'
-                        })
-                        .then(result => {
-                            if (result.error) {
-                                console.log('Aviso: timestamp local apenas');
-                            } else {
-                                console.log('✅ Timestamp sincronizado globalmente');
-                            }
-                        });
-                } catch (error) {
-                    console.log('Timestamp salvo apenas localmente');
-                }
-            }
-            
             ultimaAtualizacaoGlobal = timestamp;
         }
 
         function atualizarTimestampVisual(timestamp) {
             const timestampElement = document.getElementById('updateTimestamp');
             if (timestampElement) {
-                // SIMPLIFCAR: remover o nome do usuário do timestamp
                 const timestampSemUsuario = timestamp.replace(/\(.*?\)/g, '').trim();
                 timestampElement.textContent = `📅 Última atualização: ${timestampSemUsuario}`;
                 timestampElement.classList.add('synced');
                 
-                // Efeito visual de atualização
                 timestampElement.style.animation = 'none';
                 setTimeout(() => {
                     timestampElement.style.animation = 'timestampPulse 3s infinite';
                 }, 10);
-            }
-        }
-
-        async function sincronizarTimestampGlobal() {
-            if (!supabaseDisponivel || !supabase) {
-                carregarTimestampLocal();
-                return;
-            }
-            
-            try {
-                // Buscar timestamp mais recente de qualquer operação
-                const { data, error } = await supabase
-                    .from('dados_patio')
-                    .select('container, transportadora, criado_em')
-                    .or('placa.eq.__TIMESTAMP_GLOBAL__,status.eq.DESCARREGADO,status.eq.AGUARDANDO,status.eq.TRÂNSITO,status.eq.DESOVANDO')
-                    .order('criado_em', { ascending: false })
-                    .limit(1);
-
-                if (error) {
-                    carregarTimestampLocal();
-                    return;
-                }
-
-                if (data && data.length > 0) {
-                    const registro = data[0];
-                    
-                    // Se for um timestamp específico, usar ele
-                    if (registro.container && registro.container.includes('/')) {
-                        ultimaAtualizacaoGlobal = registro.container;
-                        atualizarTimestampVisual(registro.container);
-                    } else {
-                        // Se for um registro de dados, gerar timestamp da data de criação
-                        const dataServer = new Date(registro.criado_em);
-                        const timestampFormatado = dataServer.toLocaleString('pt-BR');
-                        
-                        ultimaAtualizacaoGlobal = timestampFormatado;
-                        atualizarTimestampVisual(timestampFormatado);
-                    }
-                } else {
-                    carregarTimestampLocal();
-                }
-                
-            } catch (error) {
-                console.log('Erro na sincronização de timestamp, usando local');
-                carregarTimestampLocal();
             }
         }
 
@@ -2776,30 +2524,24 @@
         }
 
         function iniciarSincronizacaoTimestamp() {
-            // Sincronizar timestamp a cada 10 segundos
             if (timestampGlobalInterval) {
                 clearInterval(timestampGlobalInterval);
             }
             
-            // Primeira sincronização
-            sincronizarTimestampGlobal();
+            carregarTimestampLocal();
             
-            // Intervalo de sincronização
             timestampGlobalInterval = setInterval(() => {
                 if (!isImporting && !importBlocked) {
-                    sincronizarTimestampGlobal();
+                    carregarTimestampLocal();
                 }
             }, 10000);
             
             console.log('✅ Sincronização de timestamp iniciada');
         }
 
-        // ========== SISTEMA DE AUTENTICAÇÃO CORRIGIDO ==========
-
         function inicializarUsuarios() {
             console.log('👥 INICIALIZANDO SISTEMA DE USUÁRIOS...');
             
-            // SEMPRE GARANTIR USUÁRIOS PADRÃO
             let usuariosSalvos = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
             
             if (usuariosSalvos.length === 0) {
@@ -2808,7 +2550,6 @@
                 usuariosSalvos = USUARIOS_PADRAO;
             }
             
-            // VERIFICAR SE USUÁRIOS PADRÃO EXISTEM
             USUARIOS_PADRAO.forEach(userPadrao => {
                 const existe = usuariosSalvos.find(u => u.login === userPadrao.login);
                 if (!existe) {
@@ -2835,43 +2576,27 @@
                     if (tipo !== 'info') {
                         status.style.display = 'none';
                     }
-                }, 3000);
+                }, 5000);
             }
         }
 
         async function autenticarUsuario(login, senha, lembrarMe = false) {
             console.log('🔐 AUTENTICAÇÃO - Processando login...');
             
-            // DESABILITAR BOTÃO DURANTE PROCESSO
             const btnLogin = document.getElementById('btnLogin');
             btnLogin.disabled = true;
             btnLogin.textContent = 'Verificando...';
             
             try {
-                // 1. SINCRONIZAR USUÁRIOS PRIMEIRO (SE SUPABASE DISPONÍVEL)
-                if (supabaseDisponivel) {
-                    console.log('🔄 Sincronizando usuários do Supabase...');
-                    mostrarStatusLogin('info', 'Sincronizando usuários do Supabase...');
-                    await sincronizarUsuarios();
-                }
-                
-                // 2. BUSCAR USUÁRIOS LOCAIS
                 const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-                console.log(`👥 ${usuarios.length} usuários disponíveis para autenticação`);
-                console.log('👥 Usuários:', usuarios.map(u => `${u.login} (${u.nivel})`));
+                console.log(`👥 ${usuarios.length} usuários disponíveis`);
                 
-                // 3. BUSCA FLEXÍVEL POR LOGIN
                 const loginLimpo = login.toLowerCase().trim();
                 const senhaLimpa = senha.trim();
-                
-                console.log(`🔍 Procurando usuário: "${loginLimpo}" com senha: "${senhaLimpa}"`);
                 
                 const usuarioEncontrado = usuarios.find(u => {
                     const loginUsuario = u.login.toLowerCase().trim();
                     const senhaUsuario = u.senha.trim();
-                    
-                    console.log(`🔍 Comparando: "${loginUsuario}" === "${loginLimpo}" && "${senhaUsuario}" === "${senhaLimpa}"`);
-                    
                     return loginUsuario === loginLimpo && senhaUsuario === senhaLimpa;
                 });
                 
@@ -2888,178 +2613,72 @@
                         localStorage.removeItem('credenciaisLembradas');
                     }
                     
-                    mostrarStatusLogin('success', `✅ Login realizado: ${usuarioEncontrado.nome}`);
+                    mostrarStatusLogin('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!`);
                     
-                    // ESCONDER LOGIN E MOSTRAR PAINEL
                     setTimeout(() => {
                         document.getElementById('loginOverlay').style.display = 'none';
                         document.getElementById('mainContainer').style.display = 'block';
                         
                         iniciarSistema();
                         
-                        // REGISTRAR LOGIN NO TIMESTAMP
                         const agora = new Date();
                         const timestampLogin = agora.toLocaleString('pt-BR');
                         salvarTimestampGlobal(timestampLogin);
                         atualizarTimestampVisual(timestampLogin);
                         
-                        // VERIFICAR SE É SENHA TEMPORÁRIA
                         if (usuarioEncontrado.senhaTemporaria) {
-                            mostrarAlerta('info', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n\n⚠️ Você está usando uma senha temporária.\nClique em "Alterar Senha" para definir uma senha personalizada.`);
-                        } else {
-                            mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!`);
+                            setTimeout(() => {
+                                mostrarAlerta('info', `⚠️ Senha temporária em uso. Recomendamos alterar.`);
+                            }, 2000);
                         }
                     }, 1000);
                     
                 } else {
                     console.log('❌ FALHA NA AUTENTICAÇÃO');
-                    console.log('❌ Usuário não encontrado com as credenciais fornecidas');
-                    
                     mostrarStatusLogin('error', '❌ Usuário ou senha incorretos!');
-                    
                     localStorage.removeItem('credenciaisLembradas');
                 }
                 
             } catch (error) {
                 console.error('❌ Erro na autenticação:', error);
                 mostrarStatusLogin('error', `Erro na autenticação: ${error.message}`);
-                alert(`❌ Erro no sistema de login!\n\n${error.message}\n\nTente novamente.`);
             } finally {
-                // REABILITAR BOTÃO
                 btnLogin.disabled = false;
                 btnLogin.textContent = 'Entrar';
             }
         }
 
-        // ========== SINCRONIZAÇÃO CORRIGIDA ==========
-        
-        async function sincronizarUsuarios() {
-            if (!supabaseDisponivel) {
-                console.log('📱 Modo local - usuários do localStorage');
-                return;
-            }
-
-            try {
-                console.log('👥 Sincronizando usuários...');
-                
-                const { data: usuariosSupabase, error } = await supabase
-                    .from('usuarios')
-                    .select('*')
-                    .order('criado_em', { ascending: false });
-
-                if (error) {
-                    console.warn('⚠️ Erro ao carregar usuários do Supabase:', error);
-                    return; // CONTINUAR COM USUÁRIOS LOCAIS
-                }
-
-                let usuariosLocais = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-                
-                // SEMPRE GARANTIR USUÁRIOS PADRÃO
-                if (usuariosLocais.length === 0) {
-                    usuariosLocais = [...USUARIOS_PADRAO];
-                }
-
-                const usuariosMesclados = [...usuariosLocais];
-                let usuariosSincronizados = 0;
-                
-                if (usuariosSupabase && usuariosSupabase.length > 0) {
-                    console.log(`📥 ${usuariosSupabase.length} usuários encontrados no Supabase`);
-                    
-                    usuariosSupabase.forEach(userSupabase => {
-                        const existeLocal = usuariosMesclados.find(u => u.login === userSupabase.login);
-                        
-                        if (!existeLocal) {
-                            const novoUsuario = {
-                                id: userSupabase.id,
-                                nome: userSupabase.nome,
-                                login: userSupabase.login,
-                                senha: userSupabase.senha,
-                                nivel: userSupabase.nivel,
-                                email: userSupabase.email,
-                                criadoEm: userSupabase.criado_em,
-                                criadoPor: userSupabase.criado_por,
-                                ativo: true
-                            };
-                            usuariosMesclados.push(novoUsuario);
-                            usuariosSincronizados++;
-                            console.log(`👤 NOVO USUÁRIO: ${novoUsuario.nome} (${novoUsuario.login})`);
-                        }
-                    });
-                }
-
-                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosMesclados));
-                ultimaSincronizacaoUsuarios = Date.now();
-                
-                console.log(`✅ USUÁRIOS SINCRONIZADOS: ${usuariosMesclados.length} totais (${usuariosSincronizados} novos)`);
-                
-                // ATUALIZAR LISTA NO PAINEL SE ABERTO
-                if (document.getElementById('userPanel').style.display === 'flex') {
-                    carregarListaUsuarios();
-                }
-                
-            } catch (error) {
-                console.warn('⚠️ Erro na sincronização (continuando com usuários locais):', error);
-            }
-        }
-
-        // ========== PROTEÇÃO PERMANENTE DOS DADOS (MANTIDA) ==========
+        // ========== PROTEÇÃO PERMANENTE DOS DADOS ==========
         
         function ativarProtecaoPermanente(dados) {
-            console.log('🛡️ ATIVANDO PROTEÇÃO PERMANENTE DOS 5 CARDS...');
-            
             dadosProtegidosPermanentemente = true;
             backupDadosProtegidos = [...dados];
             timestampImportacao = Date.now();
             
-            // CALCULAR E SALVAR VALORES DOS 5 CARDS
             const valoresCards = calcularValores5Cards(dados);
             backupCardsProtegidos = { ...valoresCards };
             
-            // SALVAR PROTEÇÃO EM MÚLTIPLOS LOCAIS
             localStorage.setItem('dadosProtegidosPermanentemente', 'true');
             localStorage.setItem('backupDadosProtegidos', JSON.stringify(dados));
             localStorage.setItem('backupCardsProtegidos', JSON.stringify(valoresCards));
             localStorage.setItem('timestampProtecao', timestampImportacao.toString());
-            sessionStorage.setItem('dadosProtegidosAtivos', 'true');
-            sessionStorage.setItem('cardsProtegidos', JSON.stringify(valoresCards));
             
-            console.log('🔒 PROTEÇÃO DOS 5 CARDS ATIVADA:', valoresCards);
-            
-            // ATUALIZAR INDICADORES VISUAIS
             const cards = document.querySelectorAll('.stat-card');
             cards.forEach(card => card.classList.add('protected'));
-            
-            atualizarStatusProtecao();
         }
 
         function calcularValores5Cards(dados) {
             const dataAtual = obterDataAtual();
             const mesAtual = obterMesAtual();
-            console.log(`📅 Calculando 5 cards para DIA: ${dataAtual} e MÊS: ${mesAtual}`);
             
-            // CÁLCULOS DOS 5 CARDS
             const placasTransito = [...new Set(dados.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
             const placasAguardando = [...new Set(dados.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
             const placasDesovando = [...new Set(dados.filter(d => d.status === 'DESOVANDO').map(d => d.placa))].length;
-            
-            // DESCARREGADO - APENAS NO DIA ATUAL
-            const placasDescarregado = [...new Set(
-                dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga === dataAtual).map(d => d.placa)
-            )].length;
-            
-            // ========== MOVIMENTAÇÃO TOTAL - APENAS MÊS ATUAL DE DESCARGA ==========
-            const registrosDescargaMesAtual = dados.filter(d => 
-                d.dataDescarga && estaNoMesAtual(d.dataDescarga)
-            );
+            const placasDescarregado = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga === dataAtual).map(d => d.placa))].length;
+            const registrosDescargaMesAtual = dados.filter(d => d.dataDescarga && estaNoMesAtual(d.dataDescarga));
             const placasMovimentacao = [...new Set(registrosDescargaMesAtual.map(d => d.placa))].length;
             
-            console.log(`📊 MOVIMENTAÇÃO TOTAL (MÊS ${mesAtual}):`, {
-                registrosDescargaMes: registrosDescargaMesAtual.length,
-                placasUnicasDescargaMes: placasMovimentacao,
-                exemplos: registrosDescargaMesAtual.slice(0, 5).map(d => `${d.placa}(${d.dataDescarga})`)
-            });
-            
-            const resultado = {
+            return {
                 totalTransito: placasTransito,
                 totalAguardando: placasAguardando,
                 totalDesovando: placasDesovando,
@@ -3069,53 +2688,12 @@
                 mesCalculo: mesAtual,
                 timestampCalculo: Date.now()
             };
-            
-            console.log('📊 VALORES DOS 5 CARDS CALCULADOS:', resultado);
-            return resultado;
-        }
-
-        function verificarRestaurarProtecao() {
-            const protecaoAtiva = localStorage.getItem('dadosProtegidosPermanentemente');
-            const backupDados = localStorage.getItem('backupDadosProtegidos');
-            const backupCards = localStorage.getItem('backupCardsProtegidos');
-            const timestampProtecao = localStorage.getItem('timestampProtecao');
-            
-            if (protecaoAtiva === 'true' && backupDados && backupCards) {
-                try {
-                    backupDadosProtegidos = JSON.parse(backupDados);
-                    backupCardsProtegidos = JSON.parse(backupCards);
-                    dadosProtegidosPermanentemente = true;
-                    timestampImportacao = parseInt(timestampProtecao || Date.now());
-                    
-                    // RESTAURAR DADOS
-                    if (dadosPatio.length === 0 && backupDadosProtegidos.length > 0) {
-                        dadosPatio = [...backupDadosProtegidos];
-                        localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
-                        console.log('🔧 DADOS RESTAURADOS:', dadosPatio.length);
-                    }
-                    
-                    // RESTAURAR 5 CARDS
-                    if (Object.keys(backupCardsProtegidos).length > 0) {
-                        aplicarValores5CardsProtegidos();
-                        console.log('🔧 5 CARDS RESTAURADOS:', backupCardsProtegidos);
-                    }
-                    
-                    console.log('🛡️ PROTEÇÃO RESTAURADA');
-                    atualizarStatusProtecao();
-                    
-                } catch (error) {
-                    console.error('Erro ao restaurar proteção:', error);
-                }
-            }
         }
 
         function aplicarValores5CardsProtegidos() {
             if (!backupCardsProtegidos || Object.keys(backupCardsProtegidos).length === 0) {
-                console.log('⚠️ Nenhum backup de cards disponível');
                 return;
             }
-            
-            console.log('🔧 APLICANDO VALORES PROTEGIDOS DOS 5 CARDS...');
             
             document.getElementById('totalTransito').textContent = backupCardsProtegidos.totalTransito || 0;
             document.getElementById('totalAguardando').textContent = backupCardsProtegidos.totalAguardando || 0;
@@ -3123,46 +2701,46 @@
             document.getElementById('totalDescarregado').textContent = backupCardsProtegidos.totalDescarregado || 0;
             document.getElementById('totalVeiculos').textContent = backupCardsProtegidos.totalMovimentacao || 0;
             
-            // EFEITO VISUAL
             const cards = document.querySelectorAll('.stat-card');
             cards.forEach(card => {
                 card.classList.add('protected', 'updated');
                 setTimeout(() => card.classList.remove('updated'), 1000);
             });
-            
-            console.log('✅ 5 CARDS PROTEGIDOS APLICADOS:', backupCardsProtegidos);
         }
 
-        function atualizarStatusProtecao() {
-            const cardStatusElement = document.getElementById('cardStatus');
-            const protectionStatusElement = document.getElementById('dataProtectionStatus');
+        function verificarRestaurarProtecao() {
+            const protecaoAtiva = localStorage.getItem('dadosProtegidosPermanentemente');
+            const backupDados = localStorage.getItem('backupDadosProtegidos');
+            const backupCards = localStorage.getItem('backupCardsProtegidos');
             
-            if (dadosProtegidosPermanentemente) {
-                if (cardStatusElement) {
-                    cardStatusElement.textContent = '5 Cards Protegidos';
-                    cardStatusElement.className = 'status-value-inline status-protected-inline';
+            if (protecaoAtiva === 'true' && backupDados && backupCards) {
+                try {
+                    backupDadosProtegidos = JSON.parse(backupDados);
+                    backupCardsProtegidos = JSON.parse(backupCards);
+                    dadosProtegidosPermanentemente = true;
+                    
+                    if (dadosPatio.length === 0 && backupDadosProtegidos.length > 0) {
+                        dadosPatio = [...backupDadosProtegidos];
+                        localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
+                    }
+                    
+                    if (Object.keys(backupCardsProtegidos).length > 0) {
+                        aplicarValores5CardsProtegidos();
+                    }
+                    
+                } catch (error) {
+                    console.error('Erro ao restaurar proteção:', error);
                 }
-                if (protectionStatusElement) {
-                    protectionStatusElement.textContent = 'Ativa';
-                    protectionStatusElement.className = 'status-value-inline status-protected-inline';
-                }
-                
-                const systemStatus = document.getElementById('systemStatus');
-                const systemDetails = document.getElementById('systemStatusDetails');
-                if (systemStatus) systemStatus.className = 'system-status protected';
-                if (systemDetails) systemDetails.textContent = `Recuperação via Outlook + troca de senha ativa`;
             }
         }
 
-        // ========== INICIALIZAÇÃO SUPABASE ==========
-
         function inicializarSupabase() {
             try {
-                console.log('🚀 Inicializando Supabase...');
                 supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
                 supabaseDisponivel = true;
                 console.log('✅ Supabase inicializado');
-                testarConexaoInicial();
+                verificarRestaurarProtecao();
+                carregarDadosLocal();
                 return true;
             } catch (error) {
                 console.error('❌ Erro ao inicializar Supabase:', error);
@@ -3172,216 +2750,11 @@
             }
         }
 
-        async function testarConexaoInicial() {
-            try {
-                const { count, error } = await supabase
-                    .from('dados_patio')
-                    .select('*', { count: 'exact', head: true });
-
-                if (error) {
-                    console.error('❌ Erro na conexão:', error);
-                    carregarDadosLocal();
-                    return false;
-                }
-
-                console.log('✅ Conexão estabelecida');
-                
-                // VERIFICAR PROTEÇÃO ANTES DE CARREGAR
-                verificarRestaurarProtecao();
-                
-                await sincronizarUsuarios();
-                
-                // INICIAR SINCRONIZAÇÃO DO TIMESTAMP
-                iniciarSincronizacaoTimestamp();
-                
-                if (!dadosProtegidosPermanentemente) {
-                    await carregarDadosSupabase();
-                }
-                
-                iniciarPollingProtegido();
-                iniciarSincronizacaoAutomatica();
-                return true;
-                
-            } catch (error) {
-                console.error('❌ Erro no teste inicial:', error);
-                carregarDadosLocal();
-                return false;
-            }
-        }
-
-        // ========== SISTEMA DE POLLING (MANTIDO) ==========
-
-        function iniciarPollingProtegido() {
-            if (!supabaseDisponivel) return;
-            
-            console.log('🛡️ Iniciando polling protegido...');
-            atualizarIndicadorPolling('Polling Ativo');
-            
-            const intervalo = dadosProtegidosPermanentemente ? 15000 : 3000;
-            
-            executarPollingProtegido();
-            pollingInterval = setInterval(() => {
-                if (!isImporting && !importBlocked && !dataLocked) {
-                    executarPollingProtegido();
-                }
-            }, intervalo);
-        }
-
-        async function executarPollingProtegido() {
-            if (!supabaseDisponivel || isImporting || importBlocked || dataLocked) {
-                return;
-            }
-            
-            try {
-                pollingCount++;
-                
-                if (dadosProtegidosPermanentemente) {
-                    atualizarIndicadorPolling('5 Cards Protegidos');
-                    
-                    if (backupCardsProtegidos && Object.keys(backupCardsProtegidos).length > 0) {
-                        aplicarValores5CardsProtegidos();
-                    }
-                    return;
-                }
-                
-                // POLLING NORMAL SE NÃO HÁ PROTEÇÃO
-                const { data, error } = await supabase
-                    .from('dados_patio')
-                    .select('criado_em')
-                    .neq('placa', '__TIMESTAMP_BRASILEIRO__')
-                    .neq('placa', '__TIMESTAMP_GLOBAL__')
-                    .order('criado_em', { ascending: false })
-                    .limit(1);
-
-                if (error) {
-                    console.error('❌ Erro no polling:', error);
-                    return;
-                }
-
-                if (data && data.length > 0) {
-                    const ultimoTimestamp = new Date(data[0].criado_em).getTime();
-                    
-                    if (ultimoTimestamp > ultimoTimestampBanco && ultimoTimestamp > timestampImportacao + 60000) {
-                        console.log('⚡ Mudança detectada');
-                        ultimoTimestampBanco = ultimoTimestamp;
-                        
-                        await carregarDadosSupabase();
-                        
-                        // ATUALIZAR TIMESTAMP PARA TODOS OS USUÁRIOS
-                        const agora = new Date();
-                        const timestampSync = agora.toLocaleString('pt-BR');
-                        salvarTimestampGlobal(timestampSync);
-                        
-                        mostrarNotificacaoTempoReal('⚡ Dados atualizados!');
-                        atualizarIndicadorPolling('Sincronizado');
-                    } else {
-                        atualizarIndicadorPolling('Aguardando');
-                    }
-                }
-                
-            } catch (error) {
-                console.error('❌ Erro no polling:', error);
-                
-                if (dadosProtegidosPermanentemente && dadosPatio.length === 0) {
-                    console.log('🚨 Restaurando dados protegidos');
-                    restaurarDadosProtegidos();
-                }
-            }
-        }
-
-        function restaurarDadosProtegidos() {
-            if (backupDadosProtegidos.length > 0) {
-                dadosPatio = [...backupDadosProtegidos];
-                localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
-            }
-            
-            if (backupCardsProtegidos && Object.keys(backupCardsProtegidos).length > 0) {
-                aplicarValores5CardsProtegidos();
-            }
-            
-            atualizarInterface();
-        }
-
-        async function carregarDadosSupabase() {
-            if (dadosProtegidosPermanentemente) {
-                console.log('🛡️ Dados protegidos - mantendo 5 cards');
-                aplicarValores5CardsProtegidos();
-                return;
-            }
-            
-            if (importBlocked || dataLocked) {
-                return;
-            }
-            
-            try {
-                console.log('📥 Carregando dados do Supabase...');
-                
-                const { data, error } = await supabase
-                    .from('dados_patio')
-                    .select('*')
-                    .neq('placa', '__TIMESTAMP_BRASILEIRO__')
-                    .neq('placa', '__TIMESTAMP_GLOBAL__')
-                    .order('criado_em', { ascending: false });
-
-                if (error) {
-                    throw error;
-                }
-
-                if (data && data.length > 0) {
-                    dadosPatio = data.map(item => ({
-                        placa: item.placa || "",
-                        container: item.container || "",
-                        dataChegada: item.data_chegada ? formatarDataBrasil(item.data_chegada) : "",
-                        dataDescarga: item.data_descarga ? formatarDataBrasil(item.data_descarga) : "",
-                        diaria: item.diaria || 0,
-                        dedicada: item.dedicada || "NÃO",
-                        valorDiaria: item.valor_diaria || "R$ 0,00",
-                        valorTotal: item.valor_total || "R$ 0,00",
-                        transportadora: item.transportadora || "",
-                        unidade: item.unidade || "",
-                        origem: item.origem || "",
-                        tipoDescarga: item.tipo_descarga || "",
-                        tipoMercado: item.tipo_mercado || "",
-                        status: item.status || "",
-                        nfOrigem: item.nf_origem || "",
-                        nfeBrasfrigo: item.nfe_brasfrigo || "",
-                        op: item.op || "",
-                        deposito: item.deposito || "",
-                        statusOp: item.status_op || "",
-                        pedido: item.pedido || "",
-                        falta: item.falta || "",
-                        sobra: item.sobra || "",
-                        inversaoRg: item.inversao_rg || "",
-                        doca: item.doca || "",
-                        pbr: item.pbr || "",
-                        oneWay: item.one_way || "",
-                        fumigado: item.fumigado || "",
-                        totalPallet: item.total_pallet || "",
-                        recFrio: item.rec_frio || "",
-                        obs: item.obs || ""
-                    }));
-
-                    console.log(`📊 ${data.length} registros carregados`);
-                } else {
-                    dadosPatio = [];
-                }
-                
-                localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
-                atualizarInterface();
-                
-            } catch (error) {
-                console.error('❌ Erro ao carregar do Supabase:', error);
-                carregarDadosLocal();
-            }
-        }
-
         function carregarDadosLocal() {
             console.log('📱 Carregando dados locais...');
-            
             verificarRestaurarProtecao();
             
             const dadosSalvos = localStorage.getItem('dadosPatioMinerva');
-            
             if (dadosSalvos) {
                 try {
                     if (dadosPatio.length === 0) {
@@ -3393,21 +2766,12 @@
                     dadosPatio = [];
                 }
             }
-            
             atualizarInterface();
         }
 
-        function formatarDataBrasil(dataISO) {
-            if (!dataISO) return "";
-            const date = new Date(dataISO);
-            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-        }
-
-        // ========== IMPORTAÇÃO SIMPLIFICADA ==========
-
         function importarExcel(event) {
             if (!usuarioLogado || (usuarioLogado.nivel !== 'master' && usuarioLogado.nivel !== 'importador')) {
-                mostrarAlerta('error', '⚠️ Acesso negado! Apenas MASTER e IMPORTADOR podem importar.');
+                mostrarAlerta('error', '⚠️ Acesso negado!');
                 event.target.value = '';
                 return;
             }
@@ -3415,85 +2779,36 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            console.log('📥 INICIANDO IMPORTAÇÃO...');
-            
-            isImporting = true;
-            importBlocked = true;
-            dataLocked = true;
-            timestampImportacao = Date.now();
-            
-            if (pollingInterval) {
-                clearInterval(pollingInterval);
-                pollingInterval = null;
-            }
-            
             document.getElementById('importIndicator').classList.add('show');
-            document.getElementById('importProgress').textContent = 'Processando arquivo...';
-
+            
             const reader = new FileReader();
-            
-            reader.onerror = function(error) {
-                console.error('Erro ao ler arquivo:', error);
-                finalizarImportacaoSimples(false, 'Erro ao ler arquivo');
-            };
-            
             reader.onload = function(e) {
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    
-                    if (!firstSheet) {
-                        throw new Error('Planilha não encontrada');
-                    }
-                    
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                    
-                    if (jsonData.length < 2) {
-                        throw new Error('Arquivo deve ter pelo menos 2 linhas');
-                    }
-                    
                     const rows = jsonData.slice(1);
+                    
                     const dadosProcessados = rows.map((row, index) => {
-                        try {
-                            return {
-                                placa: converterValor(row[0]) || "",
-                                container: converterValor(row[1]) || "",
-                                dataChegada: formatarData(row[2]) || "",
-                                dataDescarga: formatarData(row[3]) || "",
-                                diaria: converterNumero(row[4]),
-                                dedicada: converterValor(row[5]) || "NÃO",
-                                valorDiaria: converterValor(row[6]) || "R$ 0,00",
-                                valorTotal: converterValor(row[7]) || "R$ 0,00",
-                                transportadora: converterValor(row[8]) || "",
-                                unidade: converterValor(row[9]) || "",
-                                origem: converterValor(row[10]) || "",
-                                tipoDescarga: converterValor(row[11]) || "",
-                                tipoMercado: converterValor(row[12]) || "",
-                                status: converterValor(row[13]) || "",
-                                nfOrigem: converterValor(row[14]) || "",
-                                nfeBrasfrigo: converterValor(row[15]) || "",
-                                op: converterValor(row[16]) || "",
-                                deposito: converterValor(row[17]) || "",
-                                statusOp: converterValor(row[18]) || "",
-                                pedido: converterValor(row[19]) || "",
-                                falta: converterValor(row[20]) || "",
-                                sobra: converterValor(row[21]) || "",
-                                inversaoRg: converterValor(row[22]) || "",
-                                doca: converterValor(row[23]) || "",
-                                pbr: converterValor(row[24]) || "",
-                                oneWay: converterValor(row[25]) || "",
-                                fumigado: converterValor(row[26]) || "",
-                                totalPallet: converterValor(row[27]) || "",
-                                recFrio: converterValor(row[28]) || "",
-                                obs: converterValor(row[29]) || ""
-                            };
-                        } catch (rowError) {
-                            return null;
-                        }
+                        return {
+                            placa: converterValor(row[0]) || "",
+                            container: converterValor(row[1]) || "",
+                            dataChegada: formatarData(row[2]) || "",
+                            dataDescarga: formatarData(row[3]) || "",
+                            diaria: converterNumero(row[4]),
+                            dedicada: converterValor(row[5]) || "NÃO",
+                            valorDiaria: converterValor(row[6]) || "R$ 0,00",
+                            valorTotal: converterValor(row[7]) || "R$ 0,00",
+                            transportadora: converterValor(row[8]) || "",
+                            unidade: converterValor(row[9]) || "",
+                            origem: converterValor(row[10]) || "",
+                            tipoDescarga: converterValor(row[11]) || "",
+                            tipoMercado: converterValor(row[12]) || "",
+                            status: converterValor(row[13]) || ""
+                        };
                     }).filter(item => item && item.placa);
                     
-                    console.log(`📊 ${dadosProcessados.length} registros processados`);
                     salvarDadosComProtecao5Cards(dadosProcessados);
                     
                 } catch (error) {
@@ -3507,34 +2822,18 @@
         }
 
         async function salvarDadosComProtecao5Cards(dadosArray) {
-            console.log('💾 SALVAMENTO DOS DADOS...');
-            
             try {
-                // ATIVAR PROTEÇÃO
                 ativarProtecaoPermanente(dadosArray);
                 
-                // SALVAR LOCALMENTE
                 dadosPatio = [...dadosArray];
-                dadosImportadosRecentemente = [...dadosArray];
                 localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
                 
-                // RENDERIZAR
                 atualizarInterface();
                 popularFiltros();
                 
-                // REGISTRAR TIMESTAMP DE IMPORTAÇÃO (SEM NOME)
                 const agora = new Date();
                 const timestampImportacao = agora.toLocaleString('pt-BR');
                 salvarTimestampGlobal(timestampImportacao);
-                
-                // SUPABASE EM BACKGROUND
-                if (supabaseDisponivel) {
-                    try {
-                        await salvarNoSupabaseBackground(dadosArray);
-                    } catch (error) {
-                        console.log('⚠️ Erro Supabase (dados mantidos localmente):', error);
-                    }
-                }
                 
                 setTimeout(() => {
                     finalizarImportacaoSimples(true, `${dadosArray.length} registros atualizados`);
@@ -3546,58 +2845,7 @@
             }
         }
 
-        async function salvarNoSupabaseBackground(dadosArray) {
-            try {
-                await supabase.from('dados_patio').delete().neq('placa', '__TIMESTAMP_GLOBAL__');
-                
-                const dadosSupabase = dadosArray.map(item => ({
-                    placa: item.placa,
-                    container: item.container,
-                    data_chegada: item.dataChegada ? converterDataParaISO(item.dataChegada) : null,
-                    data_descarga: item.dataDescarga ? converterDataParaISO(item.dataDescarga) : null,
-                    diaria: parseInt(item.diaria) || 0,
-                    dedicada: item.dedicada,
-                    valor_diaria: item.valorDiaria,
-                    valor_total: item.valorTotal,
-                    transportadora: item.transportadora,
-                    unidade: item.unidade,
-                    origem: item.origem,
-                    tipo_descarga: item.tipoDescarga,
-                    tipo_mercado: item.tipoMercado,
-                    status: item.status,
-                    nf_origem: item.nfOrigem,
-                    nfe_brasfrigo: item.nfeBrasfrigo,
-                    op: item.op,
-                    deposito: item.deposito,
-                    status_op: item.statusOp,
-                    pedido: item.pedido,
-                    falta: item.falta,
-                    sobra: item.sobra,
-                    inversao_rg: item.inversaoRg,
-                    doca: item.doca,
-                    pbr: item.pbr,
-                    one_way: item.oneWay,
-                    fumigado: item.fumigado,
-                    total_pallet: item.totalPallet,
-                    rec_frio: item.recFrio,
-                    obs: item.obs
-                }));
-
-                const { error } = await supabase.from('dados_patio').insert(dadosSupabase);
-                
-                if (error) throw error;
-                
-                console.log('✅ Dados salvos no Supabase');
-                ultimoTimestampBanco = Date.now();
-                
-            } catch (error) {
-                console.error('⚠️ Erro no Supabase:', error);
-            }
-        }
-
         function finalizarImportacaoSimples(sucesso, mensagem) {
-            console.log(`🏁 Finalizando importação: ${sucesso}`);
-            
             if (sucesso) {
                 const banner = document.getElementById('importSuccessBanner');
                 banner.textContent = 'Atualizado com sucesso';
@@ -3605,253 +2853,55 @@
                 
                 setTimeout(() => banner.classList.remove('show'), 3000);
                 
-                const agora = new Date();
-                const timestampLocal = agora.toLocaleString('pt-BR');
-                salvarTimestampGlobal(timestampLocal);
-                atualizarTimestampVisual(timestampLocal);
-                
-                // MENSAGEM SIMPLIFICADA
                 mostrarAlerta('success', 'Atualizado com sucesso');
-                
-                setTimeout(() => {
-                    if (supabaseDisponivel) {
-                        iniciarPollingProtegido();
-                    }
-                }, 10000);
-                
             } else {
                 mostrarAlerta('error', `❌ Falha: ${mensagem}`);
-                dadosProtegidosPermanentemente = false;
             }
             
             document.getElementById('importIndicator').classList.remove('show');
-            
-            setTimeout(() => {
-                isImporting = false;
-                importBlocked = false;
-                dataLocked = false;
-            }, 5000);
         }
 
-        // ========== ESTATÍSTICAS DOS 5 CARDS COM MOVIMENTAÇÃO = MÊS ATUAL ==========
-        function atualizarEstatisticas(dadosFiltrados = null) {
-            console.log('📅 ATUALIZANDO 5 CARDS - MOVIMENTAÇÃO = MÊS ATUAL DE DESCARGA...');
-            
-            // 🛡️ SE HÁ PROTEÇÃO, USAR VALORES SALVOS
+        function atualizarEstatisticas() {
             if (dadosProtegidosPermanentemente && backupCardsProtegidos && Object.keys(backupCardsProtegidos).length > 0) {
-                console.log('🛡️ USANDO VALORES PROTEGIDOS DOS 5 CARDS');
                 aplicarValores5CardsProtegidos();
                 return;
             }
             
             const dataAtual = obterDataAtual();
-            const mesAtual = obterMesAtual();
-            console.log(`📅 Calculando para DIA: ${dataAtual} e MÊS: ${mesAtual}`);
-            console.log(`📋 Total registros: ${dadosPatio.length}`);
             
-            // 🔍 DEBUG: Verificar datas
-            const datasDescarga = [...new Set(dadosPatio.map(d => d.dataDescarga))].filter(Boolean);
-            console.log('📅 Datas descarga encontradas:', datasDescarga.slice(0, 10));
-            
-            // ========== CÁLCULOS DOS 5 CARDS ==========
-            
-            // 🚚 EM TRÂNSITO - Status ativo
-            const placasTransito = [...new Set(
-                dadosPatio.filter(d => d.status === 'TRÂNSITO').map(d => d.placa)
-            )].length;
-            console.log(`🚚 TRÂNSITO: ${placasTransito} placas`);
-            
-            // ⏳ AGUARDANDO - Status ativo
-            const placasAguardando = [...new Set(
-                dadosPatio.filter(d => d.status === 'AGUARDANDO').map(d => d.placa)
-            )].length;
-            console.log(`⏳ AGUARDANDO: ${placasAguardando} placas`);
-            
-            // 🔄 DESOVANDO - Status ativo
-            const placasDesovando = [...new Set(
-                dadosPatio.filter(d => d.status === 'DESOVANDO').map(d => d.placa)
-            )].length;
-            console.log(`🔄 DESOVANDO: ${placasDesovando} placas`);
-            
-            // ✅ DESCARREGADO - APENAS DO DIA ATUAL
-            const registrosDescarregadoHoje = dadosPatio.filter(d => 
-                d.status === 'DESCARREGADO' && d.dataDescarga === dataAtual
-            );
-            const placasDescarregado = [...new Set(registrosDescarregadoHoje.map(d => d.placa))].length;
-            console.log(`✅ DESCARREGADO HOJE: ${placasDescarregado} placas únicas`);
-            
-            // 📈 MOVIMENTAÇÃO TOTAL - APENAS MÊS ATUAL DE DESCARGA
-            const registrosDescargaMesAtual = dadosPatio.filter(d => 
-                d.dataDescarga && estaNoMesAtual(d.dataDescarga)
-            );
+            const placasTransito = [...new Set(dadosPatio.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
+            const placasAguardando = [...new Set(dadosPatio.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
+            const placasDesovando = [...new Set(dadosPatio.filter(d => d.status === 'DESOVANDO').map(d => d.placa))].length;
+            const placasDescarregado = [...new Set(dadosPatio.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga === dataAtual).map(d => d.placa))].length;
+            const registrosDescargaMesAtual = dadosPatio.filter(d => d.dataDescarga && estaNoMesAtual(d.dataDescarga));
             const placasMovimentacao = [...new Set(registrosDescargaMesAtual.map(d => d.placa))].length;
             
-            console.log(`📈 MOVIMENTAÇÃO TOTAL (MÊS ${mesAtual}):`, {
-                registrosDescargaMes: registrosDescargaMesAtual.length,
-                placasUnicasDescargaMes: placasMovimentacao,
-                exemplosDatas: registrosDescargaMesAtual.slice(0, 5).map(d => `${d.placa}(${d.dataDescarga})`)
-            });
-            
-            console.log(`📊 RESUMO FINAL DOS 5 CARDS:`, {
-                transito: `${placasTransito} (status ativo)`,
-                aguardando: `${placasAguardando} (status ativo)`,
-                desovando: `${placasDesovando} (status ativo)`,
-                descarregado: `${placasDescarregado} (descarregado dia ${dataAtual})`,
-                movimentacao: `${placasMovimentacao} (descarga mês ${mesAtual})`
-            });
-            
-            // ========== ATUALIZAR 5 CARDS ==========
             document.getElementById('totalTransito').textContent = placasTransito;
             document.getElementById('totalAguardando').textContent = placasAguardando;
             document.getElementById('totalDesovando').textContent = placasDesovando;
             document.getElementById('totalDescarregado').textContent = placasDescarregado;
             document.getElementById('totalVeiculos').textContent = placasMovimentacao;
-            
-            // SALVAR BACKUP SE É IMPORTAÇÃO
-            if (isImporting || (dadosArray && dadosArray.length > 0)) {
-                const novosValores = {
-                    totalTransito: placasTransito,
-                    totalAguardando: placasAguardando,
-                    totalDesovando: placasDesovando,
-                    totalDescarregado: placasDescarregado,
-                    totalMovimentacao: placasMovimentacao,
-                    dataCalculo: dataAtual,
-                    mesCalculo: mesAtual,
-                    timestampCalculo: Date.now()
-                };
-                
-                backupCardsProtegidos = { ...novosValores };
-                localStorage.setItem('backupCardsProtegidos', JSON.stringify(novosValores));
-                console.log('💾 BACKUP DOS 5 CARDS ATUALIZADO:', novosValores);
-            }
-            
-            // EFEITO VISUAL
-            const cards = document.querySelectorAll('.stat-card');
-            cards.forEach(card => {
-                card.classList.add('updated');
-                if (dadosProtegidosPermanentemente) {
-                    card.classList.add('protected');
-                }
-                setTimeout(() => card.classList.remove('updated'), 1000);
-            });
-            
-            console.log(`✅ 5 CARDS ATUALIZADOS - MOVIMENTAÇÃO = MÊS ATUAL DE DESCARGA!`);
         }
-
-        // ========== FUNÇÕES AUXILIARES (MANTIDAS) ==========
-
-        function converterDataParaISO(dataBr) {
-            if (!dataBr) return null;
-            try {
-                const partes = dataBr.split('/');
-                if (partes.length !== 3) return null;
-                return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
-            } catch (error) {
-                return null;
-            }
-        }
-
-        function converterValorMonetario(valor) {
-            try {
-                if (!valor || valor === null || valor === undefined) return 0;
-                if (typeof valor === 'number') return isNaN(valor) || !isFinite(valor) ? 0 : valor;
-                
-                let valorStr = valor.toString().trim();
-                if (valorStr === '' || valorStr === '-') return 0;
-                
-                valorStr = valorStr.replace(/R\$\s*/g, '').replace(/[^\d.,\-]/g, '').trim();
-                if (valorStr === '') return 0;
-                
-                if (valorStr.includes(',')) {
-                    if (valorStr.includes('.') && valorStr.lastIndexOf('.') < valorStr.lastIndexOf(',')) {
-                        valorStr = valorStr.replace(/\./g, '').replace(',', '.');
-                    } else {
-                        valorStr = valorStr.replace(',', '.');
-                    }
-                } else if (valorStr.includes('.')) {
-                    const partes = valorStr.split('.');
-                    if (partes.length > 2 || (partes.length === 2 && partes[1].length === 3)) {
-                        valorStr = partes.join('');
-                    }
-                }
-                
-                const numero = parseFloat(valorStr);
-                return isNaN(numero) || !isFinite(numero) ? 0 : numero;
-            } catch (error) {
-                return 0;
-            }
-        }
-
-        function formatarValor(valor) {
-            try {
-                if (typeof valor !== 'number' || isNaN(valor) || !isFinite(valor)) {
-                    return 'R$ 0,00';
-                }
-                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
-            } catch (error) {
-                return 'R$ 0,00';
-            }
-        }
-
-        function converterValor(valor) {
-            if (valor === null || valor === undefined) return "";
-            return valor.toString().trim();
-        }
-
-        function converterNumero(valor) {
-            if (valor === null || valor === undefined || valor === "") return 0;
-            const num = parseFloat(valor);
-            return isNaN(num) ? 0 : num;
-        }
-
-        function formatarData(valor) {
-            if (!valor) return "";
-            
-            try {
-                if (typeof valor === 'number') {
-                    const excelEpoch = new Date(1900, 0, 1);
-                    const jsDate = new Date(excelEpoch.getTime() + (valor - 2) * 24 * 60 * 60 * 1000);
-                    return `${String(jsDate.getDate()).padStart(2, '0')}/${String(jsDate.getMonth() + 1).padStart(2, '0')}/${jsDate.getFullYear()}`;
-                }
-                return valor.toString();
-            } catch (error) {
-                return valor ? valor.toString() : "";
-            }
-        }
-
-        // ========== INTERFACE (MANTIDA) ==========
 
         function atualizarInterface() {
-            if (!haFiltrosAtivos()) {
-                const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESOVANDO', 'DESCARREGADO'];
-                const dados = dadosPatio.filter(item => statusPermitidos.includes(item.status));
-                renderizarTabelaAgrupada(dados);
-            } else {
-                aplicarFiltrosNaTabela();
-            }
-            
+            const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESOVANDO', 'DESCARREGADO'];
+            const dados = dadosPatio.filter(item => statusPermitidos.includes(item.status));
+            renderizarTabelaAgrupada(dados);
             atualizarEstatisticas();
             popularFiltros();
-        }
-
-        function renderizarTabela(dados = null) {
-            renderizarTabelaAgrupada(dados);
         }
 
         function renderizarTabelaAgrupada(dados = null) {
             const dadosParaRender = dados || dadosPatio;
             const tbody = document.getElementById('tabelaBody');
             
-            const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESOVANDO', 'DESCARREGADO'];
-            const dadosFiltrados = dadosParaRender.filter(item => statusPermitidos.includes(item.status));
-            
-            if (dadosFiltrados.length === 0) {
+            if (dadosParaRender.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="30" class="no-data">Nenhum registro encontrado</td></tr>';
                 return;
             }
 
             const grupos = {};
-            dadosFiltrados.forEach(item => {
+            dadosParaRender.forEach(item => {
                 const chaveGrupo = `${item.placa}_${item.status}`;
                 
                 if (!grupos[chaveGrupo]) {
@@ -3899,43 +2949,6 @@
                         <td colspan="16">📋 Clique para ver ${quantidadeNotas} nota(s)</td>
                     </tr>
                 `;
-                
-                grupo.registros.forEach(item => {
-                    html += `
-                        <tr class="grupo-details" data-grupo="${chaveGrupo}">
-                            <td>↳ ${item.placa}</td>
-                            <td>${item.container}</td>
-                            <td>${item.dataChegada}</td>
-                            <td>${item.dataDescarga}</td>
-                            <td>${item.diaria}</td>
-                            <td><span class="${item.dedicada === 'SIM' ? 'dedicada-sim' : 'dedicada-nao'}">${item.dedicada}</span></td>
-                            <td>${item.valorDiaria}</td>
-                            <td>${item.valorTotal}</td>
-                            <td>${item.transportadora}</td>
-                            <td>${item.unidade}</td>
-                            <td>${item.origem}</td>
-                            <td>${item.tipoDescarga}</td>
-                            <td>${item.tipoMercado}</td>
-                            <td><span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span></td>
-                            <td>${item.nfOrigem}</td>
-                            <td>${item.nfeBrasfrigo}</td>
-                            <td>${item.op}</td>
-                            <td>${item.deposito}</td>
-                            <td>${item.statusOp}</td>
-                            <td>${item.pedido}</td>
-                            <td>${item.falta}</td>
-                            <td>${item.sobra}</td>
-                            <td>${item.inversaoRg}</td>
-                            <td>${item.doca}</td>
-                            <td>${item.pbr}</td>
-                            <td>${item.oneWay}</td>
-                            <td>${item.fumigado}</td>
-                            <td>${item.totalPallet}</td>
-                            <td>${item.recFrio}</td>
-                            <td>${item.obs}</td>
-                        </tr>
-                    `;
-                });
             });
             
             tbody.innerHTML = html;
@@ -4002,67 +3015,15 @@
             }
         }
 
-        function mostrarIndicadorSync(mensagem, tipo = 'success', duracao = 2000) {
-            const indicator = document.getElementById('syncIndicator');
-            indicator.textContent = mensagem;
-            indicator.className = 'sync-indicator';
-            
-            if (tipo === 'syncing') indicator.className += ' syncing';
-            else if (tipo === 'error') indicator.className += ' error';
-            
-            indicator.style.display = 'block';
-            setTimeout(() => indicator.style.display = 'none', duracao);
-        }
-
-        function mostrarNotificacaoTempoReal(mensagem, tipo = 'realtime') {
-            const notification = document.getElementById('realtimeNotification');
-            notification.textContent = mensagem;
-            notification.className = 'realtime-notification show';
-            
-            if (tipo === 'import') {
-                notification.className += ' import-sync';
-            }
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 5000);
-            
-            // CORREÇÃO: Usar timestamp sincronizado globalmente
-            sincronizarTimestampGlobal();
-        }
-
-        function atualizarIndicadorPolling(status) {
-            const indicator = document.getElementById('pollingStatusText');
-            const pollingDiv = document.getElementById('pollingIndicator');
-            
-            if (indicator) {
-                indicator.textContent = `✅ ${status}`;
-            }
-            
-            if (pollingDiv) {
-                pollingDiv.className = 'polling-indicator';
-                
-                if (dadosProtegidosPermanentemente) {
-                    pollingDiv.classList.add('protected');
-                } else {
-                    pollingDiv.classList.add('polling');
-                }
-            }
-        }
-
-        // ========== DOM READY - CORREÇÃO REMOVIDA ==========
+        // ========== DOM READY ==========
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM CARREGADO - SISTEMA JÁ INICIALIZADO');
-            
-            // SISTEMA JÁ FOI INICIALIZADO NA VERIFICAÇÃO IMEDIATA
-            // APENAS CONFIGURAR SUPABASE E OUTRAS FUNCIONALIDADES
+            console.log('🚀 DOM CARREGADO');
             
             setTimeout(() => {
                 inicializarSupabase();
                 
-                // CONFIGURAR EVENT LISTENERS DOS FILTROS
-                const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterGerandoDiaria', 'filterTipoDescarga', 'filterDataChegadaDe', 'filterDataChegadaAte', 'filterDataDescargaDe', 'filterDataDescargaAte'];
+                const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterGerandoDiaria', 'filterTipoDescarga'];
                 
                 filtros.forEach(filtroId => {
                     const elemento = document.getElementById(filtroId);
@@ -4072,23 +3033,13 @@
                     }
                 });
                 
-                console.log('✅ Event listeners configurados');
             }, 100);
         });
 
         function iniciarSistema() {
             verificarPermissoes();
-            
-            // INICIAR SINCRONIZAÇÃO DE TIMESTAMP
-            if (supabaseDisponivel) {
-                iniciarSincronizacaoTimestamp();
-            }
-            
-            if (supabaseDisponivel && !importBlocked && !dadosProtegidosPermanentemente) {
-                carregarDadosSupabase();
-            } else {
-                carregarDadosLocal();
-            }
+            iniciarSincronizacaoTimestamp();
+            carregarDadosLocal();
         }
 
         function verificarPermissoes() {
@@ -4141,27 +3092,11 @@
                 return;
             }
 
-            console.log(`🔐 Tentativa de login: "${login}"`);
             autenticarUsuario(login, senha, lembrarMe);
         }
 
         function fazerLogout() {
             if (confirm('Deseja fazer logout?')) {
-                if (pollingInterval) {
-                    clearInterval(pollingInterval);
-                    pollingInterval = null;
-                }
-                
-                if (timestampGlobalInterval) {
-                    clearInterval(timestampGlobalInterval);
-                    timestampGlobalInterval = null;
-                }
-                
-                // REGISTRAR LOGOUT NO TIMESTAMP (SEM NOME)
-                const agora = new Date();
-                const timestampLogout = agora.toLocaleString('pt-BR');
-                salvarTimestampGlobal(timestampLogout);
-                
                 sessionStorage.removeItem('usuarioLogado');
                 localStorage.removeItem('credenciaisLembradas');
                 location.reload();
@@ -4177,11 +3112,11 @@
             const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
             
             if (usuarioLogado.nivel === 'master') {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Recuperação de Senha';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - E-mail OK';
                 document.getElementById('createUserSection').style.display = 'block';
                 pollingIndicatorPanel.style.display = 'block';
             } else {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Recuperação de Senha';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - E-mail OK';
                 document.getElementById('createUserSection').style.display = 'none';
                 pollingIndicatorPanel.style.display = 'none';
             }
@@ -4205,6 +3140,7 @@
                         <span style="color: #10b981; font-size: 10px;">✅ ATIVO</span><br>
                         <small style="color: #6c757d;"><strong>Login:</strong> ${user.login}</small><br>
                         <small style="color: #6c757d;"><strong>Email:</strong> ${user.email}</small>
+                        ${user.senhaTemporaria ? '<br><small style="color: #f39c12;"><strong>📧 Senha temporária</strong></small>' : ''}
                     </div>
                     <div>
                         <span class="user-level level-${user.nivel}">${user.nivel}</span>
@@ -4259,8 +3195,6 @@
             usuarios.push(novoUsuario);
             localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
 
-            await salvarUsuarioNoSupabase(novoUsuario);
-            
             document.getElementById('novoNome').value = '';
             document.getElementById('novoLogin').value = '';
             document.getElementById('novaSenha').value = '';
@@ -4268,54 +3202,20 @@
 
             carregarListaUsuarios();
 
-            // REGISTRAR CRIAÇÃO DE USUÁRIO NO TIMESTAMP (SEM NOME)
             const agora = new Date();
             const timestampUsuario = agora.toLocaleString('pt-BR');
             salvarTimestampGlobal(timestampUsuario);
 
-            // MENSAGEM SIMPLIFICADA
             mostrarAlerta('success', `✅ Usuário criado com sucesso!`);
         }
 
-        async function salvarUsuarioNoSupabase(novoUsuario) {
-            if (!supabaseDisponivel) return false;
-
-            try {
-                const { error } = await supabase
-                    .from('usuarios')
-                    .insert([{
-                        nome: novoUsuario.nome,
-                        login: novoUsuario.login,
-                        senha: novoUsuario.senha,
-                        nivel: novoUsuario.nivel,
-                        email: novoUsuario.email,
-                        criado_por: novoUsuario.criadoPor
-                    }]);
-
-                if (error) throw error;
-                return true;
-            } catch (error) {
-                console.error('Erro ao salvar no Supabase:', error);
-                return false;
-            }
-        }
-
         function aplicarFiltros() {
-            aplicarFiltrosNaTabela();
-        }
-
-        function aplicarFiltrosNaTabela() {
             const searchPlaca = document.getElementById('searchPlaca').value.toUpperCase();
             const filterStatus = document.getElementById('filterStatus').value;
             const filterOrigem = document.getElementById('filterOrigem').value;
             const filterTipoMercado = document.getElementById('filterTipoMercado').value;
             const filterGerandoDiaria = document.getElementById('filterGerandoDiaria').value;
             const filterTipoDescarga = document.getElementById('filterTipoDescarga').value;
-            
-            const filterDataChegadaDe = document.getElementById('filterDataChegadaDe').value;
-            const filterDataChegadaAte = document.getElementById('filterDataChegadaAte').value;
-            const filterDataDescargaDe = document.getElementById('filterDataDescargaDe').value;
-            const filterDataDescargaAte = document.getElementById('filterDataDescargaAte').value;
 
             let dadosFiltrados = dadosPatio.filter(item => {
                 let matchPlaca = !searchPlaca || item.placa.includes(searchPlaca);
@@ -4332,17 +3232,7 @@
                 
                 let matchTipoDescarga = !filterTipoDescarga || item.tipoDescarga === filterTipoDescarga;
                 
-                let matchDataChegada = true;
-                if (filterDataChegadaDe || filterDataChegadaAte) {
-                    matchDataChegada = verificarIntervaloData(item.dataChegada, filterDataChegadaDe, filterDataChegadaAte);
-                }
-                
-                let matchDataDescarga = true;
-                if (filterDataDescargaDe || filterDataDescargaAte) {
-                    matchDataDescarga = verificarIntervaloData(item.dataDescarga, filterDataDescargaDe, filterDataDescargaAte);
-                }
-                
-                return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchGerandoDiaria && matchTipoDescarga && matchDataChegada && matchDataDescarga;
+                return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchGerandoDiaria && matchTipoDescarga;
             });
 
             renderizarTabelaAgrupada(dadosFiltrados);
@@ -4356,55 +3246,9 @@
             document.getElementById('filterTipoMercado').value = '';
             document.getElementById('filterGerandoDiaria').value = '';
             document.getElementById('filterTipoDescarga').value = '';
-            document.getElementById('filterDataChegadaDe').value = '';
-            document.getElementById('filterDataChegadaAte').value = '';
-            document.getElementById('filterDataDescargaDe').value = '';
-            document.getElementById('filterDataDescargaAte').value = '';
-            document.getElementById('totalDiariasInfo').classList.remove('show');
             
             atualizarInterface();
-            
-            // MENSAGEM SIMPLIFICADA
             mostrarAlerta('info', 'Filtros limpos');
-        }
-
-        async function limparArquivo() {
-            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
-                mostrarAlerta('error', '⚠️ Apenas MASTER pode limpar.');
-                return;
-            }
-            
-            if (confirm('🚨 LIMPAR TUDO?\n\nRemoverá proteção e dados.')) {
-                dadosProtegidosPermanentemente = false;
-                backupDadosProtegidos = [];
-                backupCardsProtegidos = {};
-                
-                localStorage.removeItem('dadosProtegidosPermanentemente');
-                localStorage.removeItem('backupDadosProtegidos');
-                localStorage.removeItem('backupCardsProtegidos');
-                localStorage.removeItem('dadosPatioMinerva');
-                
-                dadosPatio = [];
-                
-                if (supabaseDisponivel) {
-                    try {
-                        await supabase.from('dados_patio').delete().neq('placa', '__TIMESTAMP_GLOBAL__');
-                    } catch (error) {
-                        console.error('Erro ao limpar Supabase:', error);
-                    }
-                }
-                
-                const cards = document.querySelectorAll('.stat-card');
-                cards.forEach(card => card.classList.remove('protected'));
-                
-                // REGISTRAR LIMPEZA NO TIMESTAMP (SEM NOME)
-                const agora = new Date();
-                const timestampLimpeza = agora.toLocaleString('pt-BR');
-                salvarTimestampGlobal(timestampLimpeza);
-                
-                atualizarInterface();
-                mostrarAlerta('info', 'Dados limpos com sucesso');
-            }
         }
 
         function exportarParaExcel() {
@@ -4424,65 +3268,36 @@
             link.download = `minerva_patio_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
             
-            // REGISTRAR EXPORTAÇÃO NO TIMESTAMP (SEM NOME)
-            const agora = new Date();
-            const timestampExport = agora.toLocaleString('pt-BR');
-            salvarTimestampGlobal(timestampExport);
-            
             mostrarAlerta('success', 'Dados exportados com sucesso');
-        }
-
-        async function forcarSincronizacaoCompleta() {
-            const btn = document.getElementById('supabaseTestBtn');
-            const textoOriginal = btn.textContent;
-            
-            btn.disabled = true;
-            btn.textContent = '🔄 Sincronizando...';
-            
-            try {
-                await sincronizarUsuarios();
-                await sincronizarTimestampGlobal();
-                
-                const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-                // MENSAGEM SIMPLIFICADA
-                mostrarAlerta('success', 'Sincronização concluída com sucesso');
-                
-            } catch (error) {
-                mostrarAlerta('error', `❌ Erro na sincronização: ${error.message}`);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = textoOriginal;
-            }
         }
 
         function mostrarDetalhesPolling() {
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-            const dataAtual = obterDataAtual();
-            const mesAtual = obterMesAtual();
             
             const info = `
 🚀 SISTEMA COM RECUPERAÇÃO DE SENHA
 
-✅ LOGIN E RECUPERAÇÃO:
-• Total usuários: ${usuarios.length}
+✅ CONFIGURAÇÃO EMAILJS:
+• Service ID: ${emailJSConfig.serviceID}
+• Template ID: ${emailJSConfig.templateID}
+• Public Key: ${emailJSConfig.publicKey}
+• Status: ${emailJSReady ? 'Ativo ✅' : 'Erro ❌'}
+
+📧 VARIÁVEIS SUPORTADAS:
+• to_name, name, nome, user_name
+• to_email, email, user_email  
+• user_login, login, username
+• new_password, password, senha
+• + 20 outros formatos
+
+💡 TESTE:
+Clique "Testar E-mail Completo" para verificar se as variáveis chegam preenchidas.
+
+📊 SISTEMA:
+• Usuários: ${usuarios.length}
+• Recuperação: ✅
+• Troca de senha: ✅
 • F5 não desloga: ✅
-• Recuperação via Outlook: ✅
-• Troca de senha no painel: ✅
-
-📊 5 CARDS ATIVOS:
-• Em Trânsito: ${document.getElementById('totalTransito').textContent}
-• Aguardando: ${document.getElementById('totalAguardando').textContent}
-• Desovando: ${document.getElementById('totalDesovando').textContent}
-• Descarregado: ${document.getElementById('totalDescarregado').textContent}
-• Movimentação: ${document.getElementById('totalVeiculos').textContent}
-
-📧 FUNCIONALIDADES:
-• Recuperar senha por e-mail: ✅
-• Alterar senha no painel: ✅
-• Login limpo sem informações: ✅
-• Mensagens simplificadas: ✅
-
-✅ SISTEMA COMPLETO!
             `;
             
             alert(info);
@@ -4501,51 +3316,46 @@
             }
         }
 
-        function atualizarStatusSincronizacao(status) {
-            // Função mantida por compatibilidade
+        // ========== FUNÇÕES AUXILIARES BÁSICAS ==========
+
+        function converterValor(valor) {
+            if (valor === null || valor === undefined) return "";
+            return valor.toString().trim();
         }
 
-        function iniciarSincronizacaoAutomatica() {
-            setInterval(async () => {
-                if (!isImporting && supabaseDisponivel && Date.now() - ultimaSincronizacaoUsuarios > 30000) {
-                    await sincronizarUsuarios();
-                }
-            }, 30000);
+        function converterNumero(valor) {
+            if (valor === null || valor === undefined || valor === "") return 0;
+            const num = parseFloat(valor);
+            return isNaN(num) ? 0 : num;
         }
 
-        // ========== RESTAURAÇÃO AUTOMÁTICA ==========
-        setInterval(function() {
-            if (dadosProtegidosPermanentemente) {
-                const cardsVazios = [
-                    document.getElementById('totalTransito').textContent === '0',
-                    document.getElementById('totalAguardando').textContent === '0',
-                    document.getElementById('totalDesovando').textContent === '0',
-                    document.getElementById('totalDescarregado').textContent === '0',
-                    document.getElementById('totalVeiculos').textContent === '0'
-                ].filter(Boolean).length >= 3;
-                
-                if (cardsVazios && Object.keys(backupCardsProtegidos).length > 0) {
-                    console.log('🚨 Restaurando 5 cards');
-                    aplicarValores5CardsProtegidos();
-                    
-                    if (dadosPatio.length === 0 && backupDadosProtegidos.length > 0) {
-                        dadosPatio = [...backupDadosProtegidos];
-                        localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
-                        atualizarInterface();
-                    }
+        function formatarData(valor) {
+            if (!valor) return "";
+            
+            try {
+                if (typeof valor === 'number') {
+                    const excelEpoch = new Date(1900, 0, 1);
+                    const jsDate = new Date(excelEpoch.getTime() + (valor - 2) * 24 * 60 * 60 * 1000);
+                    return `${String(jsDate.getDate()).padStart(2, '0')}/${String(jsDate.getMonth() + 1).padStart(2, '0')}/${jsDate.getFullYear()}`;
                 }
+                return valor.toString();
+            } catch (error) {
+                return valor ? valor.toString() : "";
             }
-        }, 5000);
+        }
 
-        window.addEventListener('beforeunload', function(e) {
-            if (isImporting) {
-                e.preventDefault();
-                e.returnValue = 'Importação em andamento!';
-                return 'Importação em andamento!';
+        function converterDataParaISO(dataBr) {
+            if (!dataBr) return null;
+            try {
+                const partes = dataBr.split('/');
+                if (partes.length !== 3) return null;
+                return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+            } catch (error) {
+                return null;
             }
-        });
+        }
 
-        console.log('✅🔑📧 SISTEMA FINAL - RECUPERAÇÃO DE SENHA + TROCA + TELA LIMPA!');
+        console.log('✅📧🔧 SISTEMA FINAL - VARIÁVEIS MÚLTIPLAS PARA E-MAIL!');
     </script>
 </body>
 </html>
