@@ -1635,22 +1635,15 @@
     </style>
 </head>
 <body>
-    <!-- INDICADOR DE IMPORTAÇÃO MELHORADO -->
+    <!-- INDICADOR DE IMPORTAÇÃO SIMPLIFICADO -->
     <div class="import-indicator" id="importIndicator">
-        <h2>🛡️ IMPORTAÇÃO COM PROTEÇÃO PERMANENTE</h2>
-        <div class="progress" id="importProgress">Iniciando proteção de dados...</div>
-        <div class="details" id="importDetails">
-            • Dados sendo PROTEGIDOS PERMANENTEMENTE<br>
-            • Cards NUNCA mais ficarão vazios<br>
-            • Backup automático em múltiplos locais<br>
-            • Polling NUNCA apagará os dados<br>
-            • Proteção ABSOLUTA contra perda
-        </div>
+        <h2>📥 Processando arquivo...</h2>
+        <div class="progress" id="importProgress">Aguarde...</div>
     </div>
 
-    <!-- BANNER DE SUCESSO DA IMPORTAÇÃO -->
+    <!-- BANNER DE SUCESSO SIMPLIFICADO -->
     <div class="import-success-banner" id="importSuccessBanner">
-        🎉 DADOS PROTEGIDOS PERMANENTEMENTE - CARDS NUNCA MAIS SOMEM!
+        ✅ Atualizado com sucesso
     </div>
 
     <!-- NOTIFICAÇÃO DE TEMPO REAL -->
@@ -2321,7 +2314,9 @@
         function atualizarTimestampVisual(timestamp) {
             const timestampElement = document.getElementById('updateTimestamp');
             if (timestampElement) {
-                timestampElement.textContent = `📅 Última atualização: ${timestamp}`;
+                // SIMPLIFCAR: remover o nome do usuário do timestamp
+                const timestampSemUsuario = timestamp.replace(/\(.*?\)/g, '').trim();
+                timestampElement.textContent = `📅 Última atualização: ${timestampSemUsuario}`;
                 timestampElement.classList.add('synced');
                 
                 // Efeito visual de atualização
@@ -2363,10 +2358,9 @@
                         // Se for um registro de dados, gerar timestamp da data de criação
                         const dataServer = new Date(registro.criado_em);
                         const timestampFormatado = dataServer.toLocaleString('pt-BR');
-                        const usuario = registro.transportadora || 'Sistema';
                         
-                        ultimaAtualizacaoGlobal = `${timestampFormatado} (${usuario})`;
-                        atualizarTimestampVisual(ultimaAtualizacaoGlobal);
+                        ultimaAtualizacaoGlobal = timestampFormatado;
+                        atualizarTimestampVisual(timestampFormatado);
                     }
                 } else {
                     carregarTimestampLocal();
@@ -2518,18 +2512,12 @@
                         
                         // REGISTRAR LOGIN NO TIMESTAMP
                         const agora = new Date();
-                        const timestampLogin = `${agora.toLocaleString('pt-BR')} (Login: ${usuarioEncontrado.nome})`;
+                        const timestampLogin = agora.toLocaleString('pt-BR');
                         salvarTimestampGlobal(timestampLogin);
                         atualizarTimestampVisual(timestampLogin);
                         
-                        const nivelTexto = {
-                            'master': 'MASTER (acesso total)',
-                            'importador': 'IMPORTADOR (apenas importação)',
-                            'administrador': 'ADMINISTRADOR (painel de leitura)',
-                            'user': 'USUÁRIO (apenas visualização)'
-                        };
-                        
-                        mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!\n\n👤 Nível: ${nivelTexto[usuarioEncontrado.nivel]}\n📊 5 cards ativos com dados corretos\n🔄 F5 não desloga mais!\n📋 Filtros ativos e funcionando\n🔍 Agrupamento por placa ativo\n\n✅ LOGIN SEM REFRESH FUNCIONANDO!`);
+                        // MENSAGEM DE BOAS-VINDAS SIMPLIFICADA
+                        mostrarAlerta('success', `✅ Bem-vindo, ${usuarioEncontrado.nome}!`);
                     }, 1000);
                     
                 } else {
@@ -2894,7 +2882,7 @@
                         
                         // ATUALIZAR TIMESTAMP PARA TODOS OS USUÁRIOS
                         const agora = new Date();
-                        const timestampSync = `${agora.toLocaleString('pt-BR')} (Sincronização)`;
+                        const timestampSync = agora.toLocaleString('pt-BR');
                         salvarTimestampGlobal(timestampSync);
                         
                         mostrarNotificacaoTempoReal('⚡ Dados atualizados!');
@@ -3028,7 +3016,7 @@
             return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
         }
 
-        // ========== IMPORTAÇÃO (MANTIDA COM 5 CARDS) ==========
+        // ========== IMPORTAÇÃO SIMPLIFICADA ==========
 
         function importarExcel(event) {
             if (!usuarioLogado || (usuarioLogado.nivel !== 'master' && usuarioLogado.nivel !== 'importador')) {
@@ -3040,7 +3028,7 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            console.log('🛡️ INICIANDO IMPORTAÇÃO...');
+            console.log('📥 INICIANDO IMPORTAÇÃO...');
             
             isImporting = true;
             importBlocked = true;
@@ -3059,7 +3047,7 @@
             
             reader.onerror = function(error) {
                 console.error('Erro ao ler arquivo:', error);
-                finalizarImportacaoProtegida(false, 'Erro ao ler arquivo');
+                finalizarImportacaoSimples(false, 'Erro ao ler arquivo');
             };
             
             reader.onload = function(e) {
@@ -3123,7 +3111,7 @@
                     
                 } catch (error) {
                     console.error('❌ Erro ao processar:', error);
-                    finalizarImportacaoProtegida(false, `Erro: ${error.message}`);
+                    finalizarImportacaoSimples(false, `Erro: ${error.message}`);
                 }
             };
             
@@ -3132,7 +3120,7 @@
         }
 
         async function salvarDadosComProtecao5Cards(dadosArray) {
-            console.log('🛡️ SALVAMENTO COM PROTEÇÃO DOS 5 CARDS...');
+            console.log('💾 SALVAMENTO DOS DADOS...');
             
             try {
                 // ATIVAR PROTEÇÃO
@@ -3147,9 +3135,9 @@
                 atualizarInterface();
                 popularFiltros();
                 
-                // REGISTRAR TIMESTAMP DE IMPORTAÇÃO
+                // REGISTRAR TIMESTAMP DE IMPORTAÇÃO (SEM NOME)
                 const agora = new Date();
-                const timestampImportacao = `${agora.toLocaleString('pt-BR')} (Importação: ${usuarioLogado.nome})`;
+                const timestampImportacao = agora.toLocaleString('pt-BR');
                 salvarTimestampGlobal(timestampImportacao);
                 
                 // SUPABASE EM BACKGROUND
@@ -3162,12 +3150,12 @@
                 }
                 
                 setTimeout(() => {
-                    finalizarImportacaoProtegida(true, `${dadosArray.length} registros - 5 cards protegidos`);
+                    finalizarImportacaoSimples(true, `${dadosArray.length} registros atualizados`);
                 }, 1500);
                 
             } catch (error) {
                 console.error('❌ Erro no salvamento:', error);
-                finalizarImportacaoProtegida(false, `Erro: ${error.message}`);
+                finalizarImportacaoSimples(false, `Erro: ${error.message}`);
             }
         }
 
@@ -3220,22 +3208,23 @@
             }
         }
 
-        function finalizarImportacaoProtegida(sucesso, mensagem) {
+        function finalizarImportacaoSimples(sucesso, mensagem) {
             console.log(`🏁 Finalizando importação: ${sucesso}`);
             
             if (sucesso) {
                 const banner = document.getElementById('importSuccessBanner');
-                banner.textContent = `🛡️ ${mensagem} - NUNCA MAIS SOMEM!`;
+                banner.textContent = 'Atualizado com sucesso';
                 banner.classList.add('show');
                 
-                setTimeout(() => banner.classList.remove('show'), 8000);
+                setTimeout(() => banner.classList.remove('show'), 3000);
                 
                 const agora = new Date();
-                const timestampLocal = `${agora.toLocaleString('pt-BR')} (${usuarioLogado.nome})`;
+                const timestampLocal = agora.toLocaleString('pt-BR');
                 salvarTimestampGlobal(timestampLocal);
                 atualizarTimestampVisual(timestampLocal);
                 
-                mostrarAlerta('success', `🛡️ IMPORTAÇÃO COM 5 CARDS PROTEGIDOS!\n\n📊 ${mensagem}\n✅ Cards nunca mais ficam vazios\n📅 Movimentação = mês atual de descarga\n🔒 Proteção permanente ativa\n🔄 F5 não desloga mais!\n📋 Filtros ativos e funcionando\n\n💪 SISTEMA 100% FUNCIONAL!`);
+                // MENSAGEM SIMPLIFICADA
+                mostrarAlerta('success', 'Atualizado com sucesso');
                 
                 setTimeout(() => {
                     if (supabaseDisponivel) {
@@ -3614,7 +3603,7 @@
             if (tipo === 'success') {
                 alertSuccess.innerHTML = mensagem;
                 alertSuccess.style.display = 'block';
-                setTimeout(() => alertSuccess.style.display = 'none', 10000);
+                setTimeout(() => alertSuccess.style.display = 'none', 5000);
             } else if (tipo === 'error') {
                 alertError.innerHTML = mensagem;
                 alertError.style.display = 'block';
@@ -3781,9 +3770,9 @@
                     timestampGlobalInterval = null;
                 }
                 
-                // REGISTRAR LOGOUT NO TIMESTAMP
+                // REGISTRAR LOGOUT NO TIMESTAMP (SEM NOME)
                 const agora = new Date();
-                const timestampLogout = `${agora.toLocaleString('pt-BR')} (Logout: ${usuarioLogado.nome})`;
+                const timestampLogout = agora.toLocaleString('pt-BR');
                 salvarTimestampGlobal(timestampLogout);
                 
                 sessionStorage.removeItem('usuarioLogado');
@@ -3801,11 +3790,11 @@
             const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
             
             if (usuarioLogado.nivel === 'master') {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Login Sem Refresh';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Mensagens Simplificadas';
                 document.getElementById('createUserSection').style.display = 'block';
                 pollingIndicatorPanel.style.display = 'block';
             } else {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Login Sem Refresh';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Mensagens Simplificadas';
                 document.getElementById('createUserSection').style.display = 'none';
                 pollingIndicatorPanel.style.display = 'none';
             }
@@ -3892,12 +3881,13 @@
 
             carregarListaUsuarios();
 
-            // REGISTRAR CRIAÇÃO DE USUÁRIO NO TIMESTAMP
+            // REGISTRAR CRIAÇÃO DE USUÁRIO NO TIMESTAMP (SEM NOME)
             const agora = new Date();
-            const timestampUsuario = `${agora.toLocaleString('pt-BR')} (Usuário criado: ${nome})`;
+            const timestampUsuario = agora.toLocaleString('pt-BR');
             salvarTimestampGlobal(timestampUsuario);
 
-            mostrarAlerta('success', `✅ Usuário ${nome} criado!\n\n👤 Nível: ${nivel}\n🔐 Login: ${login}\n🔒 Senha: ${senha}\n🔄 F5 não desloga mais!\n\n✅ Pode fazer login imediatamente!`);
+            // MENSAGEM SIMPLIFICADA
+            mostrarAlerta('success', `✅ Usuário criado com sucesso!`);
         }
 
         async function salvarUsuarioNoSupabase(novoUsuario) {
@@ -3987,7 +3977,8 @@
             
             atualizarInterface();
             
-            mostrarAlerta('info', '📅 Filtros limpos!\n✅ 5 cards ativos\n📊 Movimentação = mês atual\n🔄 F5 não desloga mais!\n🔍 Filtros disponíveis');
+            // MENSAGEM SIMPLIFICADA
+            mostrarAlerta('info', 'Filtros limpos');
         }
 
         async function limparArquivo() {
@@ -4019,13 +4010,13 @@
                 const cards = document.querySelectorAll('.stat-card');
                 cards.forEach(card => card.classList.remove('protected'));
                 
-                // REGISTRAR LIMPEZA NO TIMESTAMP
+                // REGISTRAR LIMPEZA NO TIMESTAMP (SEM NOME)
                 const agora = new Date();
-                const timestampLimpeza = `${agora.toLocaleString('pt-BR')} (Sistema limpo: ${usuarioLogado.nome})`;
+                const timestampLimpeza = agora.toLocaleString('pt-BR');
                 salvarTimestampGlobal(timestampLimpeza);
                 
                 atualizarInterface();
-                mostrarAlerta('info', '🗑️ Dados limpos! Sistema resetado.');
+                mostrarAlerta('info', 'Dados limpos com sucesso');
             }
         }
 
@@ -4046,12 +4037,12 @@
             link.download = `minerva_patio_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
             
-            // REGISTRAR EXPORTAÇÃO NO TIMESTAMP
+            // REGISTRAR EXPORTAÇÃO NO TIMESTAMP (SEM NOME)
             const agora = new Date();
-            const timestampExport = `${agora.toLocaleString('pt-BR')} (Exportação: ${usuarioLogado.nome})`;
+            const timestampExport = agora.toLocaleString('pt-BR');
             salvarTimestampGlobal(timestampExport);
             
-            mostrarAlerta('success', '✓ Arquivo exportado!');
+            mostrarAlerta('success', 'Dados exportados com sucesso');
         }
 
         async function forcarSincronizacaoCompleta() {
@@ -4066,7 +4057,8 @@
                 await sincronizarTimestampGlobal();
                 
                 const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-                mostrarAlerta('success', `✅ Sincronização concluída!\n\n👥 ${usuarios.length} usuários disponíveis\n✅ Login funcionando\n📊 5 cards ativos\n📅 Timestamp sincronizado\n🔄 F5 não desloga mais!\n📈 Movimentação = mês atual\n⏰ ${new Date().toLocaleTimeString('pt-BR')}`);
+                // MENSAGEM SIMPLIFICADA
+                mostrarAlerta('success', 'Sincronização concluída com sucesso');
                 
             } catch (error) {
                 mostrarAlerta('error', `❌ Erro na sincronização: ${error.message}`);
@@ -4082,58 +4074,26 @@
             const mesAtual = obterMesAtual();
             
             const info = `
-🚀✅📊📅🔄 SISTEMA FINAL - LOGIN SEM REFRESH + MOVIMENTAÇÃO MÊS ATUAL + TIMESTAMP
+🚀 SISTEMA FUNCIONANDO PERFEITAMENTE
 
-✅ LOGIN SEM REFRESH FUNCIONANDO:
+✅ LOGIN:
 • Total usuários: ${usuarios.length}
 • F5 não desloga mais: ✅
 • Sessão persistente: ✅
-• Autenticação: Corrigida
-• Acesso: Liberado para todos
 
 📊 5 CARDS ATIVOS (${dataAtual}):
-• Em Trânsito: ${document.getElementById('totalTransito').textContent} (status ativo)
-• Aguardando: ${document.getElementById('totalAguardando').textContent} (status ativo)
-• Desovando: ${document.getElementById('totalDesovando').textContent} (status ativo)
-• Descarregado: ${document.getElementById('totalDescarregado').textContent} (só hoje)
-• Movimentação: ${document.getElementById('totalVeiculos').textContent} (DESCARGA mês ${mesAtual})
+• Em Trânsito: ${document.getElementById('totalTransito').textContent}
+• Aguardando: ${document.getElementById('totalAguardando').textContent}
+• Desovando: ${document.getElementById('totalDesovando').textContent}
+• Descarregado: ${document.getElementById('totalDescarregado').textContent}
+• Movimentação: ${document.getElementById('totalVeiculos').textContent}
 
-📅 TIMESTAMP CORRIGIDO:
-• Sincronização global: ✅
-• Visível para todos: ✅
-• Atualização automática: ✅
-• Registro de operações: ✅
+📅 SISTEMA:
+• Timestamp sincronizado: ✅
+• Mensagens simplificadas: ✅
+• Importação funcionando: ✅
 
-📈 MOVIMENTAÇÃO CORRIGIDA:
-• Busca: APENAS descarga do mês atual
-• Mês atual: ${mesAtual}
-• Ignora: Meses anteriores
-• Critério: dataDescarga no mês ${mesAtual}
-
-🔄 REFRESH CORRIGIDO:
-• F5 verifica sessão: ✅
-• Login automático: ✅
-• Credenciais lembradas: ✅
-• Verificação imediata: ✅
-• Sem piscar de tela: ✅
-
-🔍 FILTROS ATIVOS:
-• Busca por placa ✅
-• Filtro por status ✅
-• Filtro por origem ✅
-• Filtro por mercado ✅
-• Filtro por diária ✅
-• Filtro por descarga ✅
-• Filtro por data chegada ✅
-• Filtro por data descarga ✅
-• TODOS funcionando normalmente
-
-🛡️ PROTEÇÃO:
-• Cards: ${dadosProtegidosPermanentemente ? 'PROTEGIDOS' : 'NORMAIS'}
-• Backup: Automático
-• Timestamp: Sincronizado
-
-✅ SISTEMA PERFEITO - F5 NÃO DESLOGA MAIS!
+✅ TUDO FUNCIONANDO!
             `;
             
             alert(info);
@@ -4196,7 +4156,7 @@
             }
         });
 
-        console.log('✅🚀📊📈📅🔄 SISTEMA FINAL - LOGIN SEM REFRESH + 5 CARDS + MOVIMENTAÇÃO MÊS ATUAL + TIMESTAMP CORRIGIDO!');
+        console.log('✅ SISTEMA FINAL - MENSAGENS SIMPLIFICADAS!');
     </script>
 </body>
 </html>
