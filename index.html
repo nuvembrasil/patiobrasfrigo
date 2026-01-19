@@ -132,13 +132,6 @@
             font-weight: 600;
         }
 
-        .import-indicator .details {
-            font-size: 12px;
-            opacity: 0.8;
-            max-width: 400px;
-            line-height: 1.5;
-        }
-
         @keyframes importPulse {
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.1); opacity: 0.8; }
@@ -167,7 +160,7 @@
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        /* VISUALIZADOR DE ÚLTIMA ATUALIZAÇÃO - CORRIGIDO */
+        /* VISUALIZADOR DE ÚLTIMA ATUALIZAÇÃO */
         .update-timestamp {
             position: fixed;
             top: 65px;
@@ -196,7 +189,7 @@
             50% { opacity: 0.8; transform: scale(1.02); }
         }
 
-        /* NOTIFICAÇÃO DE TEMPO REAL */
+        /* NOTIFICAÇÕES */
         .realtime-notification {
             position: fixed;
             top: 20px;
@@ -218,17 +211,11 @@
             display: block;
         }
 
-        .realtime-notification.import-sync {
-            background: #f59e0b;
-            color: #1f2937;
-        }
-
         @keyframes realtimeSlide {
             from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
             to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
 
-        /* NOTIFICAÇÃO DE ATUALIZAÇÕES */
         .update-notification {
             position: fixed;
             top: 100px;
@@ -250,7 +237,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* INDICADOR DE SINCRONIZAÇÃO */
         .sync-indicator {
             position: fixed;
             top: 20px;
@@ -266,16 +252,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
-        .sync-indicator.syncing {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .sync-indicator.error {
-            background: #dc3545;
-        }
-
-        /* TELA DE LOGIN LIMPA - OCULTA POR PADRÃO */
+        /* TELA DE LOGIN LIMPA */
         .login-overlay {
             position: fixed;
             top: 0;
@@ -519,7 +496,7 @@
             background: #5a6268;
         }
 
-        /* PAINEL DE GOVERNANÇA DE USUÁRIOS */
+        /* PAINEL DE GOVERNANÇA */
         .user-panel {
             position: fixed;
             top: 0;
@@ -710,21 +687,6 @@
             font-size: 10px;
         }
 
-        .status-online-inline {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-offline-inline {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-
-        .status-local-inline {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
         .status-protected-inline {
             background: #d1fae5;
             color: #047857;
@@ -756,14 +718,9 @@
         .system-status {
             margin-top: 20px;
             padding: 15px;
-            background: #e7f3ff;
-            border: 1px solid #b8daff;
-            border-radius: 6px;
-        }
-
-        .system-status.protected {
             background: #f0fdf4;
-            border-color: #bbf7d0;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
         }
 
         .header {
@@ -786,7 +743,7 @@
             opacity: 0.9;
         }
 
-        /* USER-INFO COM BOTÃO DE ALTERAR SENHA */
+        /* USER-INFO COM BOTÕES */
         .user-info {
             position: absolute;
             top: 50%;
@@ -822,30 +779,13 @@
             margin: 0;
         }
 
-        .user-master {
-            background: #e74c3c;
-            color: white;
-        }
+        .user-master { background: #e74c3c; color: white; }
+        .user-admin { background: #f39c12; color: white; }
+        .user-importador { background: #17a2b8; color: white; }
+        .user-normal { background: #95a5a6; color: white; }
 
-        .user-admin {
-            background: #f39c12;
-            color: white;
-        }
-
-        .user-importador {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .user-normal {
-            background: #95a5a6;
-            color: white;
-        }
-
-        /* BOTÕES PADRÃO NEUTROS - INCLUINDO TROCA DE SENHA */
-        .btn-control-panel {
+        .btn-control-panel, .btn-change-password, .btn-logout {
             padding: 5px 8px;
-            background: #6c757d;
             color: white;
             border: none;
             border-radius: 6px;
@@ -853,7 +793,6 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
-            display: none;
             width: 100%;
             text-align: center;
             z-index: 101;
@@ -861,26 +800,22 @@
             line-height: 1.2;
         }
 
-        .btn-control-panel:hover {
-            background: #5a6268;
-            transform: translateY(-1px);
+        .btn-control-panel {
+            background: #6c757d;
+            display: none;
         }
 
         .btn-change-password {
-            padding: 5px 8px;
             background: #17a2b8;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 9px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            text-align: center;
-            z-index: 101;
-            pointer-events: auto;
-            line-height: 1.2;
+        }
+
+        .btn-logout {
+            background: #6c757d;
+        }
+
+        .btn-control-panel:hover, .btn-logout:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
         }
 
         .btn-change-password:hover {
@@ -888,52 +823,12 @@
             transform: translateY(-1px);
         }
 
-        .btn-logout {
-            padding: 5px 8px;
-            background: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 9px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            text-align: center;
-            z-index: 101;
-            pointer-events: auto;
-            line-height: 1.2;
-        }
-
-        .btn-logout:hover {
-            background: #5a6268;
-            transform: translateY(-1px);
-        }
-
-        /* CONTROLES CENTRALIZADOS AUTOMATICAMENTE */
+        /* CONTROLES */
         .controls {
             padding: 12px 16px;
             background: #f8f9fa;
             border-bottom: 2px solid #dee2e6;
             overflow-x: auto;
-        }
-
-        .controls::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .controls::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-
-        .controls::-webkit-scrollbar-thumb {
-            background: #2c3e50;
-            border-radius: 3px;
-        }
-
-        .controls::-webkit-scrollbar-thumb:hover {
-            background: #1a252f;
         }
 
         .controls-content {
@@ -951,26 +846,6 @@
             gap: 3px;
             min-width: 120px;
             flex: 0 0 auto;
-        }
-
-        .control-group.date-range {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            min-width: 160px;
-            flex: 0 0 auto;
-        }
-
-        .date-range-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px;
-        }
-
-        .date-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
         }
 
         .control-group label {
@@ -1002,21 +877,6 @@
             box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
         }
 
-        .date-input-small {
-            padding: 4px 6px !important;
-            font-size: 11px !important;
-            height: 28px !important;
-        }
-
-        .date-label-small {
-            font-size: 8px !important;
-            color: #6c757d !important;
-            margin-bottom: 1px;
-            text-align: left;
-            font-weight: 500;
-        }
-
-        /* BOTÕES CENTRALIZADOS EMBAIXO */
         .controls-buttons {
             display: flex;
             gap: 6px;
@@ -1027,9 +887,8 @@
             width: 100%;
         }
 
-        .btn-search {
+        .btn-search, .btn-clear, .btn-clear-file {
             padding: 6px 12px;
-            background: #2c3e50;
             color: white;
             border: none;
             border-radius: 6px;
@@ -1042,6 +901,10 @@
             display: flex;
             align-items: center;
             gap: 4px;
+        }
+
+        .btn-search {
+            background: #2c3e50;
         }
 
         .btn-search:hover {
@@ -1050,20 +913,7 @@
         }
 
         .btn-clear {
-            padding: 6px 12px;
             background: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            height: 32px;
-            white-space: nowrap;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .btn-clear:hover {
@@ -1072,20 +922,7 @@
         }
 
         .btn-clear-file {
-            padding: 6px 12px;
             background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            height: 32px;
-            white-space: nowrap;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .btn-clear-file:hover {
@@ -1099,25 +936,26 @@
             transform: none;
         }
 
-        /* ========== CARDS COMPACTOS - 5 CARDS APENAS ========== */
+        /* ========== CARDS PROFISSIONAIS CENTRALIZADOS COM ÍCONES - FONTE MAIOR ========== */
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            padding: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            padding: 12px;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
 
         .stat-card {
             background: white;
-            padding: 12px 15px;
-            border-radius: 8px;
+            padding: 10px 12px;
+            border-radius: 6px;
             border: none;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            text-align: center; /* CENTRALIZADO */
         }
 
         .stat-card::before {
@@ -1126,79 +964,115 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
+            height: 3px;
             transition: all 0.3s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
         }
 
         .stat-card.updated {
-            animation: cardCompactPulse 1s ease;
+            animation: cardCompactPulse 0.8s ease;
         }
 
         .stat-card.protected {
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.15);
+            box-shadow: 0 3px 10px rgba(40, 167, 69, 0.15);
             border: 1px solid rgba(40, 167, 69, 0.2);
         }
 
         @keyframes cardCompactPulse {
-            0% { transform: scale(1); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
-            50% { transform: scale(1.03); box-shadow: 0 20px 35px rgba(59, 130, 246, 0.2); }
-            100% { transform: scale(1); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
 
-        /* CORES PROFISSIONAIS DOS 5 CARDS */
+        /* CORES DOS CARDS */
         .stat-card.transito::before { background: linear-gradient(90deg, #8e44ad 0%, #9b59b6 100%); }
         .stat-card.aguardando::before { background: linear-gradient(90deg, #f39c12 0%, #ff8c00 100%); }
-        .stat-card.desovando::before { background: linear-gradient(90deg, #17a2b8 0%, #20c997 100%); }
+        .stat-card.descarregando::before { background: linear-gradient(90deg, #17a2b8 0%, #20c997 100%); }
         .stat-card.descarregado::before { background: linear-gradient(90deg, #28a745 0%, #20c997 100%); }
-        .stat-card.total::before { background: linear-gradient(90deg, #007bff 0%, #4dabf7 100%); }
+        .stat-card.movimentacao::before { background: linear-gradient(90deg, #007bff 0%, #4dabf7 100%); }
 
-        .stat-card .label {
-            font-size: 13px;
-            color: #6c757d;
-            font-weight: 600;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+        /* ÍCONES DOS CARDS */
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 8px auto;
+            opacity: 0.8;
             position: relative;
             z-index: 2;
         }
 
+        /* CARDS NORMAIS COM ÍCONES - CENTRALIZADOS - FONTE MAIOR */
+        .stat-card .label {
+            font-size: 13px; /* AUMENTADO DE 10px PARA 13px */
+            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+            position: relative;
+            z-index: 2;
+            text-align: center; /* CENTRALIZADO */
+        }
+
         .stat-card .value {
-            font-size: 28px;
+            font-size: 26px; /* AUMENTADO DE 20px PARA 26px */
             font-weight: 700;
             color: #2c3e50;
             margin-bottom: 0;
             position: relative;
             z-index: 2;
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            text-align: center; /* CENTRALIZADO */
         }
 
-        /* HOVER EFFECTS PROFISSIONAIS */
+        /* CARD ESPECIAL DE MOVIMENTAÇÃO - SEM TÍTULO E COMPACTO */
+        .stat-card.movimentacao {
+            padding: 8px 10px;
+            text-align: left; /* MANTÉM ALINHADO À ESQUERDA PARA TABELA */
+        }
+
+        .stat-card.movimentacao .movimentacao-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-card.movimentacao .movimentacao-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 0;
+        }
+
+        .stat-card.movimentacao .movimentacao-item:not(:last-child) {
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 5px;
+        }
+
+        .stat-card.movimentacao .movimentacao-label {
+            font-size: 11px; /* AUMENTADO DE 9px PARA 11px */
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .stat-card.movimentacao .movimentacao-valor {
+            font-size: 18px; /* AUMENTADO DE 14px PARA 18px */
+            font-weight: 700;
+            color: #007bff;
+        }
+
+        /* HOVER EFFECTS */
         .stat-card.transito:hover::before { background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%); }
         .stat-card.aguardando:hover::before { background: linear-gradient(90deg, #ff8c00 0%, #f39c12 100%); }
-        .stat-card.desovando:hover::before { background: linear-gradient(90deg, #20c997 0%, #17a2b8 100%); }
+        .stat-card.descarregando:hover::before { background: linear-gradient(90deg, #20c997 0%, #17a2b8 100%); }
         .stat-card.descarregado:hover::before { background: linear-gradient(90deg, #20c997 0%, #28a745 100%); }
-        .stat-card.total:hover::before { background: linear-gradient(90deg, #4dabf7 0%, #007bff 100%); }
-
-        .total-diarias-info {
-            padding: 15px 20px;
-            background: linear-gradient(135deg, #6c5ce7 0%, #7c4dff 100%);
-            color: white;
-            text-align: center;
-            font-weight: 600;
-            display: none;
-            box-shadow: 0 4px 15px rgba(124, 77, 255, 0.3);
-            letter-spacing: 0.3px;
-        }
-
-        .total-diarias-info.show {
-            display: block;
-        }
+        .stat-card.movimentacao:hover::before { background: linear-gradient(90deg, #4dabf7 0%, #007bff 100%); }
 
         .table-container {
             overflow: hidden;
@@ -1206,7 +1080,6 @@
             position: relative;
         }
 
-        /* TABELA COM SCROLL ADAPTATIVO */
         .table-wrapper {
             overflow-x: auto;
             overflow-y: auto;
@@ -1265,7 +1138,7 @@
             background: #f8f9fa;
         }
 
-        /* ESTILOS PARA AGRUPAMENTO POR PLACA */
+        /* AGRUPAMENTO POR PLACA - CORRIGIDO */
         .grupo-header {
             background: #f1f3f4 !important;
             font-weight: bold;
@@ -1332,24 +1205,7 @@
         .status-aguardando { background: #fff3cd; color: #856404; }
         .status-trânsito { background: #e7d4f5; color: #6f42c1; }
         .status-descarregado { background: #d4edda; color: #155724; }
-        .status-desovando { background: #d1ecf1; color: #0c5460; }
-
-        .dedicada-sim { 
-            background: #d1ecf1; 
-            color: #0c5460;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 9px;
-        }
-
-        .dedicada-nao { 
-            background: #f8f9fa; 
-            color: #6c757d;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 9px;
-        }
+        .status-descarregando { background: #d1ecf1; color: #0c5460; }
 
         .btn-export {
             padding: 8px 16px;
@@ -1434,31 +1290,11 @@
             border: 1px solid #b8daff;
         }
 
-        .auto-save-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* PAINEL PRINCIPAL OCULTO POR PADRÃO TAMBÉM */
         .container {
-            display: none; /* MUDANÇA: oculto por padrão até login */
+            display: none;
         }
 
-        /* MEDIA QUERIES SIMPLIFICADAS */
+        /* MEDIA QUERIES */
         @media (max-width: 900px) {
             .header {
                 padding: 20px 15px;
@@ -1480,51 +1316,63 @@
 
         @media (max-width: 600px) {
             .stats {
-                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-                gap: 12px;
-                padding: 12px;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+                padding: 10px;
+            }
+            
+            .stat-card {
+                padding: 8px 10px;
+            }
+            
+            .stat-card .value {
+                font-size: 22px; /* AUMENTADO PARA MOBILE TAMBÉM */
+            }
+            
+            .stat-card.movimentacao .movimentacao-valor {
+                font-size: 16px; /* AUMENTADO PARA MOBILE TAMBÉM */
+            }
+
+            .card-icon {
+                width: 24px;
+                height: 24px;
+                margin-bottom: 6px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- INDICADOR DE IMPORTAÇÃO SIMPLIFICADO -->
+    <!-- INDICADORES -->
     <div class="import-indicator" id="importIndicator">
         <h2>📥 Processando arquivo...</h2>
         <div class="progress" id="importProgress">Aguarde...</div>
     </div>
 
-    <!-- BANNER DE SUCESSO SIMPLIFICADO -->
     <div class="import-success-banner" id="importSuccessBanner">
         ✅ Atualizado com sucesso
     </div>
 
-    <!-- NOTIFICAÇÃO DE TEMPO REAL -->
     <div class="realtime-notification" id="realtimeNotification">
         ⚡ Dados atualizados por outro usuário!
     </div>
 
-    <!-- VISUALIZADOR DE ÚLTIMA ATUALIZAÇÃO - CORRIGIDO -->
     <div class="update-timestamp" id="updateTimestamp">
         📅 Última atualização: Nunca
     </div>
 
-    <!-- NOTIFICAÇÃO DE ATUALIZAÇÕES -->
     <div class="update-notification" id="updateNotification">
         ⚡ Dados atualizados!
     </div>
 
-    <!-- INDICADOR DE SINCRONIZAÇÃO -->
     <div class="sync-indicator" id="syncIndicator">
         🔄 Sincronizando...
     </div>
 
-    <!-- TELA DE LOGIN LIMPA - OCULTA POR PADRÃO -->
+    <!-- TELA DE LOGIN LIMPA -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-modal">
             <h2>🔐 Login - Pátio Brasfrigo</h2>
 
-            <!-- STATUS DE LOGIN -->
             <div class="login-status" id="loginStatus">
                 Sistema pronto
             </div>
@@ -1539,7 +1387,6 @@
                 <button type="submit" class="login-btn" id="btnLogin">Entrar</button>
             </form>
 
-            <!-- SEÇÃO DE RECUPERAÇÃO DE SENHA -->
             <div class="password-recovery">
                 <div class="recovery-title">🔑 Esqueceu sua senha?</div>
                 <form class="recovery-form" onsubmit="recuperarSenha(event)">
@@ -1564,12 +1411,11 @@
         </div>
     </div>
 
-    <!-- PAINEL DE GOVERNANÇA DE USUÁRIOS -->
+    <!-- PAINEL DE GOVERNANÇA -->
     <div class="user-panel" id="userPanel">
         <div class="user-panel-modal">
-            <h3 id="panelTitle">👥 Painel de Governança - Variáveis Corrigidas</h3>
+            <h3 id="panelTitle">👥 Painel de Governança - Cards Fonte Maior</h3>
             
-            <!-- INDICADOR DE POLLING APENAS PARA MASTER -->
             <div id="pollingIndicatorPanel" style="display: none;">
                 <div class="polling-indicator protected" id="pollingIndicator" onclick="mostrarDetalhesPolling()">
                     <span id="pollingStatusText">🛡️ Sistema Funcionando</span>
@@ -1593,32 +1439,29 @@
             </div>
 
             <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 Usuários Cadastrados</h4>
-            <div class="user-list" id="userList">
-                <!-- Lista de usuários será carregada aqui -->
-            </div>
+            <div class="user-list" id="userList"></div>
 
-            <!-- STATUS SUPABASE INTEGRADO -->
             <div class="supabase-status protected" id="supabaseStatus">
                 <div class="supabase-header">
                     <div class="supabase-title">
                         <span id="supabaseIcon">✅</span>
-                        <span id="supabaseTitle">Sistema: E-mail Variáveis OK</span>
+                        <span id="supabaseTitle">Sistema: Fonte Maior + Descarregando</span>
                     </div>
                     <button class="status-toggle" id="statusToggle" onclick="toggleSupabaseDetails()">▼</button>
                 </div>
                 
                 <div class="supabase-details" id="supabaseDetails">
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Conexão:</span>
-                        <span class="status-value-inline status-online-inline" id="supabaseConnectionStatus">Online</span>
-                    </div>
-                    <div class="status-item-inline">
                         <span class="status-label-inline">E-mail:</span>
-                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">Variáveis OK</span>
+                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">Funcionando</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Cards:</span>
-                        <span class="status-value-inline status-protected-inline" id="cardStatus">5 Cards Ativos</span>
+                        <span class="status-value-inline status-protected-inline" id="cardStatus">Fonte Maior</span>
+                    </div>
+                    <div class="status-item-inline">
+                        <span class="status-label-inline">Agrupamento:</span>
+                        <span class="status-value-inline status-protected-inline" id="groupStatus">Funcionando</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Proteção:</span>
@@ -1627,18 +1470,18 @@
                 </div>
                 
                 <button class="supabase-test-btn" id="supabaseTestBtn" onclick="testarEmailJS()">
-                    📧 Testar E-mail Completo
+                    📧 Testar E-mail
                 </button>
                 
                 <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="supabaseLastUpdate">
-                    Múltiplos formatos de variáveis
+                    Cards com fonte otimizada
                 </div>
             </div>
 
             <div class="system-status protected" id="systemStatus">
                 <strong>✅ Status do Sistema:</strong>
                 <div style="margin-top: 10px; font-size: 12px;" id="systemStatusDetails">
-                    E-mail com variáveis corrigidas
+                    Fonte maior + Descarregando implementado
                 </div>
             </div>
 
@@ -1646,10 +1489,6 @@
                 <button onclick="fecharPainelGovernanca()" class="btn-clear">Fechar</button>
             </div>
         </div>
-    </div>
-
-    <div class="auto-save-indicator" id="autoSaveIndicator">
-        ✅ Sistema funcionando corretamente!
     </div>
 
     <div class="container" id="mainContainer">
@@ -1664,7 +1503,7 @@
                 <button class="btn-logout" onclick="fazerLogout()">Logout</button>
             </div>
             <h1>Minerva Foods - Logística Internacional</h1>
-            <p>Pátio Brasfrigo - E-mail Funcionando</p>
+            <p>Pátio Brasfrigo - Fonte Maior + Descarregando</p>
         </div>
 
         <div class="controls">
@@ -1681,7 +1520,7 @@
                         <option value="AGUARDANDO">Aguardando</option>
                         <option value="TRÂNSITO">Em Trânsito</option>
                         <option value="DESCARREGADO">Descarregado</option>
-                        <option value="DESOVANDO">Desovando</option>
+                        <option value="DESCARREGANDO">Descarregando</option>
                     </select>
                 </div>
                 
@@ -1716,37 +1555,8 @@
                         <option value="ITAJAI">Itajaí</option>
                     </select>
                 </div>
-                
-                <div class="control-group date-range">
-                    <label>📅 Data Chegada</label>
-                    <div class="date-range-inputs">
-                        <div class="date-input-group">
-                            <div class="date-label-small">De:</div>
-                            <input type="date" id="filterDataChegadaDe" class="date-input-small">
-                        </div>
-                        <div class="date-input-group">
-                            <div class="date-label-small">Até:</div>
-                            <input type="date" id="filterDataChegadaAte" class="date-input-small">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="control-group date-range">
-                    <label>📆 Data Descarga</label>
-                    <div class="date-range-inputs">
-                        <div class="date-input-group">
-                            <div class="date-label-small">De:</div>
-                            <input type="date" id="filterDataDescargaDe" class="date-input-small">
-                        </div>
-                        <div class="date-input-group">
-                            <div class="date-label-small">Até:</div>
-                            <input type="date" id="filterDataDescargaAte" class="date-input-small">
-                        </div>
-                    </div>
-                </div>
             </div>
             
-            <!-- BOTÕES CENTRALIZADOS EMBAIXO -->
             <div class="controls-buttons">
                 <button class="btn-search" onclick="aplicarFiltros()">
                     <span>🔍</span> Aplicar
@@ -1760,31 +1570,83 @@
             </div>
         </div>
 
-        <div class="total-diarias-info" id="totalDiariasInfo">
-            📊 <span id="totalDiariasTexto">Total de diárias geradas no período: 0</span>
-        </div>
-
-        <!-- 5 CARDS APENAS (REMOVIDO DIÁRIAS GERADAS) -->
+        <!-- CARDS PROFISSIONAIS CENTRALIZADOS COM ÍCONES -->
         <div class="stats">
+            <!-- CARD EM TRÂNSITO COM ÍCONE DE CAMINHÃO -->
             <div class="stat-card transito">
+                <svg class="card-icon" viewBox="0 0 64 64" fill="none">
+                    <rect x="8" y="32" width="32" height="16" rx="2" fill="#9b59b6" opacity="0.7"/>
+                    <rect x="42" y="38" width="12" height="10" rx="1" fill="#9b59b6" opacity="0.7"/>
+                    <circle cx="18" cy="52" r="4" fill="#8e44ad"/>
+                    <circle cx="48" cy="52" r="4" fill="#8e44ad"/>
+                    <rect x="10" y="34" width="28" height="4" fill="white" opacity="0.5"/>
+                    <path d="M40 38L42 38L45 32L50 32L54 38L54 48L42 48L40 48Z" fill="#9b59b6" opacity="0.7"/>
+                </svg>
                 <div class="label">Em Trânsito</div>
                 <div class="value" id="totalTransito">0</div>
             </div>
+            
+            <!-- CARD AGUARDANDO COM ÍCONE DE RELÓGIO -->
             <div class="stat-card aguardando">
+                <svg class="card-icon" viewBox="0 0 64 64" fill="none">
+                    <circle cx="32" cy="32" r="20" stroke="#f39c12" stroke-width="3" fill="none" opacity="0.7"/>
+                    <circle cx="32" cy="32" r="16" fill="#ff8c00" opacity="0.3"/>
+                    <path d="M32 20 L32 32 L42 38" stroke="#f39c12" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="32" cy="32" r="2" fill="#f39c12"/>
+                    <rect x="30" y="10" width="4" height="6" fill="#f39c12" opacity="0.7"/>
+                    <rect x="30" y="48" width="4" height="6" fill="#f39c12" opacity="0.7"/>
+                    <rect x="10" y="30" width="6" height="4" fill="#f39c12" opacity="0.7"/>
+                    <rect x="48" y="30" width="6" height="4" fill="#f39c12" opacity="0.7"/>
+                </svg>
                 <div class="label">Aguardando</div>
                 <div class="value" id="totalAguardando">0</div>
             </div>
-            <div class="stat-card desovando">
-                <div class="label">Desovando</div>
-                <div class="value" id="totalDesovando">0</div>
+            
+            <!-- CARD DESCARREGANDO COM ÍCONE DE CONTAINER -->
+            <div class="stat-card descarregando">
+                <svg class="card-icon" viewBox="0 0 64 64" fill="none">
+                    <rect x="12" y="20" width="40" height="24" rx="2" fill="#17a2b8" opacity="0.7"/>
+                    <rect x="14" y="22" width="36" height="4" fill="#20c997" opacity="0.5"/>
+                    <rect x="14" y="28" width="36" height="4" fill="#20c997" opacity="0.5"/>
+                    <rect x="14" y="34" width="36" height="4" fill="#20c997" opacity="0.5"/>
+                    <path d="M20 44 L20 50 L44 50 L44 44" stroke="#17a2b8" stroke-width="2" fill="none"/>
+                    <path d="M24 50 L24 54 M32 50 L32 54 M40 50 L40 54" stroke="#17a2b8" stroke-width="2"/>
+                    <circle cx="26" cy="18" r="2" fill="#20c997"/>
+                    <circle cx="38" cy="18" r="2" fill="#20c997"/>
+                </svg>
+                <div class="label">Descarregando</div>
+                <div class="value" id="totalDescarregando">0</div>
             </div>
+            
+            <!-- CARD DESCARREGADO COM ÍCONE DE CHECK -->
             <div class="stat-card descarregado">
+                <svg class="card-icon" viewBox="0 0 64 64" fill="none">
+                    <circle cx="32" cy="32" r="20" fill="#28a745" opacity="0.7"/>
+                    <circle cx="32" cy="32" r="16" fill="#20c997" opacity="0.5"/>
+                    <path d="M22 32 L28 38 L42 24" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="20" y="48" width="24" height="4" rx="2" fill="#28a745" opacity="0.5"/>
+                    <rect x="16" y="52" width="32" height="2" rx="1" fill="#20c997" opacity="0.3"/>
+                </svg>
                 <div class="label">Descarregado</div>
                 <div class="value" id="totalDescarregado">0</div>
             </div>
-            <div class="stat-card total">
-                <div class="label">Movimentação Total Mês</div>
-                <div class="value" id="totalVeiculos">0</div>
+            
+            <!-- CARD DE MOVIMENTAÇÃO SEM ÍCONE (CONFORME SOLICITADO) -->
+            <div class="stat-card movimentacao">
+                <div class="movimentacao-content">
+                    <div class="movimentacao-item">
+                        <span class="movimentacao-label">Movimentação dia:</span>
+                        <span class="movimentacao-valor" id="movimentacaoDia">0</span>
+                    </div>
+                    <div class="movimentacao-item">
+                        <span class="movimentacao-label">Movimentação semana:</span>
+                        <span class="movimentacao-valor" id="movimentacaoSemana">0</span>
+                    </div>
+                    <div class="movimentacao-item">
+                        <span class="movimentacao-label">Movimentação mês:</span>
+                        <span class="movimentacao-valor" id="movimentacaoMes">0</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1857,26 +1719,23 @@
     </div>
 
     <script>
-        // ========== CONFIGURAÇÃO EMAILJS COM VARIÁVEIS MÚLTIPLAS ==========
+        // ========== CONFIGURAÇÃO EMAILJS ==========
         
-        // SUAS CREDENCIAIS EMAILJS
         const emailJSConfig = {
-            serviceID: 'service_t6q4q3f',     // Seu Service ID
-            templateID: 'template_fpi2vup',    // Seu Template ID
-            publicKey: 'bLKKoQbVyFnGB9hML'    // Sua Public Key
+            serviceID: 'service_t6q4q3f',
+            templateID: 'template_fpi2vup',
+            publicKey: 'bLKKoQbVyFnGB9hML'
         };
         
-        // Inicializar EmailJS
         let emailJSReady = false;
         
         (function inicializarEmailJS(){
             try {
-                console.log('📧 Inicializando EmailJS...');
                 emailjs.init(emailJSConfig.publicKey);
                 emailJSReady = true;
-                console.log('✅ EmailJS inicializado com sucesso');
+                console.log('✅ EmailJS inicializado');
             } catch (error) {
-                console.error('❌ Erro ao inicializar EmailJS:', error);
+                console.error('❌ Erro EmailJS:', error);
                 emailJSReady = false;
             }
         })();
@@ -1884,27 +1743,17 @@
         // ========== VARIÁVEIS GLOBAIS ==========
         let usuarioLogado = null;
         let dadosPatio = [];
-        let dadosImportadosRecentemente = [];
         let supabase = null;
         let supabaseDisponivel = false;
-        let pollingInterval = null;
-        let pollingCount = 0;
-        let lastSyncTime = 0;
-        let ultimoTimestampBanco = 0;
-        let ultimaSincronizacaoUsuarios = 0;
         
         let timestampGlobalInterval = null;
         let ultimaAtualizacaoGlobal = 'Nunca';
         
         let isImporting = false;
-        let importBlocked = false; 
-        let dataLocked = false;
-        let timestampImportacao = 0;
         let dadosProtegidosPermanentemente = false;
         let backupDadosProtegidos = [];
         let backupCardsProtegidos = {};
 
-        // 🚀 CONFIGURAÇÃO SUPABASE
         const supabaseConfig = {
             url: 'https://zhxrxymeuzvnuafvkjjd.supabase.co',
             anonKey: 'sb_publishable_GIl_nKo6EmiOzcr-io9JSA_pvQu2bOJ'
@@ -1950,8 +1799,6 @@
             }
         ];
 
-        // ========== GERAÇÃO DE SENHAS TEMPORÁRIAS ==========
-        
         function gerarSenhaTemporaria() {
             const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
             let senha = '';
@@ -1961,76 +1808,114 @@
             return senha;
         }
 
-        // ========== TESTE DE E-MAIL COM VARIÁVEIS MÚLTIPLAS ==========
+        // ========== CÁLCULOS DE PERÍODO CORRIGIDOS ==========
         
-        async function testarEmailJS() {
-            const btn = document.getElementById('supabaseTestBtn');
-            const textoOriginal = btn.textContent;
+        function obterDataAtual() {
+            const hoje = new Date();
+            const dia = hoje.getDate().toString().padStart(2, '0');
+            const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
+            const ano = hoje.getFullYear();
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        function obterMesAtual() {
+            const hoje = new Date();
+            const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
+            const ano = hoje.getFullYear();
+            return `${mes}/${ano}`;
+        }
+
+        function obterSemanaAtual() {
+            const hoje = new Date();
             
-            btn.disabled = true;
-            btn.textContent = '📧 Testando...';
+            // CALCULAR INÍCIO DA SEMANA (DOMINGO)
+            const inicioSemana = new Date(hoje);
+            inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+            
+            // CALCULAR FIM DA SEMANA (SÁBADO)
+            const fimSemana = new Date(inicioSemana);
+            fimSemana.setDate(inicioSemana.getDate() + 6);
+            
+            const formatarData = (data) => {
+                const dia = data.getDate().toString().padStart(2, '0');
+                const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+                const ano = data.getFullYear();
+                return `${dia}/${mes}/${ano}`;
+            };
+            
+            return {
+                inicio: formatarData(inicioSemana),
+                fim: formatarData(fimSemana)
+            };
+        }
+
+        function estaNoMesAtual(dataDescarga) {
+            if (!dataDescarga) return false;
             
             try {
-                console.log('🧪 TESTANDO E-MAIL COM MÚLTIPLAS VARIÁVEIS...');
+                console.log(`🔍 Verificando mês para data: ${dataDescarga}`);
                 
-                const senha = gerarSenhaTemporaria();
+                const partes = dataDescarga.split('/');
+                if (partes.length !== 3) return false;
                 
-                // TESTE COM TODOS OS FORMATOS POSSÍVEIS DE VARIÁVEIS
-                const templateParams = {
-                    // Formato padrão
-                    to_name: 'Teste Sistema',
-                    to_email: 'leandro.brasil@minervafoods.com',
-                    user_login: 'teste.sistema',
-                    new_password: senha,
-                    from_name: 'Sistema Pátio Brasfrigo',
-                    
-                    // Formatos alternativos comuns
-                    name: 'Teste Sistema',
-                    email: 'leandro.brasil@minervafoods.com',
-                    login: 'teste.sistema',
-                    password: senha,
-                    senha: senha,
-                    usuario: 'teste.sistema',
-                    nome: 'Teste Sistema',
-                    
-                    // Formatos com underline
-                    user_name: 'Teste Sistema',
-                    user_email: 'leandro.brasil@minervafoods.com',
-                    user_password: senha,
-                    
-                    // Formatos sem underline
-                    username: 'teste.sistema',
-                    userlogin: 'teste.sistema',
-                    newpassword: senha,
-                    
-                    // Campos extras
-                    reply_to: 'noreply@minervafoods.com',
-                    subject: 'Nova Senha - Teste Pátio Brasfrigo',
-                    message: `Olá Teste Sistema, sua nova senha é: ${senha}. Login: teste.sistema`
-                };
+                const mesData = partes[1]; // mm
+                const anoData = partes[2]; // yyyy
+                const mesAnoData = `${mesData}/${anoData}`;
                 
-                console.log('📧 Enviando teste com TODAS as variáveis possíveis...');
-                console.log('📧 Variáveis:', templateParams);
+                const mesAtual = obterMesAtual();
                 
-                const result = await emailjs.send(
-                    emailJSConfig.serviceID,
-                    emailJSConfig.templateID,
-                    templateParams
-                );
-                
-                console.log('✅ TESTE DE E-MAIL BEM-SUCEDIDO!', result);
-                mostrarAlerta('success', `✅ E-mail de teste enviado!\n\nSenha de teste: ${senha}\n\nVerifique se chegaram as informações completas.`);
+                const resultado = mesAnoData === mesAtual;
+                console.log(`📅 Comparando: ${mesAnoData} === ${mesAtual} → ${resultado}`);
+                return resultado;
                 
             } catch (error) {
-                console.error('❌ ERRO NO TESTE DE E-MAIL:', error);
-                mostrarAlerta('error', `❌ Erro no teste: ${error.message || 'Falha na comunicação'}`);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = textoOriginal;
+                console.error('Erro ao verificar mês:', error);
+                return false;
             }
         }
 
-        // ========== RECUPERAÇÃO DE SENHA COM VARIÁVEIS MÚLTIPLAS ==========
+        function estaNaSemanaAtual(dataDescarga) {
+            if (!dataDescarga) return false;
+            
+            try {
+                console.log(`🔍 Verificando semana para data: ${dataDescarga}`);
+                
+                // Converter data descarga para Date
+                const partes = dataDescarga.split('/');
+                if (partes.length !== 3) return false;
+                
+                const dataDesc = new Date(parseInt(partes[2]), parseInt(partes[1]) - 1, parseInt(partes[0]));
+                
+                // Obter intervalo da semana atual
+                const semana = obterSemanaAtual();
+                console.log(`📅 Semana atual: ${semana.inicio} até ${semana.fim}`);
+                
+                const partesInicio = semana.inicio.split('/');
+                const partesFim = semana.fim.split('/');
+                
+                const inicioSemana = new Date(parseInt(partesInicio[2]), parseInt(partesInicio[1]) - 1, parseInt(partesInicio[0]));
+                const fimSemana = new Date(parseInt(partesFim[2]), parseInt(partesFim[1]) - 1, parseInt(partesFim[0]));
+                
+                const resultado = dataDesc >= inicioSemana && dataDesc <= fimSemana;
+                console.log(`📅 Data ${dataDescarga} na semana? ${resultado}`);
+                return resultado;
+                
+            } catch (error) {
+                console.error('Erro ao verificar semana:', error);
+                return false;
+            }
+        }
+
+        function estaNodia(dataDescarga) {
+            if (!dataDescarga) return false;
+            
+            const dataAtual = obterDataAtual();
+            const resultado = dataDescarga === dataAtual;
+            console.log(`📅 Data ${dataDescarga} é hoje (${dataAtual})? ${resultado}`);
+            return resultado;
+        }
+
+        // ========== RECUPERAÇÃO DE SENHA ==========
         
         async function recuperarSenha(event) {
             event.preventDefault();
@@ -2043,24 +1928,15 @@
                 return;
             }
             
-            // VALIDAR FORMATO DE E-MAIL
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                mostrarStatusLogin('error', 'Formato de e-mail inválido!');
-                return;
-            }
-            
             btnRecuperar.disabled = true;
-            btnRecuperar.textContent = 'Verificando...';
+            btnRecuperar.textContent = 'Enviando...';
             mostrarStatusLogin('info', 'Verificando e-mail...');
             
             try {
-                // 1. VERIFICAR SE EMAILJS ESTÁ PRONTO
                 if (!emailJSReady) {
                     throw new Error('Sistema de e-mail não inicializado');
                 }
                 
-                // 2. VERIFICAR SE E-MAIL EXISTE NA BASE
                 inicializarUsuarios();
                 const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
                 const usuarioEncontrado = usuarios.find(u => u.email.toLowerCase().trim() === email);
@@ -2073,15 +1949,9 @@
                 }
                 
                 console.log('👤 Usuário encontrado:', usuarioEncontrado.nome);
-                mostrarStatusLogin('info', 'Gerando nova senha...');
                 
-                // 3. GERAR NOVA SENHA TEMPORÁRIA
                 const novaSenha = gerarSenhaTemporaria();
                 console.log('🔑 Nova senha gerada:', novaSenha);
-                
-                // 4. ENVIAR E-MAIL COM MÚLTIPLOS FORMATOS DE VARIÁVEIS
-                btnRecuperar.textContent = 'Enviando e-mail...';
-                mostrarStatusLogin('info', 'Enviando e-mail...');
                 
                 const emailEnviado = await enviarEmailRecuperacao(usuarioEncontrado, novaSenha);
                 
@@ -2089,7 +1959,6 @@
                     throw new Error('Falha no envio do e-mail');
                 }
                 
-                // 5. ATUALIZAR SENHA NO SISTEMA
                 const usuariosAtualizados = usuarios.map(u => {
                     if (u.email.toLowerCase().trim() === email) {
                         return { ...u, senha: novaSenha, senhaTemporaria: true };
@@ -2099,30 +1968,11 @@
                 
                 localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
                 
-                // 6. ATUALIZAR NO SUPABASE SE DISPONÍVEL
-                if (supabaseDisponivel && supabase) {
-                    try {
-                        await supabase
-                            .from('usuarios')
-                            .update({ senha: novaSenha })
-                            .eq('email', usuarioEncontrado.email);
-                    } catch (error) {
-                        console.log('Aviso: senha atualizada apenas localmente');
-                    }
-                }
-                
-                // 7. SUCESSO - MENSAGEM SIMPLIFICADA
                 mostrarStatusLogin('success', `Nova senha enviada para ${email}`);
-                
-                // LIMPAR CAMPO
                 document.getElementById('emailRecuperacao').value = '';
                 
-                // REGISTRAR NO TIMESTAMP
                 const agora = new Date();
-                const timestampRecuperacao = agora.toLocaleString('pt-BR');
-                salvarTimestampGlobal(timestampRecuperacao);
-                
-                console.log('✅ Recuperação de senha concluída');
+                salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
                 
             } catch (error) {
                 console.error('❌ Erro na recuperação:', error);
@@ -2136,21 +1986,13 @@
         async function enviarEmailRecuperacao(usuario, novaSenha) {
             try {
                 console.log('📧 ENVIANDO E-MAIL DE RECUPERAÇÃO...');
-                console.log(`📧 Para: ${usuario.email}`);
-                console.log(`👤 Usuário: ${usuario.nome}`);
-                console.log(`🔑 Nova senha: ${novaSenha}`);
-                console.log(`🔐 Login: ${usuario.login}`);
                 
-                // ENVIAR COM TODOS OS FORMATOS POSSÍVEIS DE VARIÁVEIS
                 const templateParams = {
-                    // === FORMATOS BÁSICOS ===
                     to_name: usuario.nome,
                     to_email: usuario.email,
                     user_login: usuario.login,
                     new_password: novaSenha,
-                    from_name: 'Sistema Pátio Brasfrigo - Minerva Foods',
-                    
-                    // === FORMATOS ALTERNATIVOS ===
+                    from_name: 'Sistema Pátio Brasfrigo',
                     name: usuario.nome,
                     email: usuario.email,
                     login: usuario.login,
@@ -2158,49 +2000,14 @@
                     senha: novaSenha,
                     usuario: usuario.login,
                     nome: usuario.nome,
-                    
-                    // === FORMATOS COM UNDERLINE ===
                     user_name: usuario.nome,
                     user_email: usuario.email,
                     user_password: novaSenha,
-                    
-                    // === FORMATOS SEM UNDERLINE ===
                     username: usuario.login,
                     userlogin: usuario.login,
                     newpassword: novaSenha,
-                    
-                    // === CAMPOS EXTRAS ===
-                    reply_to: 'noreply@minervafoods.com',
-                    subject: 'Nova Senha - Pátio Brasfrigo',
-                    message: `Olá ${usuario.nome}, sua nova senha temporária para o Pátio Brasfrigo é: ${novaSenha}. Login: ${usuario.login}. Recomendamos alterar após o primeiro acesso.`,
-                    
-                    // === FORMATOS EM PORTUGUÊS ===
-                    para_nome: usuario.nome,
-                    para_email: usuario.email,
-                    usuario_login: usuario.login,
-                    nova_senha: novaSenha,
-                    de_nome: 'Sistema Pátio Brasfrigo',
-                    
-                    // === FORMATOS DIRETOS (caso o template use nomes simples) ===
-                    Nome: usuario.nome,
-                    Email: usuario.email,
-                    Login: usuario.login,
-                    Senha: novaSenha,
-                    'Nova Senha': novaSenha,
-                    
-                    // === CAMPOS ESPECÍFICOS MINERVA ===
-                    minerva_usuario: usuario.nome,
-                    minerva_login: usuario.login,
-                    minerva_senha: novaSenha,
-                    brasfrigo_senha: novaSenha,
-                    
-                    // === FALLBACKS ===
-                    text: `Nova senha para ${usuario.login}: ${novaSenha}`,
-                    content: `Olá ${usuario.nome}, sua nova senha é: ${novaSenha}`,
-                    body: `Login: ${usuario.login}, Nova senha: ${novaSenha}`
+                    message: `Olá ${usuario.nome}, sua nova senha temporária é: ${novaSenha}. Login: ${usuario.login}`
                 };
-                
-                console.log('📧 ENVIANDO COM TODAS AS VARIÁVEIS POSSÍVEIS:', Object.keys(templateParams));
                 
                 const result = await emailjs.send(
                     emailJSConfig.serviceID,
@@ -2208,33 +2015,62 @@
                     templateParams
                 );
                 
-                console.log('✅ E-MAIL DE RECUPERAÇÃO ENVIADO!', result);
-                console.log('📧 Status:', result.status);
-                console.log('📧 Resposta:', result.text);
-                
+                console.log('✅ E-MAIL ENVIADO!', result);
                 return true;
                 
             } catch (error) {
-                console.error('❌ ERRO NO ENVIO DE RECUPERAÇÃO:', error);
-                console.error('❌ Detalhes completos:', {
-                    message: error.message,
-                    status: error.status,
-                    text: error.text,
-                    serviceID: emailJSConfig.serviceID,
-                    templateID: emailJSConfig.templateID,
-                    publicKey: emailJSConfig.publicKey
-                });
-                
+                console.error('❌ ERRO NO ENVIO:', error);
                 throw error;
             }
         }
 
-        // ========== TROCA DE SENHA NO PAINEL ==========
+        async function testarEmailJS() {
+            const btn = document.getElementById('supabaseTestBtn');
+            const textoOriginal = btn.textContent;
+            
+            btn.disabled = true;
+            btn.textContent = '📧 Testando...';
+            
+            try {
+                const senha = gerarSenhaTemporaria();
+                
+                const templateParams = {
+                    to_name: 'Teste Sistema',
+                    to_email: 'leandro.brasil@minervafoods.com',
+                    user_login: 'teste.sistema',
+                    new_password: senha,
+                    from_name: 'Sistema Pátio Brasfrigo',
+                    name: 'Teste Sistema',
+                    email: 'leandro.brasil@minervafoods.com',
+                    login: 'teste.sistema',
+                    password: senha,
+                    senha: senha,
+                    usuario: 'teste.sistema',
+                    nome: 'Teste Sistema'
+                };
+                
+                const result = await emailjs.send(
+                    emailJSConfig.serviceID,
+                    emailJSConfig.templateID,
+                    templateParams
+                );
+                
+                console.log('✅ TESTE BEM-SUCEDIDO!', result);
+                mostrarAlerta('success', `✅ E-mail de teste enviado com senha: ${senha}`);
+                
+            } catch (error) {
+                console.error('❌ ERRO NO TESTE:', error);
+                mostrarAlerta('error', `❌ Erro no teste: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = textoOriginal;
+            }
+        }
+
+        // ========== TROCA DE SENHA ==========
         
         function abrirModalTrocaSenha() {
             document.getElementById('changePasswordModal').style.display = 'flex';
-            
-            // LIMPAR CAMPOS
             document.getElementById('senhaAtual').value = '';
             document.getElementById('novaSenhaInput').value = '';
             document.getElementById('confirmarSenha').value = '';
@@ -2276,7 +2112,6 @@
             btnSalvar.textContent = 'Salvando...';
             
             try {
-                // ATUALIZAR SENHA LOCALMENTE
                 const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
                 const usuariosAtualizados = usuarios.map(u => {
                     if (u.login === usuarioLogado.login) {
@@ -2287,12 +2122,10 @@
                 
                 localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
                 
-                // ATUALIZAR USUÁRIO LOGADO
                 usuarioLogado.senha = novaSenha;
                 usuarioLogado.senhaTemporaria = false;
                 sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
                 
-                // ATUALIZAR CREDENCIAIS LEMBRADAS SE EXISTEM
                 const credenciaisSalvas = localStorage.getItem('credenciaisLembradas');
                 if (credenciaisSalvas) {
                     try {
@@ -2308,52 +2141,34 @@
                     }
                 }
                 
-                // ATUALIZAR NO SUPABASE SE DISPONÍVEL
-                if (supabaseDisponivel && supabase) {
-                    try {
-                        await supabase
-                            .from('usuarios')
-                            .update({ senha: novaSenha })
-                            .eq('login', usuarioLogado.login);
-                    } catch (error) {
-                        console.log('Aviso: senha atualizada apenas localmente');
-                    }
-                }
-                
-                // REGISTRAR NO TIMESTAMP
                 const agora = new Date();
-                const timestampSenha = agora.toLocaleString('pt-BR');
-                salvarTimestampGlobal(timestampSenha);
+                salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
                 
                 mostrarAlerta('success', '✅ Senha alterada com sucesso!');
                 fecharModalTrocaSenha();
                 
             } catch (error) {
                 console.error('❌ Erro ao alterar senha:', error);
-                alert(`❌ Erro ao alterar senha!\n\n${error.message}`);
+                alert(`❌ Erro ao alterar senha: ${error.message}`);
             } finally {
                 btnSalvar.disabled = false;
                 btnSalvar.textContent = 'Salvar Nova Senha';
             }
         }
 
-        // ========== CORREÇÃO PRINCIPAL: VERIFICAÇÃO IMEDIATA DE SESSÃO ==========
+        // ========== VERIFICAÇÃO IMEDIATA DE SESSÃO ==========
         
-        // EXECUTAR IMEDIATAMENTE QUANDO SCRIPT CARREGA
         (function verificarSessaoImediatamente() {
             console.log('🚀 VERIFICAÇÃO IMEDIATA DE SESSÃO...');
             
-            // 1. VERIFICAR CREDENCIAIS LEMBRADAS
             const credenciaisSalvas = localStorage.getItem('credenciaisLembradas');
             if (credenciaisSalvas) {
                 try {
                     const { login, senha } = JSON.parse(credenciaisSalvas);
-                    console.log('🔑 Credenciais lembradas encontradas:', login);
+                    console.log('🔑 Credenciais lembradas:', login);
                     
-                    // INICIALIZAR USUÁRIOS SE NÃO EXISTEM
                     inicializarUsuarios();
                     
-                    // TENTAR LOGIN AUTOMÁTICO
                     const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
                     const usuarioEncontrado = usuarios.find(u => 
                         u.login.toLowerCase().trim() === login.toLowerCase().trim() && 
@@ -2368,19 +2183,16 @@
                         return;
                     }
                 } catch (error) {
-                    console.error('Erro no login automático:', error);
                     localStorage.removeItem('credenciaisLembradas');
                 }
             }
             
-            // 2. VERIFICAR SESSÃO ATIVA
             const sessaoAtiva = sessionStorage.getItem('usuarioLogado');
             if (sessaoAtiva) {
                 try {
                     const userData = JSON.parse(sessaoAtiva);
-                    console.log('👤 Sessão ativa encontrada:', userData.nome);
+                    console.log('👤 Sessão ativa:', userData.nome);
                     
-                    // VERIFICAR SE USUÁRIO AINDA É VÁLIDO
                     inicializarUsuarios();
                     const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
                     const usuarioValido = usuarios.find(u => u.login === userData.login);
@@ -2390,104 +2202,37 @@
                         mostrarPainelSemLogin();
                         return;
                     } else {
-                        console.log('⚠️ Usuário da sessão não é mais válido');
                         sessionStorage.removeItem('usuarioLogado');
                     }
                 } catch (error) {
-                    console.error('Erro na verificação de sessão:', error);
                     sessionStorage.removeItem('usuarioLogado');
                 }
             }
             
-            // 3. SE CHEGOU ATÉ AQUI, MOSTRAR LOGIN
-            console.log('🔐 Nenhuma sessão válida, mostrando tela de login...');
+            console.log('🔐 Mostrando tela de login...');
             mostrarTelaLoginImediatamente();
         })();
 
         function mostrarPainelSemLogin() {
-            console.log('🎯 MOSTRANDO PAINEL SEM LOGIN PARA:', usuarioLogado.nome);
-            
-            // ESCONDER LOGIN E MOSTRAR PAINEL
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
-            
-            // INICIALIZAR SISTEMA IMEDIATAMENTE
             setTimeout(() => iniciarSistema(), 100);
         }
 
         function mostrarTelaLoginImediatamente() {
-            console.log('🔐 MOSTRANDO TELA DE LOGIN LIMPA');
-            
-            // INICIALIZAR USUÁRIOS
-            const usuarios = inicializarUsuarios();
-            
-            // MOSTRAR LOGIN
+            inicializarUsuarios();
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('mainContainer').style.display = 'none';
-            
-            // MOSTRAR STATUS SIMPLES
             mostrarStatusLogin('info', 'Sistema pronto');
-        }
-
-        // ========== FUNÇÕES BÁSICAS ==========
-        
-        function obterDataAtual() {
-            const hoje = new Date();
-            const dia = hoje.getDate().toString().padStart(2, '0');
-            const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
-            const ano = hoje.getFullYear();
-            return `${dia}/${mes}/${ano}`;
-        }
-
-        function obterMesAtual() {
-            const hoje = new Date();
-            const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
-            const ano = hoje.getFullYear();
-            return `${mes}/${ano}`;
-        }
-
-        function estaNoMesAtual(dataDescarga) {
-            if (!dataDescarga) return false;
-            
-            try {
-                const partes = dataDescarga.split('/');
-                if (partes.length !== 3) return false;
-                
-                const mesData = partes[1];
-                const anoData = partes[2];
-                const mesAnoData = `${mesData}/${anoData}`;
-                
-                const mesAtual = obterMesAtual();
-                return mesAnoData === mesAtual;
-                
-            } catch (error) {
-                console.error('Erro ao verificar mês:', error);
-                return false;
-            }
-        }
-
-        function haFiltrosAtivos() {
-            const filtros = [
-                document.getElementById('searchPlaca').value,
-                document.getElementById('filterStatus').value,
-                document.getElementById('filterOrigem').value,
-                document.getElementById('filterTipoMercado').value,
-                document.getElementById('filterGerandoDiaria').value,
-                document.getElementById('filterTipoDescarga').value
-            ];
-            
-            return filtros.some(filtro => filtro && filtro.trim() !== '');
         }
 
         function salvarTimestampGlobal(timestamp) {
             const timestampData = {
                 timestamp: timestamp,
-                usuario: usuarioLogado ? usuarioLogado.nome : 'Sistema',
-                dataBrasil: timestamp
+                usuario: usuarioLogado ? usuarioLogado.nome : 'Sistema'
             };
             
             localStorage.setItem('ultimaAtualizacaoGlobal', JSON.stringify(timestampData));
-            sessionStorage.setItem('timestampAtual', timestamp);
             ultimaAtualizacaoGlobal = timestamp;
         }
 
@@ -2497,11 +2242,6 @@
                 const timestampSemUsuario = timestamp.replace(/\(.*?\)/g, '').trim();
                 timestampElement.textContent = `📅 Última atualização: ${timestampSemUsuario}`;
                 timestampElement.classList.add('synced');
-                
-                timestampElement.style.animation = 'none';
-                setTimeout(() => {
-                    timestampElement.style.animation = 'timestampPulse 3s infinite';
-                }, 10);
             }
         }
 
@@ -2524,28 +2264,23 @@
         }
 
         function iniciarSincronizacaoTimestamp() {
+            carregarTimestampLocal();
+            
             if (timestampGlobalInterval) {
                 clearInterval(timestampGlobalInterval);
             }
             
-            carregarTimestampLocal();
-            
             timestampGlobalInterval = setInterval(() => {
-                if (!isImporting && !importBlocked) {
+                if (!isImporting) {
                     carregarTimestampLocal();
                 }
             }, 10000);
-            
-            console.log('✅ Sincronização de timestamp iniciada');
         }
 
         function inicializarUsuarios() {
-            console.log('👥 INICIALIZANDO SISTEMA DE USUÁRIOS...');
-            
             let usuariosSalvos = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
             
             if (usuariosSalvos.length === 0) {
-                console.log('📥 Carregando usuários padrão...');
                 localStorage.setItem('usuariosSistema', JSON.stringify(USUARIOS_PADRAO));
                 usuariosSalvos = USUARIOS_PADRAO;
             }
@@ -2553,15 +2288,11 @@
             USUARIOS_PADRAO.forEach(userPadrao => {
                 const existe = usuariosSalvos.find(u => u.login === userPadrao.login);
                 if (!existe) {
-                    console.log(`👤 Adicionando usuário padrão: ${userPadrao.login}`);
                     usuariosSalvos.push(userPadrao);
                 }
             });
             
             localStorage.setItem('usuariosSistema', JSON.stringify(usuariosSalvos));
-            
-            console.log(`✅ ${usuariosSalvos.length} usuários disponíveis para login`);
-            
             return usuariosSalvos;
         }
 
@@ -2581,15 +2312,12 @@
         }
 
         async function autenticarUsuario(login, senha, lembrarMe = false) {
-            console.log('🔐 AUTENTICAÇÃO - Processando login...');
-            
             const btnLogin = document.getElementById('btnLogin');
             btnLogin.disabled = true;
             btnLogin.textContent = 'Verificando...';
             
             try {
                 const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-                console.log(`👥 ${usuarios.length} usuários disponíveis`);
                 
                 const loginLimpo = login.toLowerCase().trim();
                 const senhaLimpa = senha.trim();
@@ -2601,14 +2329,13 @@
                 });
                 
                 if (usuarioEncontrado) {
-                    console.log('✅ LOGIN BEM-SUCEDIDO para:', usuarioEncontrado.nome);
+                    console.log('✅ LOGIN BEM-SUCEDIDO:', usuarioEncontrado.nome);
                     
                     usuarioLogado = usuarioEncontrado;
                     sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
                     
                     if (lembrarMe) {
                         localStorage.setItem('credenciaisLembradas', JSON.stringify({ login, senha }));
-                        console.log('💾 Credenciais salvas');
                     } else {
                         localStorage.removeItem('credenciaisLembradas');
                     }
@@ -2634,72 +2361,108 @@
                     }, 1000);
                     
                 } else {
-                    console.log('❌ FALHA NA AUTENTICAÇÃO');
                     mostrarStatusLogin('error', '❌ Usuário ou senha incorretos!');
                     localStorage.removeItem('credenciaisLembradas');
                 }
                 
             } catch (error) {
                 console.error('❌ Erro na autenticação:', error);
-                mostrarStatusLogin('error', `Erro na autenticação: ${error.message}`);
+                mostrarStatusLogin('error', `Erro: ${error.message}`);
             } finally {
                 btnLogin.disabled = false;
                 btnLogin.textContent = 'Entrar';
             }
         }
 
-        // ========== PROTEÇÃO PERMANENTE DOS DADOS ==========
+        // ========== PROTEÇÃO E CÁLCULOS CORRIGIDOS ==========
         
         function ativarProtecaoPermanente(dados) {
+            console.log('🛡️ ATIVANDO PROTEÇÃO COM DESCARREGANDO...');
+            
             dadosProtegidosPermanentemente = true;
             backupDadosProtegidos = [...dados];
-            timestampImportacao = Date.now();
             
-            const valoresCards = calcularValores5Cards(dados);
+            const valoresCards = calcularValores5CardsCorrigido(dados);
             backupCardsProtegidos = { ...valoresCards };
             
             localStorage.setItem('dadosProtegidosPermanentemente', 'true');
             localStorage.setItem('backupDadosProtegidos', JSON.stringify(dados));
             localStorage.setItem('backupCardsProtegidos', JSON.stringify(valoresCards));
-            localStorage.setItem('timestampProtecao', timestampImportacao.toString());
+            
+            console.log('🔒 PROTEÇÃO ATIVADA:', valoresCards);
             
             const cards = document.querySelectorAll('.stat-card');
             cards.forEach(card => card.classList.add('protected'));
         }
 
-        function calcularValores5Cards(dados) {
+        function calcularValores5CardsCorrigido(dados) {
             const dataAtual = obterDataAtual();
             const mesAtual = obterMesAtual();
+            const semanaAtual = obterSemanaAtual();
             
+            console.log(`📅 CALCULANDO CARDS COM DESCARREGANDO:`, {
+                dataAtual: dataAtual,
+                mesAtual: mesAtual,
+                semanaAtual: semanaAtual,
+                totalDados: dados.length
+            });
+            
+            // DEBUG: Verificar dados descarregados
+            const dadosDescarregados = dados.filter(d => d.status === 'DESCARREGADO');
+            console.log(`📊 DADOS DESCARREGADOS: ${dadosDescarregados.length}`);
+            
+            // CÁLCULOS DOS 4 CARDS NORMAIS - MUDANÇA: DESOVANDO → DESCARREGANDO
             const placasTransito = [...new Set(dados.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
             const placasAguardando = [...new Set(dados.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
-            const placasDesovando = [...new Set(dados.filter(d => d.status === 'DESOVANDO').map(d => d.placa))].length;
-            const placasDescarregado = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga === dataAtual).map(d => d.placa))].length;
-            const registrosDescargaMesAtual = dados.filter(d => d.dataDescarga && estaNoMesAtual(d.dataDescarga));
-            const placasMovimentacao = [...new Set(registrosDescargaMesAtual.map(d => d.placa))].length;
+            const placasDescarregando = [...new Set(dados.filter(d => d.status === 'DESCARREGANDO').map(d => d.placa))].length;
+            const placasDescarregado = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && estaNodia(d.dataDescarga)).map(d => d.placa))].length;
             
-            return {
+            // ========== MOVIMENTAÇÃO DIA/SEMANA/MÊS ==========
+            
+            const registrosDia = dados.filter(d => d.status === 'DESCARREGADO' && estaNodia(d.dataDescarga));
+            const movimentacaoDia = [...new Set(registrosDia.map(d => d.placa))].length;
+            
+            const registrosSemana = dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNaSemanaAtual(d.dataDescarga));
+            const movimentacaoSemana = [...new Set(registrosSemana.map(d => d.placa))].length;
+            
+            const registrosMes = dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNoMesAtual(d.dataDescarga));
+            const movimentacaoMes = [...new Set(registrosMes.map(d => d.placa))].length;
+            
+            const resultado = {
                 totalTransito: placasTransito,
                 totalAguardando: placasAguardando,
-                totalDesovando: placasDesovando,
+                totalDescarregando: placasDescarregando,
                 totalDescarregado: placasDescarregado,
-                totalMovimentacao: placasMovimentacao,
+                movimentacaoDia: movimentacaoDia,
+                movimentacaoSemana: movimentacaoSemana,
+                movimentacaoMes: movimentacaoMes,
                 dataCalculo: dataAtual,
                 mesCalculo: mesAtual,
-                timestampCalculo: Date.now()
+                semanaCalculo: semanaAtual
             };
+            
+            console.log('📊 RESULTADO COM DESCARREGANDO:', resultado);
+            return resultado;
         }
 
         function aplicarValores5CardsProtegidos() {
             if (!backupCardsProtegidos || Object.keys(backupCardsProtegidos).length === 0) {
+                console.log('⚠️ Nenhum backup de cards disponível');
                 return;
             }
             
+            console.log('🔧 APLICANDO VALORES PROTEGIDOS:', backupCardsProtegidos);
+            
+            // APLICAR 4 CARDS NORMAIS
             document.getElementById('totalTransito').textContent = backupCardsProtegidos.totalTransito || 0;
             document.getElementById('totalAguardando').textContent = backupCardsProtegidos.totalAguardando || 0;
-            document.getElementById('totalDesovando').textContent = backupCardsProtegidos.totalDesovando || 0;
+            document.getElementById('totalDescarregando').textContent = backupCardsProtegidos.totalDescarregando || 0;
             document.getElementById('totalDescarregado').textContent = backupCardsProtegidos.totalDescarregado || 0;
-            document.getElementById('totalVeiculos').textContent = backupCardsProtegidos.totalMovimentacao || 0;
+            
+            // APLICAR CARD ESPECIAL DE MOVIMENTAÇÃO
+            document.getElementById('movimentacaoDia').textContent = backupCardsProtegidos.movimentacaoDia || 0;
+            document.getElementById('movimentacaoSemana').textContent = backupCardsProtegidos.movimentacaoSemana || 0;
+            document.getElementById('movimentacaoMes').textContent = backupCardsProtegidos.movimentacaoMes || 0;
             
             const cards = document.querySelectorAll('.stat-card');
             cards.forEach(card => {
@@ -2738,12 +2501,11 @@
             try {
                 supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
                 supabaseDisponivel = true;
-                console.log('✅ Supabase inicializado');
                 verificarRestaurarProtecao();
                 carregarDadosLocal();
                 return true;
             } catch (error) {
-                console.error('❌ Erro ao inicializar Supabase:', error);
+                console.error('❌ Erro Supabase:', error);
                 supabaseDisponivel = false;
                 carregarDadosLocal();
                 return false;
@@ -2790,7 +2552,7 @@
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
                     const rows = jsonData.slice(1);
                     
-                    const dadosProcessados = rows.map((row, index) => {
+                    const dadosProcessados = rows.map((row) => {
                         return {
                             placa: converterValor(row[0]) || "",
                             container: converterValor(row[1]) || "",
@@ -2805,10 +2567,27 @@
                             origem: converterValor(row[10]) || "",
                             tipoDescarga: converterValor(row[11]) || "",
                             tipoMercado: converterValor(row[12]) || "",
-                            status: converterValor(row[13]) || ""
+                            status: converterValor(row[13]) || "",
+                            nfOrigem: converterValor(row[14]) || "",
+                            nfeBrasfrigo: converterValor(row[15]) || "",
+                            op: converterValor(row[16]) || "",
+                            deposito: converterValor(row[17]) || "",
+                            statusOp: converterValor(row[18]) || "",
+                            pedido: converterValor(row[19]) || "",
+                            falta: converterValor(row[20]) || "",
+                            sobra: converterValor(row[21]) || "",
+                            inversaoRg: converterValor(row[22]) || "",
+                            doca: converterValor(row[23]) || "",
+                            pbr: converterValor(row[24]) || "",
+                            oneWay: converterValor(row[25]) || "",
+                            fumigado: converterValor(row[26]) || "",
+                            totalPallet: converterValor(row[27]) || "",
+                            recFrio: converterValor(row[28]) || "",
+                            obs: converterValor(row[29]) || ""
                         };
                     }).filter(item => item && item.placa);
                     
+                    console.log(`📊 ${dadosProcessados.length} registros processados`);
                     salvarDadosComProtecao5Cards(dadosProcessados);
                     
                 } catch (error) {
@@ -2832,8 +2611,7 @@
                 popularFiltros();
                 
                 const agora = new Date();
-                const timestampImportacao = agora.toLocaleString('pt-BR');
-                salvarTimestampGlobal(timestampImportacao);
+                salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
                 
                 setTimeout(() => {
                     finalizarImportacaoSimples(true, `${dadosArray.length} registros atualizados`);
@@ -2852,7 +2630,6 @@
                 banner.classList.add('show');
                 
                 setTimeout(() => banner.classList.remove('show'), 3000);
-                
                 mostrarAlerta('success', 'Atualizado com sucesso');
             } else {
                 mostrarAlerta('error', `❌ Falha: ${mensagem}`);
@@ -2861,47 +2638,110 @@
             document.getElementById('importIndicator').classList.remove('show');
         }
 
+        // ========== ESTATÍSTICAS COM DESCARREGANDO ==========
         function atualizarEstatisticas() {
+            console.log('📅 ATUALIZANDO 5 CARDS COM DESCARREGANDO...');
+            
             if (dadosProtegidosPermanentemente && backupCardsProtegidos && Object.keys(backupCardsProtegidos).length > 0) {
+                console.log('🛡️ USANDO VALORES PROTEGIDOS');
                 aplicarValores5CardsProtegidos();
                 return;
             }
             
             const dataAtual = obterDataAtual();
+            const mesAtual = obterMesAtual();
+            const semanaAtual = obterSemanaAtual();
             
+            console.log(`📅 CÁLCULO EM TEMPO REAL:`, {
+                dataHoje: dataAtual,
+                mesAtual: mesAtual,
+                semanaAtual: semanaAtual,
+                totalDados: dadosPatio.length
+            });
+            
+            // CÁLCULOS DOS 4 CARDS NORMAIS - MUDANÇA: DESOVANDO → DESCARREGANDO
             const placasTransito = [...new Set(dadosPatio.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
             const placasAguardando = [...new Set(dadosPatio.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
-            const placasDesovando = [...new Set(dadosPatio.filter(d => d.status === 'DESOVANDO').map(d => d.placa))].length;
-            const placasDescarregado = [...new Set(dadosPatio.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga === dataAtual).map(d => d.placa))].length;
-            const registrosDescargaMesAtual = dadosPatio.filter(d => d.dataDescarga && estaNoMesAtual(d.dataDescarga));
-            const placasMovimentacao = [...new Set(registrosDescargaMesAtual.map(d => d.placa))].length;
+            const placasDescarregando = [...new Set(dadosPatio.filter(d => d.status === 'DESCARREGANDO').map(d => d.placa))].length;
+            const placasDescarregado = [...new Set(dadosPatio.filter(d => d.status === 'DESCARREGADO' && estaNodia(d.dataDescarga)).map(d => d.placa))].length;
             
+            // MOVIMENTAÇÃO DIA/SEMANA/MÊS
+            const registrosDia = dadosPatio.filter(d => d.status === 'DESCARREGADO' && estaNodia(d.dataDescarga));
+            const movimentacaoDia = [...new Set(registrosDia.map(d => d.placa))].length;
+            
+            const registrosSemana = dadosPatio.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNaSemanaAtual(d.dataDescarga));
+            const movimentacaoSemana = [...new Set(registrosSemana.map(d => d.placa))].length;
+            
+            const registrosMes = dadosPatio.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNoMesAtual(d.dataDescarga));
+            const movimentacaoMes = [...new Set(registrosMes.map(d => d.placa))].length;
+            
+            // ATUALIZAR CARDS NA TELA
             document.getElementById('totalTransito').textContent = placasTransito;
             document.getElementById('totalAguardando').textContent = placasAguardando;
-            document.getElementById('totalDesovando').textContent = placasDesovando;
+            document.getElementById('totalDescarregando').textContent = placasDescarregando;
             document.getElementById('totalDescarregado').textContent = placasDescarregado;
-            document.getElementById('totalVeiculos').textContent = placasMovimentacao;
+            
+            document.getElementById('movimentacaoDia').textContent = movimentacaoDia;
+            document.getElementById('movimentacaoSemana').textContent = movimentacaoSemana;
+            document.getElementById('movimentacaoMes').textContent = movimentacaoMes;
+            
+            // SALVAR BACKUP
+            if (isImporting) {
+                const novosValores = {
+                    totalTransito: placasTransito,
+                    totalAguardando: placasAguardando,
+                    totalDescarregando: placasDescarregando,
+                    totalDescarregado: placasDescarregado,
+                    movimentacaoDia: movimentacaoDia,
+                    movimentacaoSemana: movimentacaoSemana,
+                    movimentacaoMes: movimentacaoMes,
+                    dataCalculo: dataAtual,
+                    mesCalculo: mesAtual,
+                    semanaCalculo: semanaAtual
+                };
+                
+                backupCardsProtegidos = { ...novosValores };
+                localStorage.setItem('backupCardsProtegidos', JSON.stringify(novosValores));
+            }
+            
+            const cards = document.querySelectorAll('.stat-card');
+            cards.forEach(card => {
+                card.classList.add('updated');
+                if (dadosProtegidosPermanentemente) {
+                    card.classList.add('protected');
+                }
+                setTimeout(() => card.classList.remove('updated'), 1000);
+            });
         }
 
         function atualizarInterface() {
-            const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESOVANDO', 'DESCARREGADO'];
+            // MUDANÇA: DESOVANDO → DESCARREGANDO
+            const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESCARREGANDO', 'DESCARREGADO'];
             const dados = dadosPatio.filter(item => statusPermitidos.includes(item.status));
-            renderizarTabelaAgrupada(dados);
+            renderizarTabelaAgrupadaCorrigida(dados);
             atualizarEstatisticas();
             popularFiltros();
         }
 
-        function renderizarTabelaAgrupada(dados = null) {
+        // ========== RENDERIZAÇÃO DE TABELA COM AGRUPAMENTO CORRIGIDO ==========
+        function renderizarTabelaAgrupadaCorrigida(dados = null) {
             const dadosParaRender = dados || dadosPatio;
             const tbody = document.getElementById('tabelaBody');
             
-            if (dadosParaRender.length === 0) {
+            // MUDANÇA: DESOVANDO → DESCARREGANDO
+            const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESCARREGANDO', 'DESCARREGADO'];
+            const dadosFiltrados = dadosParaRender.filter(item => statusPermitidos.includes(item.status));
+            
+            console.log(`📋 Renderizando tabela: ${dadosFiltrados.length} registros válidos`);
+            
+            if (dadosFiltrados.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="30" class="no-data">Nenhum registro encontrado</td></tr>';
                 return;
             }
 
+            // AGRUPAR POR PLACA E STATUS
             const grupos = {};
-            dadosParaRender.forEach(item => {
+            dadosFiltrados.forEach(item => {
                 const chaveGrupo = `${item.placa}_${item.status}`;
                 
                 if (!grupos[chaveGrupo]) {
@@ -2920,14 +2760,17 @@
                 grupos[chaveGrupo].somaDiarias += parseInt(item.diaria) || 0;
             });
 
+            console.log(`📊 Grupos criados: ${Object.keys(grupos).length}`);
+
             let html = '';
             Object.values(grupos).forEach((grupo, index) => {
                 const chaveGrupo = `grupo_${index}`;
                 const quantidadeNotas = grupo.registros.length;
                 const primeiroItem = grupo.primeiroRegistro;
                 
+                // LINHA DE CABEÇALHO DO GRUPO (CLICÁVEL)
                 html += `
-                    <tr class="grupo-header" onclick="toggleGrupo('${chaveGrupo}')">
+                    <tr class="grupo-header" onclick="toggleGrupoCorrigido('${chaveGrupo}')">
                         <td>
                             <span class="expand-icon" data-icon="${chaveGrupo}">▶</span>
                             <strong>${grupo.placa}</strong>
@@ -2946,25 +2789,86 @@
                         <td>${primeiroItem.tipoDescarga}</td>
                         <td>${primeiroItem.tipoMercado}</td>
                         <td><span class="status-badge status-${grupo.status.toLowerCase()}">${grupo.status}</span></td>
-                        <td colspan="16">📋 Clique para ver ${quantidadeNotas} nota(s)</td>
+                        <td colspan="16">📋 Clique para expandir ${quantidadeNotas} nota(s)</td>
                     </tr>
                 `;
+                
+                // LINHAS DE DETALHES (OCULTAS INICIALMENTE)
+                grupo.registros.forEach(item => {
+                    html += `
+                        <tr class="grupo-details" data-grupo="${chaveGrupo}" style="display: none;">
+                            <td>↳ ${item.placa}</td>
+                            <td>${item.container}</td>
+                            <td>${item.dataChegada}</td>
+                            <td>${item.dataDescarga}</td>
+                            <td>${item.diaria}</td>
+                            <td>${item.dedicada}</td>
+                            <td>${item.valorDiaria}</td>
+                            <td>${item.valorTotal}</td>
+                            <td>${item.transportadora}</td>
+                            <td>${item.unidade}</td>
+                            <td>${item.origem}</td>
+                            <td>${item.tipoDescarga}</td>
+                            <td>${item.tipoMercado}</td>
+                            <td><span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span></td>
+                            <td>${item.nfOrigem}</td>
+                            <td>${item.nfeBrasfrigo}</td>
+                            <td>${item.op}</td>
+                            <td>${item.deposito}</td>
+                            <td>${item.statusOp}</td>
+                            <td>${item.pedido}</td>
+                            <td>${item.falta}</td>
+                            <td>${item.sobra}</td>
+                            <td>${item.inversaoRg}</td>
+                            <td>${item.doca}</td>
+                            <td>${item.pbr}</td>
+                            <td>${item.oneWay}</td>
+                            <td>${item.fumigado}</td>
+                            <td>${item.totalPallet}</td>
+                            <td>${item.recFrio}</td>
+                            <td>${item.obs}</td>
+                        </tr>
+                    `;
+                });
             });
             
             tbody.innerHTML = html;
+            
+            console.log('✅ Tabela renderizada com agrupamento funcional');
         }
 
-        function toggleGrupo(chaveGrupo) {
+        // ========== FUNÇÃO DE TOGGLE CORRIGIDA ==========
+        function toggleGrupoCorrigido(chaveGrupo) {
+            console.log(`🖱️ Clique no grupo: ${chaveGrupo}`);
+            
             const detailsRows = document.querySelectorAll(`[data-grupo="${chaveGrupo}"]`);
             const icon = document.querySelector(`[data-icon="${chaveGrupo}"]`);
             
+            console.log(`📋 Encontradas ${detailsRows.length} linhas de detalhes`);
+            
+            let visivel = false;
+            
             detailsRows.forEach(row => {
-                row.classList.toggle('show');
+                if (row.style.display === 'none' || !row.style.display) {
+                    row.style.display = 'table-row';
+                    visivel = true;
+                } else {
+                    row.style.display = 'none';
+                    visivel = false;
+                }
             });
             
             if (icon) {
-                icon.classList.toggle('expanded');
+                if (visivel) {
+                    icon.classList.add('expanded');
+                    icon.textContent = '▼';
+                } else {
+                    icon.classList.remove('expanded');
+                    icon.textContent = '▶';
+                }
             }
+            
+            console.log(`📋 Grupo ${chaveGrupo} ${visivel ? 'expandido' : 'recolhido'}`);
         }
 
         function popularFiltros() {
@@ -3112,11 +3016,11 @@
             const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
             
             if (usuarioLogado.nivel === 'master') {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - E-mail OK';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Fonte Maior + Descarregando';
                 document.getElementById('createUserSection').style.display = 'block';
                 pollingIndicatorPanel.style.display = 'block';
             } else {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - E-mail OK';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Fonte Maior + Descarregando';
                 document.getElementById('createUserSection').style.display = 'none';
                 pollingIndicatorPanel.style.display = 'none';
             }
@@ -3203,8 +3107,7 @@
             carregarListaUsuarios();
 
             const agora = new Date();
-            const timestampUsuario = agora.toLocaleString('pt-BR');
-            salvarTimestampGlobal(timestampUsuario);
+            salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
 
             mostrarAlerta('success', `✅ Usuário criado com sucesso!`);
         }
@@ -3224,10 +3127,11 @@
                 let matchTipoMercado = !filterTipoMercado || item.tipoMercado === filterTipoMercado;
                 
                 let matchGerandoDiaria = true;
+                // MUDANÇA: DESOVANDO → DESCARREGANDO
                 if (filterGerandoDiaria === 'SIM') {
-                    matchGerandoDiaria = (item.status === 'AGUARDANDO' || item.status === 'DESOVANDO') && parseInt(item.diaria) > 0;
+                    matchGerandoDiaria = (item.status === 'AGUARDANDO' || item.status === 'DESCARREGANDO') && parseInt(item.diaria) > 0;
                 } else if (filterGerandoDiaria === 'NAO') {
-                    matchGerandoDiaria = !(item.status === 'AGUARDANDO' || item.status === 'DESOVANDO') || parseInt(item.diaria) === 0;
+                    matchGerandoDiaria = !(item.status === 'AGUARDANDO' || item.status === 'DESCARREGANDO') || parseInt(item.diaria) === 0;
                 }
                 
                 let matchTipoDescarga = !filterTipoDescarga || item.tipoDescarga === filterTipoDescarga;
@@ -3235,8 +3139,8 @@
                 return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchGerandoDiaria && matchTipoDescarga;
             });
 
-            renderizarTabelaAgrupada(dadosFiltrados);
-            atualizarEstatisticas(dadosFiltrados);
+            renderizarTabelaAgrupadaCorrigida(dadosFiltrados);
+            atualizarEstatisticas();
         }
 
         function limparFiltros() {
@@ -3273,31 +3177,33 @@
 
         function mostrarDetalhesPolling() {
             const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            const dataAtual = obterDataAtual();
+            const mesAtual = obterMesAtual();
+            const semanaAtual = obterSemanaAtual();
             
             const info = `
-🚀 SISTEMA COM RECUPERAÇÃO DE SENHA
+🚀 SISTEMA ATUALIZADO
 
-✅ CONFIGURAÇÃO EMAILJS:
-• Service ID: ${emailJSConfig.serviceID}
-• Template ID: ${emailJSConfig.templateID}
-• Public Key: ${emailJSConfig.publicKey}
-• Status: ${emailJSReady ? 'Ativo ✅' : 'Erro ❌'}
+✅ FONTES MAIORES:
+• Títulos: 13px (era 10px)
+• Números: 26px (era 20px)
+• Movimentação texto: 11px (era 9px)  
+• Movimentação números: 18px (era 14px)
 
-📧 VARIÁVEIS SUPORTADAS:
-• to_name, name, nome, user_name
-• to_email, email, user_email  
-• user_login, login, username
-• new_password, password, senha
-• + 20 outros formatos
+🔄 MUDANÇA DE NOME:
+• "Desovando" → "Descarregando"
+• Cards atualizados: ✅
+• Filtros atualizados: ✅
+• Cálculos atualizados: ✅
 
-💡 TESTE:
-Clique "Testar E-mail Completo" para verificar se as variáveis chegam preenchidas.
+📊 CARDS COM ÍCONES:
+• Em Trânsito: Caminhão roxo
+• Aguardando: Relógio laranja
+• Descarregando: Container azul
+• Descarregado: Check verde
+• Movimentação: Sem ícone
 
-📊 SISTEMA:
-• Usuários: ${usuarios.length}
-• Recuperação: ✅
-• Troca de senha: ✅
-• F5 não desloga: ✅
+✅ SISTEMA ATUALIZADO!
             `;
             
             alert(info);
@@ -3316,7 +3222,7 @@ Clique "Testar E-mail Completo" para verificar se as variáveis chegam preenchid
             }
         }
 
-        // ========== FUNÇÕES AUXILIARES BÁSICAS ==========
+        // ========== FUNÇÕES AUXILIARES ==========
 
         function converterValor(valor) {
             if (valor === null || valor === undefined) return "";
@@ -3344,18 +3250,7 @@ Clique "Testar E-mail Completo" para verificar se as variáveis chegam preenchid
             }
         }
 
-        function converterDataParaISO(dataBr) {
-            if (!dataBr) return null;
-            try {
-                const partes = dataBr.split('/');
-                if (partes.length !== 3) return null;
-                return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
-            } catch (error) {
-                return null;
-            }
-        }
-
-        console.log('✅📧🔧 SISTEMA FINAL - VARIÁVEIS MÚLTIPLAS PARA E-MAIL!');
+        console.log('✅🔤📊 SISTEMA FINAL - FONTE MAIOR + DESCARREGANDO!');
     </script>
 </body>
 </html>
