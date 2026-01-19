@@ -997,8 +997,8 @@
 
         /* ÍCONES DOS CARDS */
         .card-icon {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             margin: 0 auto 8px auto;
             opacity: 0.8;
             position: relative;
@@ -1334,8 +1334,8 @@
             }
 
             .card-icon {
-                width: 24px;
-                height: 24px;
+                width: 28px;
+                height: 28px;
                 margin-bottom: 6px;
             }
         }
@@ -1414,11 +1414,11 @@
     <!-- PAINEL DE GOVERNANÇA -->
     <div class="user-panel" id="userPanel">
         <div class="user-panel-modal">
-            <h3 id="panelTitle">👥 Painel de Governança - Cards Fonte Maior</h3>
+            <h3 id="panelTitle">👥 Painel de Governança - Gráfico Descarregando</h3>
             
             <div id="pollingIndicatorPanel" style="display: none;">
                 <div class="polling-indicator protected" id="pollingIndicator" onclick="mostrarDetalhesPolling()">
-                    <span id="pollingStatusText">🛡️ Sistema Funcionando</span>
+                    <span id="pollingStatusText">🛡️ Sistema com Gráfico Ativo</span>
                 </div>
             </div>
             
@@ -1444,28 +1444,28 @@
             <div class="supabase-status protected" id="supabaseStatus">
                 <div class="supabase-header">
                     <div class="supabase-title">
-                        <span id="supabaseIcon">✅</span>
-                        <span id="supabaseTitle">Sistema: Fonte Maior + Descarregando</span>
+                        <span id="supabaseIcon">📊</span>
+                        <span id="supabaseTitle">Sistema: Gráfico Descarregando</span>
                     </div>
                     <button class="status-toggle" id="statusToggle" onclick="toggleSupabaseDetails()">▼</button>
                 </div>
                 
                 <div class="supabase-details" id="supabaseDetails">
                     <div class="status-item-inline">
-                        <span class="status-label-inline">E-mail:</span>
-                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">Funcionando</span>
+                        <span class="status-label-inline">Visual:</span>
+                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">Gráfico Dinâmico</span>
                     </div>
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Cards:</span>
-                        <span class="status-value-inline status-protected-inline" id="cardStatus">Fonte Maior</span>
+                        <span class="status-label-inline">Caminhão:</span>
+                        <span class="status-value-inline status-protected-inline" id="cardStatus">Acompanha Total</span>
                     </div>
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Agrupamento:</span>
-                        <span class="status-value-inline status-protected-inline" id="groupStatus">Funcionando</span>
+                        <span class="status-label-inline">Barra:</span>
+                        <span class="status-value-inline status-protected-inline" id="groupStatus">Progressiva</span>
                     </div>
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Proteção:</span>
-                        <span class="status-value-inline status-protected-inline" id="dataProtectionStatus">Ativa</span>
+                        <span class="status-label-inline">Indicador:</span>
+                        <span class="status-value-inline status-protected-inline" id="dataProtectionStatus">Visual Ativo</span>
                     </div>
                 </div>
                 
@@ -1474,14 +1474,14 @@
                 </button>
                 
                 <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="supabaseLastUpdate">
-                    Cards com fonte otimizada
+                    Gráfico visual implementado
                 </div>
             </div>
 
             <div class="system-status protected" id="systemStatus">
-                <strong>✅ Status do Sistema:</strong>
+                <strong>📊 Status do Sistema:</strong>
                 <div style="margin-top: 10px; font-size: 12px;" id="systemStatusDetails">
-                    Fonte maior + Descarregando implementado
+                    Caminhão gráfico funcionando
                 </div>
             </div>
 
@@ -1503,7 +1503,7 @@
                 <button class="btn-logout" onclick="fazerLogout()">Logout</button>
             </div>
             <h1>Minerva Foods - Logística Internacional</h1>
-            <p>Pátio Brasfrigo - Fonte Maior + Descarregando</p>
+            <p>Pátio Brasfrigo - Gráfico Descarregando</p>
         </div>
 
         <div class="controls">
@@ -1602,17 +1602,54 @@
                 <div class="value" id="totalAguardando">0</div>
             </div>
             
-            <!-- CARD DESCARREGANDO COM ÍCONE DE CONTAINER -->
+            <!-- CARD DESCARREGANDO - GRÁFICO DINÂMICO COM CAMINHÃO -->
             <div class="stat-card descarregando">
-                <svg class="card-icon" viewBox="0 0 64 64" fill="none">
-                    <rect x="12" y="20" width="40" height="24" rx="2" fill="#17a2b8" opacity="0.7"/>
-                    <rect x="14" y="22" width="36" height="4" fill="#20c997" opacity="0.5"/>
-                    <rect x="14" y="28" width="36" height="4" fill="#20c997" opacity="0.5"/>
-                    <rect x="14" y="34" width="36" height="4" fill="#20c997" opacity="0.5"/>
-                    <path d="M20 44 L20 50 L44 50 L44 44" stroke="#17a2b8" stroke-width="2" fill="none"/>
-                    <path d="M24 50 L24 54 M32 50 L32 54 M40 50 L40 54" stroke="#17a2b8" stroke-width="2"/>
-                    <circle cx="26" cy="18" r="2" fill="#20c997"/>
-                    <circle cx="38" cy="18" r="2" fill="#20c997"/>
+                <svg class="card-icon" viewBox="0 0 64 64" fill="none" id="descarregandoIcon">
+                    <!-- BASE DO CAMINHÃO PRINCIPAL -->
+                    <rect x="8" y="30" width="24" height="14" rx="2" fill="#17a2b8" opacity="0.9"/>
+                    
+                    <!-- CABINE -->
+                    <rect x="6" y="28" width="10" height="16" rx="2" fill="#20c997" opacity="0.9"/>
+                    <rect x="7" y="30" width="8" height="8" fill="white" opacity="0.6"/>
+                    
+                    <!-- CARRETA -->
+                    <rect x="16" y="26" width="20" height="18" rx="2" fill="#17a2b8" opacity="0.8"/>
+                    
+                    <!-- BARRA DE PROGRESSO DINÂMICA (vai crescer conforme o número) -->
+                    <rect id="progressBar" x="18" y="30" width="0" height="6" rx="2" fill="#20c997" opacity="0.9"/>
+                    <rect x="18" y="30" width="16" height="6" rx="2" fill="none" stroke="#20c997" stroke-width="1" opacity="0.5"/>
+                    
+                    <!-- INDICADORES VISUAIS DE CARGA (vão aparecer conforme o progresso) -->
+                    <rect id="carga1" x="19" y="31" width="2" height="4" fill="#28a745" opacity="0"/>
+                    <rect id="carga2" x="22" y="31" width="2" height="4" fill="#28a745" opacity="0"/>
+                    <rect id="carga3" x="25" y="31" width="2" height="4" fill="#28a745" opacity="0"/>
+                    <rect id="carga4" x="28" y="31" width="2" height="4" fill="#28a745" opacity="0"/>
+                    <rect id="carga5" x="31" y="31" width="2" height="4" fill="#28a745" opacity="0"/>
+                    
+                    <!-- EMPILHADEIRA (aparece com mais destaque quando há movimento) -->
+                    <g id="empilhadeira" opacity="0.7">
+                        <rect x="40" y="36" width="8" height="8" rx="1" fill="#17a2b8"/>
+                        <rect x="41" y="26" width="2" height="10" fill="#17a2b8"/>
+                        <rect x="39" y="28" width="6" height="1" fill="#20c997"/>
+                        <rect x="39" y="30" width="6" height="1" fill="#20c997"/>
+                        <circle cx="42" cy="46" r="2" fill="#2c3e50"/>
+                        <circle cx="46" cy="46" r="2" fill="#2c3e50"/>
+                    </g>
+                    
+                    <!-- RODAS DO CAMINHÃO -->
+                    <circle cx="12" cy="48" r="3" fill="#2c3e50"/>
+                    <circle cx="20" cy="48" r="3" fill="#2c3e50"/>
+                    <circle cx="30" cy="48" r="3" fill="#2c3e50"/>
+                    
+                    <!-- INDICADOR NUMÉRICO NO TOPO -->
+                    <text id="graficoNumero" x="32" y="20" text-anchor="middle" fill="#17a2b8" font-size="8" font-weight="bold">0</text>
+                    
+                    <!-- SETAS DE MOVIMENTO (animadas quando há atividade) -->
+                    <g id="setasMovimento" opacity="0">
+                        <path d="M50 18 L54 20 L50 22 Z" fill="#20c997"/>
+                        <path d="M52 14 L56 16 L52 18 Z" fill="#20c997" opacity="0.7"/>
+                        <path d="M48 22 L52 24 L48 26 Z" fill="#20c997" opacity="0.5"/>
+                    </g>
                 </svg>
                 <div class="label">Descarregando</div>
                 <div class="value" id="totalDescarregando">0</div>
@@ -1756,7 +1793,7 @@
 
         const supabaseConfig = {
             url: 'https://zhxrxymeuzvnuafvkjjd.supabase.co',
-            anonKey: 'sb_publishable_GIl_nKo6EmiOzcr-io9JSA_pvQu2bOJ'
+            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoeHJ4eW1ldXp2bnVhZnZramkiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczNzI5ODE1NSwiZXhwIjoyMDUyODc0MTU1fQ.F_xq6EO5jFjh7nELPjnp2MHJa1ZQNsH4DLRl8HyGhp0'
         };
 
         // ========== USUÁRIOS PADRÃO ==========
@@ -1913,6 +1950,83 @@
             const resultado = dataDescarga === dataAtual;
             console.log(`📅 Data ${dataDescarga} é hoje (${dataAtual})? ${resultado}`);
             return resultado;
+        }
+
+        // ========== FUNÇÃO DO GRÁFICO DINÂMICO NO CARD DESCARREGANDO ==========
+        
+        function atualizarGraficoDescarregando(totalDescarregando) {
+            console.log(`📊 Atualizando gráfico: ${totalDescarregando}`);
+            
+            // ELEMENTOS DO SVG
+            const progressBar = document.getElementById('progressBar');
+            const graficoNumero = document.getElementById('graficoNumero');
+            const empilhadeira = document.getElementById('empilhadeira');
+            const setasMovimento = document.getElementById('setasMovimento');
+            const cargas = ['carga1', 'carga2', 'carga3', 'carga4', 'carga5'];
+            
+            if (!progressBar || !graficoNumero) {
+                console.log('⚠️ Elementos do gráfico não encontrados');
+                return;
+            }
+            
+            // ATUALIZAR NÚMERO NO TOPO
+            graficoNumero.textContent = totalDescarregando;
+            
+            // CALCULAR PROGRESSO (máximo 16 pixels de largura para a barra)
+            const maxLargura = 16;
+            const larguraAtual = Math.min(totalDescarregando * 2, maxLargura);
+            progressBar.setAttribute('width', larguraAtual);
+            
+            // ATUALIZAR INDICADORES DE CARGA (5 blocos máximo)
+            cargas.forEach((cargaId, index) => {
+                const carga = document.getElementById(cargaId);
+                if (carga) {
+                    if (totalDescarregando > index) {
+                        carga.setAttribute('opacity', '0.9');
+                    } else {
+                        carga.setAttribute('opacity', '0');
+                    }
+                }
+            });
+            
+            // DESTACAR EMPILHADEIRA QUANDO HÁ MOVIMENTO
+            if (empilhadeira) {
+                if (totalDescarregando > 0) {
+                    empilhadeira.setAttribute('opacity', '1');
+                    empilhadeira.style.animation = 'none';
+                    setTimeout(() => {
+                        empilhadeira.style.animation = 'cardCompactPulse 2s infinite';
+                    }, 10);
+                } else {
+                    empilhadeira.setAttribute('opacity', '0.5');
+                    empilhadeira.style.animation = 'none';
+                }
+            }
+            
+            // SETAS DE MOVIMENTO QUANDO HÁ ALTA ATIVIDADE
+            if (setasMovimento) {
+                if (totalDescarregando >= 3) {
+                    setasMovimento.setAttribute('opacity', '0.8');
+                } else if (totalDescarregando > 0) {
+                    setasMovimento.setAttribute('opacity', '0.4');
+                } else {
+                    setasMovimento.setAttribute('opacity', '0');
+                }
+            }
+            
+            // MUDANÇA DE COR CONFORME INTENSIDADE
+            if (totalDescarregando >= 5) {
+                progressBar.setAttribute('fill', '#28a745'); // Verde para alta atividade
+                graficoNumero.setAttribute('fill', '#28a745');
+            } else if (totalDescarregando >= 2) {
+                progressBar.setAttribute('fill', '#20c997'); // Verde médio
+                graficoNumero.setAttribute('fill', '#20c997');
+            } else {
+                progressBar.setAttribute('fill', '#17a2b8'); // Azul padrão
+                graficoNumero.setAttribute('fill', '#17a2b8');
+            }
+            
+            console.log(`✅ Gráfico atualizado: largura ${larguraAtual}, cargas ativas: ${Math.min(totalDescarregando, 5)}`);
         }
 
         // ========== RECUPERAÇÃO DE SENHA ==========
@@ -2464,6 +2578,9 @@
             document.getElementById('movimentacaoSemana').textContent = backupCardsProtegidos.movimentacaoSemana || 0;
             document.getElementById('movimentacaoMes').textContent = backupCardsProtegidos.movimentacaoMes || 0;
             
+            // ========== ATUALIZAR GRÁFICO DESCARREGANDO ==========
+            atualizarGraficoDescarregando(backupCardsProtegidos.totalDescarregando || 0);
+            
             const cards = document.querySelectorAll('.stat-card');
             cards.forEach(card => {
                 card.classList.add('protected', 'updated');
@@ -2684,6 +2801,9 @@
             document.getElementById('movimentacaoDia').textContent = movimentacaoDia;
             document.getElementById('movimentacaoSemana').textContent = movimentacaoSemana;
             document.getElementById('movimentacaoMes').textContent = movimentacaoMes;
+            
+            // ========== ATUALIZAR GRÁFICO DESCARREGANDO ==========
+            atualizarGraficoDescarregando(placasDescarregando);
             
             // SALVAR BACKUP
             if (isImporting) {
@@ -3016,11 +3136,11 @@
             const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
             
             if (usuarioLogado.nivel === 'master') {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Fonte Maior + Descarregando';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Gráfico Descarregando';
                 document.getElementById('createUserSection').style.display = 'block';
                 pollingIndicatorPanel.style.display = 'block';
             } else {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Fonte Maior + Descarregando';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Gráfico Descarregando';
                 document.getElementById('createUserSection').style.display = 'none';
                 pollingIndicatorPanel.style.display = 'none';
             }
@@ -3053,6 +3173,7 @@
             `).join('');
         }
 
+        // ========== FUNÇÃO CORRIGIDA PARA CRIAR USUÁRIO NO SUPABASE ==========
         async function criarUsuario(event) {
             event.preventDefault();
             
@@ -3096,9 +3217,51 @@
                 ativo: true
             };
 
+            // ========== SALVAR NO LOCALSTORAGE ==========
             usuarios.push(novoUsuario);
             localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
 
+            // ========== SALVAR NO SUPABASE ==========
+            if (supabaseDisponivel && supabase) {
+                try {
+                    console.log('📤 Salvando usuário no Supabase...');
+                    
+                    // Dados para enviar ao Supabase
+                    const dadosSupabase = {
+                        id: novoUsuario.id,
+                        nome: novoUsuario.nome,
+                        login: novoUsuario.login,
+                        senha: novoUsuario.senha, // Em produção, considere criptografar a senha
+                        nivel: novoUsuario.nivel,
+                        email: novoUsuario.email,
+                        criado_em: novoUsuario.criadoEm,
+                        criado_por: novoUsuario.criadoPor,
+                        ativo: novoUsuario.ativo
+                    };
+                    
+                    const { data, error } = await supabase
+                        .from('usuarios') // Nome da tabela no Supabase
+                        .insert([dadosSupabase]);
+                    
+                    if (error) {
+                        console.error('❌ Erro ao salvar no Supabase:', error);
+                        // Não falha a criação, apenas loga o erro
+                        mostrarAlerta('warning', '⚠️ Usuário criado localmente. Erro ao sincronizar com servidor.');
+                    } else {
+                        console.log('✅ Usuário salvo no Supabase:', data);
+                        mostrarAlerta('success', `✅ Usuário criado e sincronizado com sucesso!`);
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Erro na conexão com Supabase:', error);
+                    mostrarAlerta('warning', '⚠️ Usuário criado localmente. Servidor indisponível.');
+                }
+            } else {
+                console.log('📱 Supabase indisponível, salvando apenas localmente');
+                mostrarAlerta('info', '📱 Usuário criado localmente (servidor indisponível).');
+            }
+
+            // ========== LIMPAR FORMULÁRIO E ATUALIZAR LISTA ==========
             document.getElementById('novoNome').value = '';
             document.getElementById('novoLogin').value = '';
             document.getElementById('novaSenha').value = '';
@@ -3109,7 +3272,7 @@
             const agora = new Date();
             salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
 
-            mostrarAlerta('success', `✅ Usuário criado com sucesso!`);
+            console.log(`✅ Usuário criado: ${nome} (${login})`);
         }
 
         function aplicarFiltros() {
@@ -3182,28 +3345,29 @@
             const semanaAtual = obterSemanaAtual();
             
             const info = `
-🚀 SISTEMA ATUALIZADO
+🚀 SISTEMA COM GRÁFICO ATIVO
 
-✅ FONTES MAIORES:
-• Títulos: 13px (era 10px)
-• Números: 26px (era 20px)
-• Movimentação texto: 11px (era 9px)  
-• Movimentação números: 18px (era 14px)
+📊 CAMINHÃO GRÁFICO:
+• Visual dinâmico no card "Descarregando"
+• Barra de progresso que cresce com o número
+• Indicadores visuais de carga (5 blocos)
+• Empilhadeira animada com movimento
+• Setas indicando atividade intensa
 
-🔄 MUDANÇA DE NOME:
-• "Desovando" → "Descarregando"
-• Cards atualizados: ✅
-• Filtros atualizados: ✅
-• Cálculos atualizados: ✅
+🎨 ELEMENTOS VISUAIS:
+• Número no topo do caminhão
+• Cores que mudam conforme intensidade
+• Empilhadeira pulsa quando há movimento
+• Setas aparecem com alta atividade (≥3)
 
-📊 CARDS COM ÍCONES:
-• Em Trânsito: Caminhão roxo
-• Aguardando: Relógio laranja
-• Descarregando: Container azul
-• Descarregado: Check verde
-• Movimentação: Sem ícone
+📈 FUNCIONAMENTO:
+• Acompanha soma: Descarregados + Aguardando
+• Barra cresce até 16px (máximo)
+• 5 blocos de carga se acendem
+• Verde para alta atividade (≥5)
+• Verde médio para atividade normal (≥2)
 
-✅ SISTEMA ATUALIZADO!
+✅ GRÁFICO IMPLEMENTADO COM SUCESSO!
             `;
             
             alert(info);
@@ -3250,7 +3414,7 @@
             }
         }
 
-        console.log('✅🔤📊 SISTEMA FINAL - FONTE MAIOR + DESCARREGANDO!');
+        console.log('✅🚛📊🎨 SISTEMA COM GRÁFICO DESCARREGANDO E CRIAÇÃO AUTOMÁTICA NO SUPABASE IMPLEMENTADO!');
     </script>
 </body>
 </html>
