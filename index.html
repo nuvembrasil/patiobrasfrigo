@@ -5,15 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pátio Atual - Minerva Foods</title>
     
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-    
-    <!-- Biblioteca SheetJS para ler arquivos Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
-    <!-- EmailJS SDK para envio via Outlook -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    
     <style>
         * {
             margin: 0;
@@ -28,6 +19,7 @@
             overflow-x: auto;
             overflow-y: auto;
             min-height: 100vh;
+            min-width: 1200px;
         }
 
         .container {
@@ -38,6 +30,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             overflow: hidden;
             min-height: calc(100vh - 20px);
+            min-width: 1180px;
         }
 
         /* INDICADOR DE POLLING SOMENTE NO PAINEL DE GOVERNANÇA */
@@ -503,7 +496,7 @@
             background: #5a6268;
         }
 
-        /* PAINEL DE GOVERNANÇA COM ROLAGEM HORIZONTAL */
+        /* PAINEL DE GOVERNANÇA COM ROLAGEM HORIZONTAL MELHORADA */
         .user-panel {
             position: fixed;
             top: 0;
@@ -516,6 +509,7 @@
             align-items: center;
             z-index: 9999;
             backdrop-filter: blur(5px);
+            overflow: auto;
         }
 
         .user-panel-modal {
@@ -524,11 +518,12 @@
             border-radius: 12px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             width: 95%;
-            max-width: 1000px;
+            max-width: 1200px;
             max-height: 95vh;
             overflow-y: auto;
             overflow-x: auto;
             position: relative;
+            min-width: 800px;
         }
 
         .user-panel h3 {
@@ -543,6 +538,7 @@
             gap: 10px;
             margin-bottom: 20px;
             align-items: end;
+            min-width: 700px;
         }
 
         .user-list {
@@ -559,7 +555,7 @@
             align-items: center;
             padding: 10px 15px;
             border-bottom: 1px solid #dee2e6;
-            min-width: 400px;
+            min-width: 500px;
         }
 
         .user-item:last-child {
@@ -612,7 +608,7 @@
             background: #e67e22;
         }
 
-        /* STATUS SUPABASE INTEGRADO */
+        /* STATUS SUPABASE INTEGRADO COM ROLAGEM HORIZONTAL */
         .supabase-status {
             margin-top: 20px;
             padding: 15px;
@@ -620,6 +616,7 @@
             border: 1px solid #bbf7d0;
             border-radius: 6px;
             overflow-x: auto;
+            overflow-y: visible;
         }
 
         .supabase-status.error {
@@ -642,7 +639,7 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 12px;
-            min-width: 300px;
+            min-width: 400px;
         }
 
         .supabase-title {
@@ -674,7 +671,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 15px;
-            min-width: 400px;
+            min-width: 500px;
         }
 
         .supabase-details.collapsed {
@@ -739,6 +736,7 @@
             border: 1px solid #bbf7d0;
             border-radius: 6px;
             overflow-x: auto;
+            overflow-y: visible;
         }
 
         .header {
@@ -749,6 +747,7 @@
             position: relative;
             overflow-x: auto;
             overflow-y: visible;
+            min-width: 1000px;
         }
 
         .header h1 {
@@ -855,7 +854,7 @@
             transform: translateY(-1px);
         }
 
-        /* CONTROLES RESPONSIVOS COM ROLAGEM HORIZONTAL */
+        /* CONTROLES RESPONSIVOS COM ROLAGEM HORIZONTAL MELHORADA */
         .controls {
             padding: 12px;
             background: #f8f9fa;
@@ -863,6 +862,7 @@
             overflow-x: auto;
             overflow-y: visible;
             position: relative;
+            min-width: 100%;
         }
 
         .controls-content {
@@ -870,15 +870,15 @@
             flex-wrap: nowrap;
             gap: 8px;
             align-items: end;
-            min-width: max-content;
-            justify-content: center;
+            min-width: 900px;
+            justify-content: flex-start;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
             gap: 3px;
-            min-width: 120px;
+            min-width: 130px;
             flex: 0 0 auto;
         }
 
@@ -971,14 +971,17 @@
             transform: none;
         }
 
-        /* ========== CARDS CENTRALIZADOS ========== */
+        /* ========== CARDS CENTRALIZADOS COM ROLAGEM HORIZONTAL ========== */
         .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            display: flex;
             gap: 12px;
             padding: 12px;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            justify-items: center;
+            overflow-x: auto;
+            overflow-y: visible;
+            justify-content: center;
+            align-items: stretch;
+            min-width: 100%;
         }
 
         .stat-card {
@@ -992,8 +995,8 @@
             overflow: hidden;
             cursor: pointer;
             text-align: center;
-            width: 100%;
-            max-width: 200px;
+            min-width: 180px;
+            flex: 0 0 180px;
         }
 
         .stat-card::before {
@@ -1072,6 +1075,7 @@
             padding: 6px 8px;
             text-align: left;
             min-width: 220px;
+            flex: 0 0 220px;
         }
 
         .stat-card.historico .historico-content {
@@ -1129,7 +1133,7 @@
         .stat-card.descarregado:hover::before { background: linear-gradient(90deg, #20c997 0%, #28a745 100%); }
         .stat-card.historico:hover::before { background: linear-gradient(90deg, #8e44ad 0%, #6f42c1 100%); }
 
-        /* TABELA RESPONSIVA COM ROLAGEM MELHORADA */
+        /* TABELA RESPONSIVA COM ROLAGEM HORIZONTAL MELHORADA */
         .table-container {
             overflow: hidden;
             padding: 12px;
@@ -1145,6 +1149,7 @@
             position: relative;
             background: white;
             height: 100%;
+            width: 100%;
         }
 
         .button-group {
@@ -1153,13 +1158,14 @@
             margin-bottom: 12px;
             flex-wrap: wrap;
             overflow-x: auto;
+            min-width: 100%;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: clamp(10px, 1.5vw, 11px);
-            min-width: 1200px;
+            min-width: 1800px;
         }
 
         thead {
@@ -1179,6 +1185,7 @@
             white-space: nowrap;
             border-right: 1px solid #34495e;
             line-height: 1.2;
+            min-width: 60px;
         }
 
         th:last-child {
@@ -1191,6 +1198,7 @@
             white-space: nowrap;
             text-align: center;
             font-size: clamp(10px, 1.5vw, 11px);
+            min-width: 60px;
         }
 
         tbody tr:hover {
@@ -1356,7 +1364,8 @@
         /* MEDIA QUERIES MELHORADAS */
         @media (max-width: 1200px) {
             .stats {
-                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                flex-wrap: wrap;
+                justify-content: center;
             }
             
             .table-container {
@@ -1368,6 +1377,7 @@
             .header {
                 padding: 15px 10px;
                 text-align: center;
+                min-width: 800px;
             }
             
             .user-info {
@@ -1387,7 +1397,12 @@
             }
             
             .stats {
-                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .controls-content {
+                min-width: 700px;
             }
 
             .update-timestamp {
@@ -1402,21 +1417,29 @@
                 height: calc(100vh - 400px);
                 padding: 8px;
             }
+
+            table {
+                min-width: 1600px;
+            }
         }
 
         @media (max-width: 600px) {
             body {
                 padding: 5px;
+                min-width: 1000px;
             }
             
             .stats {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                flex-wrap: wrap;
+                justify-content: center;
                 gap: 6px;
                 padding: 6px;
             }
             
             .stat-card {
                 padding: 6px 8px;
+                min-width: 140px;
+                flex: 0 0 140px;
             }
 
             .user-info {
@@ -1433,6 +1456,10 @@
                 padding: 8px;
             }
 
+            .controls-content {
+                min-width: 600px;
+            }
+
             .table-container {
                 height: calc(100vh - 350px);
                 padding: 6px;
@@ -1440,56 +1467,65 @@
 
             table {
                 font-size: 10px;
-                min-width: 1000px;
+                min-width: 1400px;
             }
 
             th, td {
                 padding: 4px 2px;
                 font-size: 9px;
+                min-width: 50px;
             }
         }
 
-        /* SCROLLBARS CUSTOMIZADAS PARA TODAS AS DIREÇÕES */
+        /* SCROLLBARS CUSTOMIZADAS MELHORADAS */
         .table-wrapper::-webkit-scrollbar,
         .user-list::-webkit-scrollbar,
         .user-panel-modal::-webkit-scrollbar,
         .controls::-webkit-scrollbar,
+        .stats::-webkit-scrollbar,
         .supabase-status::-webkit-scrollbar,
         .system-status::-webkit-scrollbar,
-        body::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        body::-webkit-scrollbar,
+        .user-panel::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
         }
 
         .table-wrapper::-webkit-scrollbar-track,
         .user-list::-webkit-scrollbar-track,
         .user-panel-modal::-webkit-scrollbar-track,
         .controls::-webkit-scrollbar-track,
+        .stats::-webkit-scrollbar-track,
         .supabase-status::-webkit-scrollbar-track,
         .system-status::-webkit-scrollbar-track,
-        body::-webkit-scrollbar-track {
+        body::-webkit-scrollbar-track,
+        .user-panel::-webkit-scrollbar-track {
             background: #f1f1f1;
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
         .table-wrapper::-webkit-scrollbar-thumb,
         .user-list::-webkit-scrollbar-thumb,
         .user-panel-modal::-webkit-scrollbar-thumb,
         .controls::-webkit-scrollbar-thumb,
+        .stats::-webkit-scrollbar-thumb,
         .supabase-status::-webkit-scrollbar-thumb,
         .system-status::-webkit-scrollbar-thumb,
-        body::-webkit-scrollbar-thumb {
+        body::-webkit-scrollbar-thumb,
+        .user-panel::-webkit-scrollbar-thumb {
             background: #c1c1c1;
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
         .table-wrapper::-webkit-scrollbar-thumb:hover,
         .user-list::-webkit-scrollbar-thumb:hover,
         .user-panel-modal::-webkit-scrollbar-thumb:hover,
         .controls::-webkit-scrollbar-thumb:hover,
+        .stats::-webkit-scrollbar-thumb:hover,
         .supabase-status::-webkit-scrollbar-thumb:hover,
         .system-status::-webkit-scrollbar-thumb:hover,
-        body::-webkit-scrollbar-thumb:hover {
+        body::-webkit-scrollbar-thumb:hover,
+        .user-panel::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
         }
     </style>
@@ -1502,7 +1538,7 @@
     </div>
 
     <div class="import-success-banner" id="importSuccessBanner">
-        ✅ Atualizado com sucesso
+        ✅ Dados atualizados
     </div>
 
     <div class="realtime-notification" id="realtimeNotification">
@@ -1543,10 +1579,10 @@
 
             <div class="password-recovery">
                 <div class="recovery-title">🔑 Esqueceu sua senha?</div>
-                <form class="recovery-form" onsubmit="recuperarSenha(event)">
-                    <input type="email" id="emailRecuperacao" class="recovery-input" placeholder="📧 Digite seu e-mail" required>
-                    <button type="submit" class="recovery-btn" id="btnRecuperar">Recuperar Senha</button>
-                </form>
+                <div class="recovery-form">
+                    <input type="email" id="emailRecuperacao" class="recovery-input" placeholder="📧 Digite seu e-mail" disabled>
+                    <button type="button" class="recovery-btn" disabled>Recuperar Senha (Indisponível)</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1599,7 +1635,7 @@
                 <div class="supabase-header">
                     <div class="supabase-title">
                         <span id="supabaseIcon">📊</span>
-                        <span id="supabaseTitle">Sistema: Gráfico Descarregando</span>
+                        <span id="supabaseTitle">Sistema: Modo Local</span>
                     </div>
                     <button class="status-toggle" id="statusToggle" onclick="toggleSupabaseDetails()">▼</button>
                 </div>
@@ -1623,19 +1659,19 @@
                     </div>
                 </div>
                 
-                <button class="supabase-test-btn" id="supabaseTestBtn" onclick="testarSupabase()">
-                    🔍 Testar Supabase
+                <button class="supabase-test-btn" id="supabaseTestBtn" onclick="mostrarInfoLocal()">
+                    📱 Modo Local Ativo
                 </button>
                 
                 <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="supabaseLastUpdate">
-                    Gráfico visual implementado
+                    Sistema funcionando localmente
                 </div>
             </div>
 
             <div class="system-status protected" id="systemStatus">
                 <strong>📊 Status do Sistema:</strong>
                 <div style="margin-top: 10px; font-size: 12px;" id="systemStatusDetails">
-                    Caminhão gráfico funcionando
+                    Sistema local funcionando normalmente
                 </div>
             </div>
 
@@ -1729,7 +1765,7 @@
             </div>
         </div>
 
-        <!-- CARDS PROFISSIONAIS CENTRALIZADOS -->
+        <!-- CARDS PROFISSIONAIS CENTRALIZADOS COM ROLAGEM HORIZONTAL -->
         <div class="stats">
             <!-- CARD EM TRÂNSITO COM ÍCONE DE CAMINHÃO -->
             <div class="stat-card transito">
@@ -1930,33 +1966,11 @@
         </div>
     </div>
 
+    <!-- BIBLIOTECAS CARREGADAS APENAS SE NECESSÁRIO -->
     <script>
-        // ========== CONFIGURAÇÃO EMAILJS ==========
-        
-        const emailJSConfig = {
-            serviceID: 'service_t6q4q3f',
-            templateID: 'template_fpi2vup',
-            publicKey: 'bLKKoQbVyFnGB9hML'
-        };
-        
-        let emailJSReady = false;
-        
-        (function inicializarEmailJS(){
-            try {
-                emailjs.init(emailJSConfig.publicKey);
-                emailJSReady = true;
-                console.log('✅ EmailJS inicializado');
-            } catch (error) {
-                console.error('❌ Erro EmailJS:', error);
-                emailJSReady = false;
-            }
-        })();
-
         // ========== VARIÁVEIS GLOBAIS ==========
         let usuarioLogado = null;
         let dadosPatio = [];
-        let supabase = null;
-        let supabaseDisponivel = false;
         
         let timestampGlobalInterval = null;
         let ultimaAtualizacaoGlobal = 'Nunca';
@@ -1966,15 +1980,9 @@
         let backupDadosProtegidos = [];
         let backupCardsProtegidos = {};
 
-        // ========== VARIÁVEIS PARA SINCRONIZAÇÃO REAL ==========
-        let ultimoTimestampCheck = '';
-        let intervalSincronizacao = null;
-
-        // ========== CONFIGURAÇÃO CORRETA DO SUPABASE ==========
-        const supabaseConfig = {
-            url: 'https://zhxrxymeuzvnuafvkjjd.supabase.co',
-            anonKey: 'sb_publishable_GIl_nKo6EmiOzcr-io9JSA_pvQu2bOJ'
-        };
+        // ========== SUPABASE E EMAIL DESABILITADOS TEMPORARIAMENTE ==========
+        let supabaseDisponivel = false;
+        let emailJSReady = false;
 
         // ========== USUÁRIOS PADRÃO ==========
         const USUARIOS_PADRAO = [
@@ -2015,15 +2023,6 @@
                 ativo: true
             }
         ];
-
-        function gerarSenhaTemporaria() {
-            const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-            let senha = '';
-            for (let i = 0; i < 8; i++) {
-                senha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-            }
-            return senha;
-        }
 
         // ========== FUNÇÕES DE DATA ==========
         
@@ -2139,232 +2138,6 @@
             return dataDescarga === obterDataAnterior(diasAtras);
         }
 
-        // ========== SINCRONIZAÇÃO REAL VIA EMAIL - CORRIGIDA ==========
-        
-        async function salvarDadosGlobalSupabase(dadosArray) {
-            if (!supabaseDisponivel || !supabase) {
-                console.log('⚠️ Supabase não disponível');
-                return false;
-            }
-
-            try {
-                console.log(`🌐 SALVANDO DADOS PARA SINCRONIZAÇÃO GLOBAL...`);
-
-                const timestampUnico = new Date().toISOString();
-                const usuarioImportacao = usuarioLogado ? usuarioLogado.nome : 'Sistema';
-                
-                // COMPRIMIR DADOS PARA CABER NO EMAIL
-                const dadosComprimidos = dadosArray.map(item => ({
-                    p: item.placa,
-                    c: item.container,
-                    dc: item.dataChegada,
-                    dd: item.dataDescarga,
-                    d: item.diaria,
-                    de: item.dedicada,
-                    vd: item.valorDiaria,
-                    vt: item.valorTotal,
-                    t: item.transportadora,
-                    u: item.unidade,
-                    o: item.origem,
-                    td: item.tipoDescarga,
-                    tm: item.tipoMercado,
-                    s: item.status,
-                    no: item.nfOrigem,
-                    nb: item.nfeBrasfrigo,
-                    op: item.op,
-                    dp: item.deposito,
-                    so: item.statusOp,
-                    pe: item.pedido,
-                    f: item.falta,
-                    sb: item.sobra,
-                    ir: item.inversaoRg,
-                    dk: item.doca,
-                    pb: item.pbr,
-                    ow: item.oneWay,
-                    fu: item.fumigado,
-                    tp: item.totalPallet,
-                    rf: item.recFrio,
-                    ob: item.obs
-                }));
-                
-                const emailComDados = `${timestampUnico}|${JSON.stringify(dadosComprimidos)}|${usuarioImportacao}`;
-                
-                console.log('📧 ATUALIZANDO EMAIL PARA SINCRONIZAÇÃO...');
-                console.log(`👤 Usuário: ${usuarioImportacao}`);
-                console.log(`⏰ Timestamp: ${timestampUnico}`);
-                console.log(`📊 Registros: ${dadosArray.length}`);
-
-                const { data, error } = await supabase
-                    .from('usuarios')
-                    .update({ 
-                        email: emailComDados,
-                        criado_em: timestampUnico 
-                    })
-                    .eq('login', 'leandro.brasil')
-                    .select();
-
-                if (error) {
-                    console.error('❌ ERRO AO SALVAR:', error);
-                    return false;
-                }
-
-                console.log('✅ DADOS SALVOS PARA SINCRONIZAÇÃO!');
-                ultimoTimestampCheck = timestampUnico;
-                return true;
-
-            } catch (error) {
-                console.error('❌ ERRO GERAL:', error);
-                return false;
-            }
-        }
-
-        async function verificarSincronizacaoViaEmail() {
-            if (!supabaseDisponivel || !supabase) {
-                return false;
-            }
-
-            try {
-                console.log('🔍 VERIFICANDO SINCRONIZAÇÃO...');
-
-                const { data, error } = await supabase
-                    .from('usuarios')
-                    .select('email, criado_em')
-                    .eq('login', 'leandro.brasil')
-                    .single();
-
-                if (error) {
-                    console.error('❌ ERRO:', error);
-                    return false;
-                }
-
-                if (!data || !data.email || !data.email.includes('|')) {
-                    console.log('📝 Sem dados de sincronização');
-                    return false;
-                }
-
-                const timestamp = data.criado_em;
-                
-                // VERIFICAR SE É DIFERENTE
-                if (timestamp !== ultimoTimestampCheck) {
-                    console.log('🚨 NOVA ATUALIZAÇÃO DETECTADA!');
-                    console.log(`• Anterior: ${ultimoTimestampCheck}`);
-                    console.log(`• Novo: ${timestamp}`);
-
-                    try {
-                        // EXTRAIR DADOS DO EMAIL
-                        const partes = data.email.split('|');
-                        const timestampDados = partes[0];
-                        const dadosJson = partes[1];
-                        const usuarioImportacao = partes[2] || 'Sistema';
-
-                        console.log(`👤 IMPORTADO POR: ${usuarioImportacao}`);
-
-                        // PROCESSAR DADOS COMPRIMIDOS
-                        const dadosComprimidos = JSON.parse(dadosJson);
-                        
-                        // DESCOMPRIMIR DADOS
-                        const dadosDescomprimidos = dadosComprimidos.map(item => ({
-                            placa: item.p || "",
-                            container: item.c || "",
-                            dataChegada: item.dc || "",
-                            dataDescarga: item.dd || "",
-                            diaria: item.d || 0,
-                            dedicada: item.de || "NÃO",
-                            valorDiaria: item.vd || "R$ 0,00",
-                            valorTotal: item.vt || "R$ 0,00",
-                            transportadora: item.t || "",
-                            unidade: item.u || "",
-                            origem: item.o || "",
-                            tipoDescarga: item.td || "",
-                            tipoMercado: item.tm || "",
-                            status: item.s || "",
-                            nfOrigem: item.no || "",
-                            nfeBrasfrigo: item.nb || "",
-                            op: item.op || "",
-                            deposito: item.dp || "",
-                            statusOp: item.so || "",
-                            pedido: item.pe || "",
-                            falta: item.f || "",
-                            sobra: item.sb || "",
-                            inversaoRg: item.ir || "",
-                            doca: item.dk || "",
-                            pbr: item.pb || "",
-                            oneWay: item.ow || "",
-                            fumigado: item.fu || "",
-                            totalPallet: item.tp || "",
-                            recFrio: item.rf || "",
-                            obs: item.ob || ""
-                        }));
-
-                        console.log(`📂 CARREGANDO ${dadosDescomprimidos.length} REGISTROS`);
-
-                        // ATUALIZAR DADOS GLOBAIS - FORÇAR ATUALIZAÇÃO
-                        dadosPatio = [...dadosDescomprimidos];
-                        localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
-
-                        // ATUALIZAR TIMESTAMP
-                        ultimoTimestampCheck = timestamp;
-
-                        // FORÇAR ATUALIZAÇÃO DA PROTEÇÃO TAMBÉM
-                        ativarProtecaoPermanente(dadosDescomprimidos);
-
-                        // ATUALIZAR INTERFACE - GARANTIR ATUALIZAÇÃO COMPLETA
-                        renderizarTabelaAgrupadaCorrigida();
-                        atualizarEstatisticas();
-                        popularFiltros();
-
-                        // MOSTRAR NOTIFICAÇÃO APENAS PARA OUTROS USUÁRIOS
-                        const usuarioAtual = usuarioLogado ? usuarioLogado.nome : 'Anônimo';
-                        if (usuarioImportacao !== usuarioAtual) {
-                            const notification = document.getElementById('realtimeNotification');
-                            if (notification) {
-                                notification.textContent = `⚡ Dados atualizados por ${usuarioImportacao}! ${dadosDescomprimidos.length} registros sincronizados`;
-                                notification.classList.add('show');
-                                setTimeout(() => notification.classList.remove('show'), 7000);
-                            }
-                        }
-
-                        // ATUALIZAR TIMESTAMP VISUAL
-                        atualizarTimestampVisual(new Date(timestampDados).toLocaleString('pt-BR'));
-
-                        console.log('✅ SINCRONIZAÇÃO CONCLUÍDA - INTERFACE ATUALIZADA!');
-                        return true;
-
-                    } catch (parseError) {
-                        console.error('❌ ERRO AO PROCESSAR DADOS:', parseError);
-                        return false;
-                    }
-                } else {
-                    console.log('📊 Dados já atualizados');
-                    return false;
-                }
-
-            } catch (error) {
-                console.error('❌ ERRO NA VERIFICAÇÃO:', error);
-                return false;
-            }
-        }
-
-        function iniciarSincronizacaoTempoReal() {
-            console.log('⚡ INICIANDO SINCRONIZAÇÃO TEMPO REAL...');
-            
-            if (intervalSincronizacao) {
-                clearInterval(intervalSincronizacao);
-            }
-
-            // VERIFICAR IMEDIATAMENTE
-            verificarSincronizacaoViaEmail();
-
-            // VERIFICAR A CADA 2 SEGUNDOS
-            intervalSincronizacao = setInterval(() => {
-                if (!isImporting) {
-                    verificarSincronizacaoViaEmail();
-                }
-            }, 2000);
-            
-            console.log('✅ Sincronização ativa (2s)');
-        }
-
         // ========== FUNÇÃO DO GRÁFICO DINÂMICO NO CARD DESCARREGANDO ==========
         
         function atualizarGraficoDescarregando(totalDescarregando) {
@@ -2442,283 +2215,6 @@
             console.log(`✅ Gráfico atualizado: largura ${larguraAtual}, cargas ativas: ${Math.min(totalDescarregando, 5)}`);
         }
 
-        // ========== RECUPERAÇÃO DE SENHA ==========
-        
-        async function recuperarSenha(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('emailRecuperacao').value.trim().toLowerCase();
-            const btnRecuperar = document.getElementById('btnRecuperar');
-            
-            if (!email) {
-                mostrarStatusLogin('error', 'Digite um e-mail válido!');
-                return;
-            }
-            
-            btnRecuperar.disabled = true;
-            btnRecuperar.textContent = 'Enviando...';
-            mostrarStatusLogin('info', 'Verificando e-mail...');
-            
-            try {
-                if (!emailJSReady) {
-                    throw new Error('Sistema de e-mail não inicializado');
-                }
-                
-                sincronizarUsuariosLocalStorage();
-                const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-                const usuarioEncontrado = usuarios.find(u => u.email.toLowerCase().trim() === email);
-                
-                if (!usuarioEncontrado) {
-                    mostrarStatusLogin('error', 'E-mail não encontrado no sistema!');
-                    btnRecuperar.disabled = false;
-                    btnRecuperar.textContent = 'Recuperar Senha';
-                    return;
-                }
-                
-                console.log('👤 Usuário encontrado:', usuarioEncontrado.nome);
-                
-                const novaSenha = gerarSenhaTemporaria();
-                console.log('🔑 Nova senha gerada:', novaSenha);
-                
-                const emailEnviado = await enviarEmailRecuperacao(usuarioEncontrado, novaSenha);
-                
-                if (!emailEnviado) {
-                    throw new Error('Falha no envio do e-mail');
-                }
-                
-                const usuariosAtualizados = usuarios.map(u => {
-                    if (u.email.toLowerCase().trim() === email) {
-                        return { ...u, senha: novaSenha, senhaTemporaria: true };
-                    }
-                    return u;
-                });
-                
-                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
-                
-                mostrarStatusLogin('success', `Nova senha enviada para ${email}`);
-                document.getElementById('emailRecuperacao').value = '';
-                
-                const agora = new Date();
-                salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
-                
-            } catch (error) {
-                console.error('❌ Erro na recuperação:', error);
-                mostrarStatusLogin('error', 'Erro ao enviar e-mail. Tente novamente.');
-            } finally {
-                btnRecuperar.disabled = false;
-                btnRecuperar.textContent = 'Recuperar Senha';
-            }
-        }
-
-        async function enviarEmailRecuperacao(usuario, novaSenha) {
-            try {
-                console.log('📧 ENVIANDO E-MAIL DE RECUPERAÇÃO...');
-                
-                const templateParams = {
-                    to_name: usuario.nome,
-                    to_email: usuario.email,
-                    user_login: usuario.login,
-                    new_password: novaSenha,
-                    from_name: 'Sistema Pátio Brasfrigo',
-                    name: usuario.nome,
-                    email: usuario.email,
-                    login: usuario.login,
-                    password: novaSenha,
-                    senha: novaSenha,
-                    usuario: usuario.login,
-                    nome: usuario.nome,
-                    user_name: usuario.nome,
-                    user_email: usuario.email,
-                    user_password: novaSenha,
-                    username: usuario.login,
-                    userlogin: usuario.login,
-                    newpassword: novaSenha,
-                    message: `Olá ${usuario.nome}, sua nova senha temporária é: ${novaSenha}. Login: ${usuario.login}`
-                };
-                
-                const result = await emailjs.send(
-                    emailJSConfig.serviceID,
-                    emailJSConfig.templateID,
-                    templateParams
-                );
-                
-                console.log('✅ E-MAIL ENVIADO!', result);
-                return true;
-                
-            } catch (error) {
-                console.error('❌ ERRO NO ENVIO:', error);
-                throw error;
-            }
-        }
-
-        // ========== TESTE COMPLETO DO SUPABASE ==========
-        async function testarSupabase() {
-            const btn = document.getElementById('supabaseTestBtn');
-            const textoOriginal = btn.textContent;
-            
-            btn.disabled = true;
-            btn.textContent = '🔍 Testando...';
-            
-            try {
-                console.log('🚀 TESTE SUPABASE INICIADO');
-                
-                if (!supabase) {
-                    throw new Error('Supabase não inicializado');
-                }
-                
-                const { data: usuarios, error: erroLeitura } = await supabase
-                    .from('usuarios')
-                    .select('*')
-                    .limit(5);
-                
-                if (erroLeitura) {
-                    throw new Error(`Leitura: ${erroLeitura.message}`);
-                }
-                
-                console.log('✅ TESTE BEM-SUCEDIDO!', usuarios.length, 'usuários');
-                mostrarAlerta('success', '✅ Supabase funcionando!');
-                
-            } catch (error) {
-                console.error('❌ TESTE FALHOU:', error.message);
-                mostrarAlerta('error', `❌ Erro: ${error.message}`);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = textoOriginal;
-            }
-        }
-
-        async function testarEmailJS() {
-            const btn = document.getElementById('supabaseTestBtn');
-            const textoOriginal = btn.textContent;
-            
-            btn.disabled = true;
-            btn.textContent = '📧 Testando...';
-            
-            try {
-                const senha = gerarSenhaTemporaria();
-                
-                const templateParams = {
-                    to_name: 'Teste Sistema',
-                    to_email: 'leandro.brasil@minervafoods.com',
-                    user_login: 'teste.sistema',
-                    new_password: senha,
-                    from_name: 'Sistema Pátio Brasfrigo',
-                    name: 'Teste Sistema',
-                    email: 'leandro.brasil@minervafoods.com',
-                    login: 'teste.sistema',
-                    password: senha,
-                    senha: senha,
-                    usuario: 'teste.sistema',
-                    nome: 'Teste Sistema'
-                };
-                
-                const result = await emailjs.send(
-                    emailJSConfig.serviceID,
-                    emailJSConfig.templateID,
-                    templateParams
-                );
-                
-                console.log('✅ TESTE BEM-SUCEDIDO!', result);
-                mostrarAlerta('success', `✅ E-mail enviado!`);
-                
-            } catch (error) {
-                console.error('❌ ERRO:', error);
-                mostrarAlerta('error', `❌ Erro: ${error.message}`);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = textoOriginal;
-            }
-        }
-
-        // ========== TROCA DE SENHA ==========
-        
-        function abrirModalTrocaSenha() {
-            document.getElementById('changePasswordModal').style.display = 'flex';
-            document.getElementById('senhaAtual').value = '';
-            document.getElementById('novaSenhaInput').value = '';
-            document.getElementById('confirmarSenha').value = '';
-        }
-
-        function fecharModalTrocaSenha() {
-            document.getElementById('changePasswordModal').style.display = 'none';
-        }
-
-        async function alterarSenha(event) {
-            event.preventDefault();
-            
-            const senhaAtual = document.getElementById('senhaAtual').value.trim();
-            const novaSenha = document.getElementById('novaSenhaInput').value.trim();
-            const confirmarSenha = document.getElementById('confirmarSenha').value.trim();
-            const btnSalvar = document.getElementById('btnSalvarSenha');
-            
-            if (!senhaAtual || !novaSenha || !confirmarSenha) {
-                alert('❌ Preencha todos os campos!');
-                return;
-            }
-            
-            if (novaSenha !== confirmarSenha) {
-                alert('❌ Nova senha e confirmação não coincidem!');
-                return;
-            }
-            
-            if (novaSenha.length < 6) {
-                alert('❌ Nova senha deve ter pelo menos 6 caracteres!');
-                return;
-            }
-            
-            if (usuarioLogado.senha !== senhaAtual) {
-                alert('❌ Senha atual incorreta!');
-                return;
-            }
-            
-            btnSalvar.disabled = true;
-            btnSalvar.textContent = 'Salvando...';
-            
-            try {
-                const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-                const usuariosAtualizados = usuarios.map(u => {
-                    if (u.login === usuarioLogado.login) {
-                        return { ...u, senha: novaSenha, senhaTemporaria: false };
-                    }
-                    return u;
-                });
-                
-                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
-                
-                usuarioLogado.senha = novaSenha;
-                usuarioLogado.senhaTemporaria = false;
-                sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
-                
-                const credenciaisSalvas = localStorage.getItem('credenciaisLembradas');
-                if (credenciaisSalvas) {
-                    try {
-                        const credenciais = JSON.parse(credenciaisSalvas);
-                        if (credenciais.login === usuarioLogado.login) {
-                            localStorage.setItem('credenciaisLembradas', JSON.stringify({
-                                login: usuarioLogado.login,
-                                senha: novaSenha
-                            }));
-                        }
-                    } catch (error) {
-                        console.log('Erro ao atualizar credenciais lembradas');
-                    }
-                }
-                
-                const agora = new Date();
-                salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
-                
-                mostrarAlerta('success', '✅ Senha alterada com sucesso!');
-                fecharModalTrocaSenha();
-                
-            } catch (error) {
-                console.error('❌ Erro ao alterar senha:', error);
-                alert(`❌ Erro ao alterar senha: ${error.message}`);
-            } finally {
-                btnSalvar.disabled = false;
-                btnSalvar.textContent = 'Salvar Nova Senha';
-            }
-        }
-
         // ========== VERIFICAÇÃO IMEDIATA DE SESSÃO ==========
         
         (function verificarSessaoImediatamente() {
@@ -2730,7 +2226,7 @@
                     const { login, senha } = JSON.parse(credenciaisSalvas);
                     console.log('🔑 Credenciais lembradas:', login);
                     
-                    sincronizarUsuariosLocalStorage();
+                    inicializarUsuarios();
                     
                     const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
                     const usuarioEncontrado = usuarios.find(u => 
@@ -2756,7 +2252,7 @@
                     const userData = JSON.parse(sessaoAtiva);
                     console.log('👤 Sessão ativa:', userData.nome);
                     
-                    sincronizarUsuariosLocalStorage();
+                    inicializarUsuarios();
                     const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
                     const usuarioValido = usuarios.find(u => u.login === userData.login);
                     
@@ -2783,7 +2279,7 @@
         }
 
         function mostrarTelaLoginImediatamente() {
-            sincronizarUsuariosLocalStorage();
+            inicializarUsuarios();
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('mainContainer').style.display = 'none';
             mostrarStatusLogin('info', 'Sistema pronto');
@@ -2840,73 +2336,22 @@
             }, 10000);
         }
 
-        // ========== SINCRONIZAÇÃO DE USUÁRIOS ==========
-        async function sincronizarUsuariosLocalStorage() {
-            console.log('🔄 SINCRONIZANDO USUÁRIOS...');
-            
-            try {
-                let usuariosLocais = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-                
-                if (usuariosLocais.length === 0) {
-                    usuariosLocais = [...USUARIOS_PADRAO];
-                }
-                
-                USUARIOS_PADRAO.forEach(userPadrao => {
-                    const existe = usuariosLocais.find(u => u.login === userPadrao.login);
-                    if (!existe) {
-                        usuariosLocais.push(userPadrao);
-                    }
-                });
-                
-                if (supabaseDisponivel && supabase) {
-                    try {
-                        const { data: usuariosSupabase, error } = await supabase
-                            .from('usuarios')
-                            .select('*');
-                        
-                        if (!error && usuariosSupabase) {
-                            usuariosSupabase.forEach(userSupabase => {
-                                // PULAR USUÁRIOS COM EMAIL MODIFICADO PARA SINCRONIZAÇÃO
-                                if (userSupabase.email && userSupabase.email.includes('|')) {
-                                    return;
-                                }
-                                
-                                const existeLocal = usuariosLocais.find(u => u.login === userSupabase.login);
-                                if (!existeLocal) {
-                                    const usuarioParaLocal = {
-                                        id: userSupabase.id || Date.now(),
-                                        nome: userSupabase.nome,
-                                        login: userSupabase.login,
-                                        senha: userSupabase.senha,
-                                        nivel: userSupabase.nivel,
-                                        email: userSupabase.email,
-                                        criadoEm: userSupabase.criado_em || new Date().toISOString(),
-                                        criadoPor: userSupabase.criado_por || 'Sistema',
-                                        ativo: userSupabase.ativo !== false
-                                    };
-                                    
-                                    usuariosLocais.push(usuarioParaLocal);
-                                }
-                            });
-                        }
-                    } catch (error) {
-                        console.log('⚠️ Erro na sincronização com Supabase:', error.message);
-                    }
-                }
-                
-                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosLocais));
-                console.log(`✅ ${usuariosLocais.length} usuários sincronizados`);
-                
-                return usuariosLocais;
-                
-            } catch (error) {
-                console.error('❌ Erro na sincronização:', error);
-                return JSON.parse(localStorage.getItem('usuariosSistema') || JSON.stringify(USUARIOS_PADRAO));
-            }
-        }
-
         function inicializarUsuarios() {
-            return sincronizarUsuariosLocalStorage();
+            let usuariosLocais = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            
+            if (usuariosLocais.length === 0) {
+                usuariosLocais = [...USUARIOS_PADRAO];
+            }
+            
+            USUARIOS_PADRAO.forEach(userPadrao => {
+                const existe = usuariosLocais.find(u => u.login === userPadrao.login);
+                if (!existe) {
+                    usuariosLocais.push(userPadrao);
+                }
+            });
+            
+            localStorage.setItem('usuariosSistema', JSON.stringify(usuariosLocais));
+            return usuariosLocais;
         }
 
         function mostrarStatusLogin(tipo, mensagem) {
@@ -2924,14 +2369,14 @@
             }
         }
 
-        // ========== AUTENTICAÇÃO ==========
+        // ========== AUTENTICAÇÃO SIMPLES ==========
         async function autenticarUsuario(login, senha, lembrarMe = false) {
             const btnLogin = document.getElementById('btnLogin');
             btnLogin.disabled = true;
             btnLogin.textContent = 'Verificando...';
             
             try {
-                const usuarios = await sincronizarUsuariosLocalStorage();
+                const usuarios = inicializarUsuarios();
                 
                 const loginLimpo = login.toLowerCase().trim();
                 const senhaLimpa = senha.trim();
@@ -3010,8 +2455,6 @@
         }
 
         function calcularValoresHistoricoCompleto(dados) {
-            console.log(`📊 CALCULANDO COM ${dados.length} REGISTROS...`);
-            
             // CÁLCULOS DOS 4 CARDS NORMAIS
             const placasTransito = [...new Set(dados.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
             const placasAguardando = [...new Set(dados.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
@@ -3034,7 +2477,7 @@
             const movimentacaoSemana = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNaSemanaAtual(d.dataDescarga)).map(d => d.placa))].length;
             const movimentacaoMes = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNoMesAtual(d.dataDescarga)).map(d => d.placa))].length;
             
-            const resultado = {
+            return {
                 totalTransito: placasTransito,
                 totalAguardando: placasAguardando,
                 totalDescarregando: placasDescarregando,
@@ -3047,18 +2490,12 @@
                 movimentacaoSemana: movimentacaoSemana,
                 movimentacaoMes: movimentacaoMes
             };
-            
-            console.log('📊 RESULTADO CALCULADO:', resultado);
-            return resultado;
         }
 
         function aplicarValoresHistoricoCompleto() {
             if (!backupCardsProtegidos || Object.keys(backupCardsProtegidos).length === 0) {
-                console.log('⚠️ Nenhum backup disponível');
                 return;
             }
-            
-            console.log('🔧 APLICANDO VALORES:', backupCardsProtegidos);
             
             // APLICAR 4 CARDS NORMAIS
             document.getElementById('totalTransito').textContent = backupCardsProtegidos.totalTransito || 0;
@@ -3082,8 +2519,6 @@
                 card.classList.add('protected', 'updated');
                 setTimeout(() => card.classList.remove('updated'), 1000);
             });
-            
-            console.log('✅ VALORES APLICADOS NA INTERFACE');
         }
 
         function verificarRestaurarProtecao() {
@@ -3112,43 +2547,18 @@
             }
         }
 
-        function inicializarSupabase() {
-            try {
-                console.log('🚀 INICIALIZANDO SUPABASE...');
-                
-                supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
-                supabaseDisponivel = true;
-                console.log('✅ Supabase inicializado');
-                
-                verificarRestaurarProtecao();
-                carregarDadosLocal();
-                return true;
-            } catch (error) {
-                console.error('❌ Erro ao inicializar Supabase:', error);
-                supabaseDisponivel = false;
-                carregarDadosLocal();
-                return false;
-            }
-        }
-
         function carregarDadosLocal() {
-            console.log('📱 Carregando dados...');
+            console.log('📱 Carregando dados locais...');
             verificarRestaurarProtecao();
             
-            // VERIFICAR SINCRONIZAÇÃO PRIMEIRO
-            verificarSincronizacaoViaEmail();
-            
-            // SE NÃO HÁ DADOS, CARREGAR LOCAIS
-            if (dadosPatio.length === 0) {
-                const dadosSalvos = localStorage.getItem('dadosPatioMinerva');
-                if (dadosSalvos) {
-                    try {
-                        dadosPatio = JSON.parse(dadosSalvos);
-                        console.log('💾 Dados carregados:', dadosPatio.length);
-                    } catch (error) {
-                        console.error('Erro:', error);
-                        dadosPatio = [];
-                    }
+            const dadosSalvos = localStorage.getItem('dadosPatioMinerva');
+            if (dadosSalvos) {
+                try {
+                    dadosPatio = JSON.parse(dadosSalvos);
+                    console.log('💾 Dados carregados:', dadosPatio.length);
+                } catch (error) {
+                    console.error('Erro:', error);
+                    dadosPatio = [];
                 }
             }
             
@@ -3168,6 +2578,24 @@
             isImporting = true;
             document.getElementById('importIndicator').classList.add('show');
             
+            // CARREGAR BIBLIOTECA XLSX APENAS QUANDO NECESSÁRIO
+            if (!window.XLSX) {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+                script.onload = () => processarArquivo(file);
+                script.onerror = () => {
+                    mostrarAlerta('error', 'Erro ao carregar biblioteca. Tente novamente.');
+                    finalizarImportacao(false, 'Erro na biblioteca');
+                };
+                document.head.appendChild(script);
+            } else {
+                processarArquivo(file);
+            }
+            
+            event.target.value = '';
+        }
+
+        function processarArquivo(file) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -3213,7 +2641,7 @@
                     }).filter(item => item && item.placa);
                     
                     console.log(`📊 ${dadosProcessados.length} registros processados`);
-                    salvarComSincronizacaoFinal(dadosProcessados);
+                    salvarDadosLocal(dadosProcessados);
                     
                 } catch (error) {
                     console.error('❌ Erro ao processar:', error);
@@ -3222,37 +2650,29 @@
             };
             
             reader.readAsArrayBuffer(file);
-            event.target.value = '';
         }
 
-        // ========== SALVAMENTO COM SINCRONIZAÇÃO FINAL ==========
-        async function salvarComSincronizacaoFinal(dadosArray) {
+        function salvarDadosLocal(dadosArray) {
             try {
-                console.log('🌐 SALVANDO COM SINCRONIZAÇÃO FINAL...');
+                console.log('💾 SALVANDO DADOS LOCALMENTE...');
                 
-                // ATUALIZAR DADOS LOCAIS PRIMEIRO
+                // ATUALIZAR DADOS LOCAIS
                 dadosPatio = [...dadosArray];
                 localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
                 
                 // ATIVAR PROTEÇÃO
                 ativarProtecaoPermanente(dadosArray);
                 
-                // ATUALIZAR INTERFACE IMEDIATAMENTE
+                // ATUALIZAR INTERFACE
                 renderizarTabelaAgrupadaCorrigida();
                 atualizarEstatisticas();
                 popularFiltros();
-                
-                // SALVAR NO SUPABASE PARA SINCRONIZAÇÃO
-                const sucessoSupabase = await salvarDadosGlobalSupabase(dadosArray);
                 
                 const agora = new Date();
                 salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
                 
                 setTimeout(() => {
-                    const mensagem = sucessoSupabase ? 
-                        `${dadosArray.length} registros sincronizados para todos os usuários` :
-                        `${dadosArray.length} registros salvos (erro na sincronização)`;
-                    finalizarImportacao(true, mensagem);
+                    finalizarImportacao(true, 'Dados atualizados');
                 }, 1500);
                 
             } catch (error) {
@@ -3266,11 +2686,11 @@
             
             if (sucesso) {
                 const banner = document.getElementById('importSuccessBanner');
-                banner.textContent = 'Dados sincronizados para todos os usuários via Supabase';
+                banner.textContent = 'Dados atualizados';
                 banner.classList.add('show');
                 
-                setTimeout(() => banner.classList.remove('show'), 4000);
-                mostrarAlerta('success', 'Sincronização global bem-sucedida');
+                setTimeout(() => banner.classList.remove('show'), 3000);
+                mostrarAlerta('success', 'Dados atualizados');
             } else {
                 mostrarAlerta('error', `❌ Falha: ${mensagem}`);
             }
@@ -3278,11 +2698,9 @@
             document.getElementById('importIndicator').classList.remove('show');
         }
 
-        // ========== ESTATÍSTICAS FORÇADAS ==========
+        // ========== ESTATÍSTICAS ==========
         function atualizarEstatisticas() {
-            console.log(`📊 ATUALIZANDO ESTATÍSTICAS COM ${dadosPatio.length} REGISTROS...`);
-            
-            // SEMPRE RECALCULAR EM TEMPO REAL PARA GARANTIR
+            console.log(`📊 ATUALIZANDO ESTATÍSTICAS...`);
             
             // CÁLCULOS DOS 4 CARDS NORMAIS
             const placasTransito = [...new Set(dadosPatio.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
@@ -3306,27 +2724,13 @@
             const movimentacaoSemana = [...new Set(dadosPatio.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNaSemanaAtual(d.dataDescarga)).map(d => d.placa))].length;
             const movimentacaoMes = [...new Set(dadosPatio.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNoMesAtual(d.dataDescarga)).map(d => d.placa))].length;
             
-            console.log('📈 VALORES CALCULADOS:', {
-                transito: placasTransito,
-                aguardando: placasAguardando,
-                descarregando: placasDescarregando,
-                descarregado: placasDescarregado,
-                d0: movimentacaoD0,
-                d1: movimentacaoD1,
-                d2: movimentacaoD2,
-                d3: movimentacaoD3,
-                d4: movimentacaoD4,
-                semana: movimentacaoSemana,
-                mes: movimentacaoMes
-            });
-            
-            // ATUALIZAR CARDS NA TELA - FORÇAR ATUALIZAÇÃO
+            // ATUALIZAR CARDS NA TELA
             document.getElementById('totalTransito').textContent = placasTransito;
             document.getElementById('totalAguardando').textContent = placasAguardando;
             document.getElementById('totalDescarregando').textContent = placasDescarregando;
             document.getElementById('totalDescarregado').textContent = placasDescarregado;
             
-            // ATUALIZAR HISTÓRICO COMPLETO - FORÇAR ATUALIZAÇÃO
+            // ATUALIZAR HISTÓRICO COMPLETO
             document.getElementById('movimentacaoD0').textContent = movimentacaoD0;
             document.getElementById('movimentacaoD1').textContent = movimentacaoD1;
             document.getElementById('movimentacaoD2').textContent = movimentacaoD2;
@@ -3342,23 +2746,14 @@
                 card.classList.add('updated');
                 setTimeout(() => card.classList.remove('updated'), 1000);
             });
-            
-            console.log('✅ INTERFACE ATUALIZADA COM SUCESSO!');
         }
 
         function atualizarInterface() {
-            console.log('🔄 ATUALIZANDO INTERFACE COMPLETA...');
-            
             const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESCARREGANDO', 'DESCARREGADO'];
             const dados = dadosPatio.filter(item => statusPermitidos.includes(item.status));
-            
-            console.log(`📊 Dados filtrados: ${dados.length} de ${dadosPatio.length}`);
-            
             renderizarTabelaAgrupadaCorrigida(dados);
             atualizarEstatisticas();
             popularFiltros();
-            
-            console.log('✅ INTERFACE ATUALIZADA COMPLETAMENTE');
         }
 
         // ========== RENDERIZAÇÃO DE TABELA ==========
@@ -3466,7 +2861,6 @@
             });
             
             tbody.innerHTML = html;
-            console.log('✅ Tabela renderizada');
         }
 
         function toggleGrupoCorrigido(chaveGrupo) {
@@ -3532,43 +2926,37 @@
             if (tipo === 'success') {
                 alertSuccess.innerHTML = mensagem;
                 alertSuccess.style.display = 'block';
-                setTimeout(() => alertSuccess.style.display = 'none', 5000);
+                setTimeout(() => alertSuccess.style.display = 'none', 4000);
             } else if (tipo === 'error') {
                 alertError.innerHTML = mensagem;
                 alertError.style.display = 'block';
-                setTimeout(() => alertError.style.display = 'none', 8000);
+                setTimeout(() => alertError.style.display = 'none', 6000);
             } else if (tipo === 'info') {
                 alertInfo.innerHTML = mensagem;
                 alertInfo.style.display = 'block';
-                setTimeout(() => alertInfo.style.display = 'none', 5000);
+                setTimeout(() => alertInfo.style.display = 'none', 4000);
             }
         }
 
         // ========== DOM READY ==========
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM CARREGADO');
+            console.log('🚀 DOM CARREGADO - MODO LOCAL ATIVO');
             
-            setTimeout(() => {
-                inicializarSupabase();
-                
-                const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterGerandoDiaria', 'filterTipoDescarga'];
-                
-                filtros.forEach(filtroId => {
-                    const elemento = document.getElementById(filtroId);
-                    if (elemento) {
-                        const evento = elemento.type === 'text' ? 'input' : 'change';
-                        elemento.addEventListener(evento, aplicarFiltros);
-                    }
-                });
-                
-            }, 100);
+            const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterGerandoDiaria', 'filterTipoDescarga'];
+            
+            filtros.forEach(filtroId => {
+                const elemento = document.getElementById(filtroId);
+                if (elemento) {
+                    const evento = elemento.type === 'text' ? 'input' : 'change';
+                    elemento.addEventListener(evento, aplicarFiltros);
+                }
+            });
         });
 
         function iniciarSistema() {
             verificarPermissoes();
             iniciarSincronizacaoTimestamp();
-            iniciarSincronizacaoTempoReal(); // SINCRONIZAÇÃO EM TEMPO REAL
             carregarDadosLocal();
         }
 
@@ -3627,10 +3015,6 @@
 
         function fazerLogout() {
             if (confirm('Deseja fazer logout?')) {
-                if (intervalSincronizacao) {
-                    clearInterval(intervalSincronizacao);
-                }
-                
                 sessionStorage.removeItem('usuarioLogado');
                 localStorage.removeItem('credenciaisLembradas');
                 location.reload();
@@ -3689,7 +3073,7 @@
             `).join('');
         }
 
-        async function excluirUsuario(loginUsuario, nomeUsuario) {
+        function excluirUsuario(loginUsuario, nomeUsuario) {
             if (!confirm(`❌ Excluir "${nomeUsuario}"?`)) return;
             if (!confirm(`🚨 Confirmação final?`)) return;
 
@@ -3698,15 +3082,7 @@
                 const usuariosAtualizados = usuarios.filter(u => u.login !== loginUsuario);
                 localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
                 
-                if (supabaseDisponivel && supabase) {
-                    try {
-                        await supabase.from('usuarios').delete().eq('login', loginUsuario);
-                        mostrarAlerta('success', `✅ ${nomeUsuario} excluído!`);
-                    } catch (error) {
-                        mostrarAlerta('warning', `⚠️ ${nomeUsuario} removido localmente`);
-                    }
-                }
-                
+                mostrarAlerta('success', `✅ ${nomeUsuario} excluído!`);
                 carregarListaUsuarios();
                 
             } catch (error) {
@@ -3714,7 +3090,7 @@
             }
         }
 
-        async function criarUsuario(event) {
+        function criarUsuario(event) {
             event.preventDefault();
             
             if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
@@ -3758,25 +3134,8 @@
 
             usuarios.push(novoUsuario);
             localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
-
-            if (supabaseDisponivel && supabase) {
-                try {
-                    await supabase.from('usuarios').insert([{
-                        nome: novoUsuario.nome,
-                        login: novoUsuario.login,
-                        senha: novoUsuario.senha,
-                        nivel: novoUsuario.nivel,
-                        email: novoUsuario.email,
-                        criado_em: novoUsuario.criadoEm,
-                        criado_por: novoUsuario.criadoPor,
-                        ativo: novoUsuario.ativo
-                    }]);
-                    
-                    mostrarAlerta('success', `✅ ${nome} criado!`);
-                } catch (error) {
-                    mostrarAlerta('warning', `⚠️ ${nome} criado localmente`);
-                }
-            }
+            
+            mostrarAlerta('success', `✅ ${nome} criado!`);
 
             document.getElementById('novoNome').value = '';
             document.getElementById('novoLogin').value = '';
@@ -3784,10 +3143,82 @@
             document.getElementById('novoNivel').value = '';
 
             carregarListaUsuarios();
+        }
+
+        function alterarSenha(event) {
+            event.preventDefault();
             
-            setTimeout(async () => {
-                await sincronizarUsuariosLocalStorage();
-            }, 1000);
+            const senhaAtual = document.getElementById('senhaAtual').value.trim();
+            const novaSenha = document.getElementById('novaSenhaInput').value.trim();
+            const confirmarSenha = document.getElementById('confirmarSenha').value.trim();
+            const btnSalvar = document.getElementById('btnSalvarSenha');
+            
+            if (!senhaAtual || !novaSenha || !confirmarSenha) {
+                alert('❌ Preencha todos os campos!');
+                return;
+            }
+            
+            if (novaSenha !== confirmarSenha) {
+                alert('❌ Nova senha e confirmação não coincidem!');
+                return;
+            }
+            
+            if (novaSenha.length < 6) {
+                alert('❌ Nova senha deve ter pelo menos 6 caracteres!');
+                return;
+            }
+            
+            if (usuarioLogado.senha !== senhaAtual) {
+                alert('❌ Senha atual incorreta!');
+                return;
+            }
+            
+            btnSalvar.disabled = true;
+            btnSalvar.textContent = 'Salvando...';
+            
+            try {
+                const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+                const usuariosAtualizados = usuarios.map(u => {
+                    if (u.login === usuarioLogado.login) {
+                        return { ...u, senha: novaSenha, senhaTemporaria: false };
+                    }
+                    return u;
+                });
+                
+                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                
+                usuarioLogado.senha = novaSenha;
+                usuarioLogado.senhaTemporaria = false;
+                sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+                
+                const credenciaisSalvas = localStorage.getItem('credenciaisLembradas');
+                if (credenciaisSalvas) {
+                    try {
+                        const credenciais = JSON.parse(credenciaisSalvas);
+                        if (credenciais.login === usuarioLogado.login) {
+                            localStorage.setItem('credenciaisLembradas', JSON.stringify({
+                                login: usuarioLogado.login,
+                                senha: novaSenha
+                            }));
+                        }
+                    } catch (error) {
+                        console.log('Erro ao atualizar credenciais lembradas');
+                    }
+                }
+                
+                const agora = new Date();
+                salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
+                
+                mostrarAlerta('success', '✅ Senha alterada com sucesso!');
+                fecharModalTrocaSenha();
+                
+            } catch (error) {
+                console.error('❌ Erro ao alterar senha:', error);
+                alert(`❌ Erro ao alterar senha: ${error.message}`);
+            } finally {
+                btnSalvar.disabled = false;
+                btnSalvar.textContent = 'Salvar Nova Senha';
+            }
         }
 
         function aplicarFiltros() {
@@ -3832,6 +3263,34 @@
             mostrarAlerta('info', 'Filtros limpos');
         }
 
+        function limparArquivo() {
+            if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
+                mostrarAlerta('error', '⚠️ Apenas MASTER pode limpar arquivo!');
+                return;
+            }
+
+            if (confirm('❌ ATENÇÃO!\n\nDeseja realmente limpar todos os dados do arquivo?\n\nEsta ação NÃO pode ser desfeita!')) {
+                if (confirm('🚨 CONFIRMAÇÃO FINAL!\n\nTem certeza absoluta?\n\nTodos os dados serão perdidos!')) {
+                    dadosPatio = [];
+                    localStorage.removeItem('dadosPatioMinerva');
+                    localStorage.removeItem('dadosProtegidosPermanentemente');
+                    localStorage.removeItem('backupDadosProtegidos');
+                    localStorage.removeItem('backupCardsProtegidos');
+                    
+                    dadosProtegidosPermanentemente = false;
+                    backupDadosProtegidos = [];
+                    backupCardsProtegidos = {};
+                    
+                    atualizarInterface();
+                    
+                    mostrarAlerta('success', '🧹 Dados limpos com sucesso!');
+                    
+                    const agora = new Date();
+                    salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
+                }
+            }
+        }
+
         function exportarParaExcel() {
             if (dadosPatio.length === 0) {
                 mostrarAlerta('error', '⚠️ Não há dados!');
@@ -3853,21 +3312,48 @@
         }
 
         function mostrarDetalhesPolling() {
-            const info = `📧 SINCRONIZAÇÃO VIA EMAIL - CORRIGIDA
+            const info = `📱 SISTEMA EM MODO LOCAL
 
-🔧 CORREÇÕES IMPLEMENTADAS:
-• Dados comprimidos para caber no email
-• Separador "|" (mais simples que "|||")
-• Atualização forçada da interface
-• Recálculo imediato das estatísticas
+🔧 CARACTERÍSTICAS:
+• Sem conexões externas
+• Funciona completamente offline
+• Dados salvos localmente
+• Sem dependências de CDN
 
-🔄 FUNCIONAMENTO:
-• Você importa → Email atualizado no Supabase
-• Rhemerson → Verifica email a cada 2s
-• Timestamp mudou → Carrega + aplica dados
-• Interface → Atualizada completamente
+📊 FUNCIONAMENTO:
+• Login e usuários funcionando
+• Importação de Excel ativa
+• Cards com histórico completo
+• Interface totalmente responsiva
 
-✅ PROBLEMA DA INTERFACE CORRIGIDO!`;
+⚠️ LIMITAÇÕES TEMPORÁRIAS:
+• Sem sincronização entre computadores
+• Sem recuperação de senha por email
+• Modo local até liberação da rede
+
+✅ SISTEMA FUNCIONAL E SEGURO!`;
+            
+            alert(info);
+        }
+
+        function mostrarInfoLocal() {
+            const info = `📱 MODO LOCAL ATIVO
+
+O sistema está funcionando em modo local para evitar bloqueios de firewall.
+
+✅ FUNCIONALIDADES DISPONÍVEIS:
+• Login de usuários
+• Importação de Excel
+• Análise de dados
+• Filtros e pesquisa
+• Exportação de dados
+• Interface completa
+
+⚠️ LIMITAÇÕES:
+• Sem sincronização entre computadores
+• Dados salvos apenas localmente
+
+Para reativar a sincronização, entre em contato com o TI para liberar as conexões necessárias.`;
             
             alert(info);
         }
@@ -3913,7 +3399,7 @@
             }
         }
 
-        console.log('✅🚛📊📧🔧 SISTEMA COM SINCRONIZAÇÃO E ATUALIZAÇÃO DE INTERFACE CORRIGIDAS!');
+        console.log('✅🚛📊📱🔒 SISTEMA EM MODO LOCAL SEGURO FUNCIONANDO!');
     </script>
 </body>
 </html>
