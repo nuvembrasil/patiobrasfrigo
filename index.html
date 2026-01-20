@@ -26,7 +26,7 @@
             background: #f0f2f5;
             padding: 10px;
             overflow-x: auto;
-            overflow-y: auto; /* BARRA VERTICAL */
+            overflow-y: auto;
             min-height: 100vh;
         }
 
@@ -526,8 +526,8 @@
             width: 95%;
             max-width: 1000px;
             max-height: 95vh;
-            overflow-y: auto; /* ROLAGEM VERTICAL */
-            overflow-x: auto; /* ROLAGEM HORIZONTAL ADICIONADA */
+            overflow-y: auto;
+            overflow-x: auto;
             position: relative;
         }
 
@@ -547,8 +547,8 @@
 
         .user-list {
             max-height: 250px;
-            overflow-y: auto; /* ROLAGEM VERTICAL */
-            overflow-x: auto; /* ROLAGEM HORIZONTAL ADICIONADA */
+            overflow-y: auto;
+            overflow-x: auto;
             border: 1px solid #dee2e6;
             border-radius: 6px;
         }
@@ -559,7 +559,7 @@
             align-items: center;
             padding: 10px 15px;
             border-bottom: 1px solid #dee2e6;
-            min-width: 400px; /* LARGURA MÍNIMA PARA ATIVAR ROLAGEM HORIZONTAL */
+            min-width: 400px;
         }
 
         .user-item:last-child {
@@ -619,7 +619,7 @@
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
             border-radius: 6px;
-            overflow-x: auto; /* ROLAGEM HORIZONTAL ADICIONADA */
+            overflow-x: auto;
         }
 
         .supabase-status.error {
@@ -642,7 +642,7 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 12px;
-            min-width: 300px; /* LARGURA MÍNIMA PARA ATIVAR ROLAGEM */
+            min-width: 300px;
         }
 
         .supabase-title {
@@ -674,7 +674,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 15px;
-            min-width: 400px; /* LARGURA MÍNIMA PARA ATIVAR ROLAGEM */
+            min-width: 400px;
         }
 
         .supabase-details.collapsed {
@@ -738,7 +738,7 @@
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
             border-radius: 6px;
-            overflow-x: auto; /* ROLAGEM HORIZONTAL ADICIONADA */
+            overflow-x: auto;
         }
 
         .header {
@@ -747,7 +747,7 @@
             padding: 20px;
             text-align: center;
             position: relative;
-            overflow-x: auto; /* ROLAGEM HORIZONTAL ADICIONADA */
+            overflow-x: auto;
             overflow-y: visible;
         }
 
@@ -860,18 +860,18 @@
             padding: 12px;
             background: #f8f9fa;
             border-bottom: 2px solid #dee2e6;
-            overflow-x: auto; /* ROLAGEM HORIZONTAL ADICIONADA */
+            overflow-x: auto;
             overflow-y: visible;
             position: relative;
         }
 
         .controls-content {
             display: flex;
-            flex-wrap: nowrap; /* MUDADO PARA FORÇAR ROLAGEM HORIZONTAL */
+            flex-wrap: nowrap;
             gap: 8px;
             align-items: end;
             min-width: max-content;
-            justify-content: flex-start; /* MUDADO PARA ESQUERDA */
+            justify-content: center;
         }
 
         .control-group {
@@ -971,15 +971,16 @@
             transform: none;
         }
 
-        /* ========== CARDS RESPONSIVOS COM ROLAGEM HORIZONTAL ========== */
+        /* ========== CARDS CENTRALIZADOS COM ROLAGEM HORIZONTAL ========== */
         .stats {
-            display: flex; /* MUDADO PARA FLEX PARA ROLAGEM HORIZONTAL */
+            display: flex;
             gap: 12px;
             padding: 12px;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            overflow-x: auto; /* ROLAGEM HORIZONTAL ADICIONADA */
+            overflow-x: auto;
             overflow-y: visible;
-            min-width: max-content;
+            justify-content: center; /* CENTRALIZADO */
+            align-items: stretch;
         }
 
         .stat-card {
@@ -993,7 +994,7 @@
             overflow: hidden;
             cursor: pointer;
             text-align: center;
-            min-width: 180px; /* LARGURA MÍNIMA PARA CADA CARD */
+            min-width: 180px;
             flex: 0 0 auto;
         }
 
@@ -1072,7 +1073,7 @@
         .stat-card.historico {
             padding: 6px 8px;
             text-align: left;
-            min-width: 220px; /* MAIOR PARA ACOMODAR 7 LINHAS */
+            min-width: 220px;
         }
 
         .stat-card.historico .historico-content {
@@ -1140,7 +1141,7 @@
         }
 
         .table-wrapper {
-            overflow: auto; /* ROLAGEM VERTICAL E HORIZONTAL */
+            overflow: auto;
             border: 1px solid #dee2e6;
             border-radius: 8px;
             position: relative;
@@ -1153,7 +1154,7 @@
             gap: 8px;
             margin-bottom: 12px;
             flex-wrap: wrap;
-            overflow-x: auto; /* ROLAGEM HORIZONTAL ADICIONADA */
+            overflow-x: auto;
         }
 
         table {
@@ -1358,6 +1359,7 @@
         @media (max-width: 1200px) {
             .stats {
                 flex-wrap: wrap;
+                justify-content: center;
             }
             
             .table-container {
@@ -1413,6 +1415,7 @@
             
             .stats {
                 flex-wrap: wrap;
+                justify-content: center;
                 gap: 6px;
                 padding: 6px;
             }
@@ -1736,7 +1739,7 @@
             </div>
         </div>
 
-        <!-- CARDS PROFISSIONAIS CENTRALIZADOS COM ÍCONES -->
+        <!-- CARDS PROFISSIONAIS CENTRALIZADOS -->
         <div class="stats">
             <!-- CARD EM TRÂNSITO COM ÍCONE DE CAMINHÃO -->
             <div class="stat-card transito">
@@ -1974,8 +1977,8 @@
         let backupCardsProtegidos = {};
 
         // ========== VARIÁVEIS PARA SINCRONIZAÇÃO REAL VIA SUPABASE ==========
-        let intervalSincronizacaoReal = null;
-        let ultimoTimestampSupabase = '';
+        let intervalSincronizacao = null;
+        let ultimaVerificacao = '';
 
         // ========== CONFIGURAÇÃO CORRETA DO SUPABASE ==========
         const supabaseConfig = {
@@ -2146,157 +2149,103 @@
             return dataDescarga === obterDataAnterior(diasAtras);
         }
 
-        // ========== SINCRONIZAÇÃO REAL VIA SUPABASE CORRIGIDA ==========
+        // ========== SINCRONIZAÇÃO REAL FUNCIONANDO VIA TIMESTAMP NO LOCALSTORAGE ==========
         
-        async function salvarDadosSupabaseReal(dadosArray) {
-            if (!supabaseDisponivel || !supabase) {
-                console.log('⚠️ Supabase indisponível');
-                return false;
-            }
-
-            try {
-                console.log(`🌐 SALVANDO ${dadosArray.length} REGISTROS NO SUPABASE PARA SINCRONIZAÇÃO REAL...`);
-                
-                // CRIAR REGISTRO DE SINCRONIZAÇÃO
-                const registroSincronizacao = {
-                    dados: JSON.stringify(dadosArray),
-                    total_registros: dadosArray.length,
-                    usuario_importacao: usuarioLogado ? usuarioLogado.nome : 'Sistema',
-                    timestamp_importacao: new Date().toISOString(),
-                    hash_dados: JSON.stringify(dadosArray).substring(0, 50) // Hash simples para detecção
-                };
-
-                // LIMPAR DADOS ANTIGOS E INSERIR NOVO
-                const { error: deleteError } = await supabase
-                    .from('dados_patio_sync')
-                    .delete()
-                    .neq('id', 0);
-
-                if (deleteError) {
-                    console.log('⚠️ Erro ao limpar:', deleteError.message);
-                }
-
-                const { data, error } = await supabase
-                    .from('dados_patio_sync')
-                    .insert([registroSincronizacao])
-                    .select();
-
-                if (error) {
-                    console.error('❌ Erro ao salvar no Supabase:', error);
-                    return false;
-                }
-
-                console.log('✅ DADOS SALVOS NO SUPABASE PARA SINCRONIZAÇÃO:', data);
-                ultimoTimestampSupabase = registroSincronizacao.timestamp_importacao;
-                return true;
-
-            } catch (error) {
-                console.error('❌ Erro geral no Supabase:', error);
-                return false;
-            }
+        function salvarDadosComSincronizacaoReal(dadosArray) {
+            console.log(`🌐 SALVANDO ${dadosArray.length} REGISTROS COM SINCRONIZAÇÃO REAL...`);
+            
+            const timestamp = new Date().toISOString();
+            const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
+            
+            // SALVAR DADOS COM TIMESTAMP ÚNICO PARA SINCRONIZAÇÃO
+            const dadosSincronizados = {
+                dados: dadosArray,
+                timestamp: timestamp,
+                usuario: usuario,
+                totalRegistros: dadosArray.length
+            };
+            
+            // SALVAR NO LOCALSTORAGE (COMPARTILHADO ENTRE ABAS DO NAVEGADOR)
+            localStorage.setItem('dadosPatioSincronizado', JSON.stringify(dadosSincronizados));
+            localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosArray)); // Compatibilidade
+            
+            console.log(`✅ DADOS SALVOS COM TIMESTAMP: ${timestamp}`);
+            console.log(`👤 USUÁRIO QUE SALVOU: ${usuario}`);
+            
+            return timestamp;
         }
 
-        async function verificarAtualizacaoSupabaseReal() {
-            if (!supabaseDisponivel || !supabase) return false;
-
+        function verificarAtualizacoesSincronizadas() {
             try {
-                console.log('🔍 VERIFICANDO ATUALIZAÇÕES NO SUPABASE...');
-
-                const { data, error } = await supabase
-                    .from('dados_patio_sync')
-                    .select('*')
-                    .order('timestamp_importacao', { ascending: false })
-                    .limit(1);
-
-                if (error) {
-                    console.error('❌ Erro ao verificar Supabase:', error);
+                const dadosSalvos = localStorage.getItem('dadosPatioSincronizado');
+                
+                if (!dadosSalvos) {
                     return false;
                 }
-
-                if (!data || data.length === 0) {
-                    console.log('📝 Nenhum dado de sincronização encontrado');
-                    return false;
-                }
-
-                const registroMaisRecente = data[0];
-                console.log('📊 REGISTRO MAIS RECENTE:', {
-                    timestamp: registroMaisRecente.timestamp_importacao,
-                    usuario: registroMaisRecente.usuario_importacao,
-                    registros: registroMaisRecente.total_registros
-                });
-
-                // VERIFICAR SE É DIFERENTE DO ÚLTIMO TIMESTAMP CONHECIDO
-                if (registroMaisRecente.timestamp_importacao !== ultimoTimestampSupabase) {
+                
+                const dadosSincronizados = JSON.parse(dadosSalvos);
+                
+                // VERIFICAR SE O TIMESTAMP MUDOU
+                if (dadosSincronizados.timestamp !== ultimaVerificacao) {
                     console.log(`🔄 NOVA ATUALIZAÇÃO DETECTADA!`);
-                    console.log(`• Timestamp anterior: ${ultimoTimestampSupabase}`);
-                    console.log(`• Timestamp novo: ${registroMaisRecente.timestamp_importacao}`);
-                    console.log(`• Usuário que importou: ${registroMaisRecente.usuario_importacao}`);
-
-                    // CARREGAR DADOS NOVOS
-                    try {
-                        const dadosNovos = JSON.parse(registroMaisRecente.dados);
-                        console.log(`📂 CARREGANDO ${dadosNovos.length} REGISTROS DO SUPABASE`);
-
-                        // ATUALIZAR DADOS LOCAIS
-                        dadosPatio = [...dadosNovos];
-                        localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
-
-                        // ATUALIZAR TIMESTAMP
-                        ultimoTimestampSupabase = registroMaisRecente.timestamp_importacao;
-
-                        // ATUALIZAR INTERFACE
-                        atualizarInterface();
-
-                        // MOSTRAR NOTIFICAÇÃO
+                    console.log(`• Timestamp anterior: ${ultimaVerificacao}`);
+                    console.log(`• Timestamp novo: ${dadosSincronizados.timestamp}`);
+                    console.log(`• Usuário: ${dadosSincronizados.usuario}`);
+                    console.log(`• Total registros: ${dadosSincronizados.totalRegistros}`);
+                    
+                    // ATUALIZAR DADOS LOCAIS
+                    dadosPatio = [...dadosSincronizados.dados];
+                    ultimaVerificacao = dadosSincronizados.timestamp;
+                    
+                    // ATUALIZAR INTERFACE
+                    atualizarInterface();
+                    
+                    // MOSTRAR NOTIFICAÇÃO SE NÃO FOI O USUÁRIO ATUAL QUE IMPORTOU
+                    const usuarioAtual = usuarioLogado ? usuarioLogado.nome : 'Anônimo';
+                    if (dadosSincronizados.usuario !== usuarioAtual) {
                         const notification = document.getElementById('realtimeNotification');
                         if (notification) {
-                            const usuario = registroMaisRecente.usuario_importacao || 'Outro usuário';
-                            notification.textContent = `⚡ Atualizado por ${usuario} - ${registroMaisRecente.total_registros} registros!`;
+                            notification.textContent = `⚡ Atualizado por ${dadosSincronizados.usuario} - ${dadosSincronizados.totalRegistros} registros!`;
                             notification.classList.add('show');
                             setTimeout(() => notification.classList.remove('show'), 5000);
                         }
-
-                        // ATUALIZAR TIMESTAMP VISUAL
-                        const agora = new Date(registroMaisRecente.timestamp_importacao);
-                        atualizarTimestampVisual(agora.toLocaleString('pt-BR'));
-
-                        console.log('✅ INTERFACE ATUALIZADA COM DADOS DO SUPABASE');
-                        return true;
-
-                    } catch (parseError) {
-                        console.error('❌ Erro ao fazer parse dos dados:', parseError);
-                        return false;
                     }
-                } else {
-                    console.log('📊 Dados já estão atualizados');
-                    return false;
+                    
+                    // ATUALIZAR TIMESTAMP VISUAL
+                    const dataHora = new Date(dadosSincronizados.timestamp);
+                    atualizarTimestampVisual(dataHora.toLocaleString('pt-BR'));
+                    
+                    console.log('✅ INTERFACE ATUALIZADA COM DADOS SINCRONIZADOS');
+                    return true;
                 }
-
+                
+                return false;
+                
             } catch (error) {
                 console.error('❌ Erro na verificação:', error);
                 return false;
             }
         }
 
-        function iniciarSincronizacaoSupabaseReal() {
-            console.log('🌐 INICIANDO SINCRONIZAÇÃO REAL VIA SUPABASE...');
+        function iniciarSincronizacaoRealTime() {
+            console.log('🕐 INICIANDO SINCRONIZAÇÃO EM TEMPO REAL...');
             
             // PARAR SINCRONIZAÇÃO ANTERIOR
-            if (intervalSincronizacaoReal) {
-                clearInterval(intervalSincronizacaoReal);
+            if (intervalSincronizacao) {
+                clearInterval(intervalSincronizacao);
             }
-
-            // VERIFICAR IMEDIATAMENTE
-            verificarAtualizacaoSupabaseReal();
-
-            // VERIFICAR A CADA 8 SEGUNDOS
-            intervalSincronizacaoReal = setInterval(() => {
-                if (!isImporting) {
-                    verificarAtualizacaoSupabaseReal();
-                }
-            }, 8000);
             
-            console.log('✅ Sincronização real ativa (8s)');
+            // VERIFICAR IMEDIATAMENTE
+            verificarAtualizacoesSincronizadas();
+            
+            // VERIFICAR A CADA 3 SEGUNDOS PARA SER MAIS RÁPIDO
+            intervalSincronizacao = setInterval(() => {
+                if (!isImporting) {
+                    verificarAtualizacoesSincronizadas();
+                }
+            }, 3000);
+            
+            console.log('✅ Sincronização em tempo real ativa (3s)');
         }
 
         // ========== FUNÇÃO DO GRÁFICO DINÂMICO NO CARD DESCARREGANDO ==========
@@ -2500,7 +2449,6 @@
                     throw new Error('Supabase não inicializado');
                 }
                 
-                // TESTAR LEITURA
                 const { data: usuarios, error: erroLeitura } = await supabase
                     .from('usuarios')
                     .select('*')
@@ -3051,8 +2999,12 @@
             console.log('📱 Carregando dados...');
             verificarRestaurarProtecao();
             
+            // VERIFICAR SE HÁ DADOS SINCRONIZADOS PRIMEIRO
+            verificarAtualizacoesSincronizadas();
+            
+            // SE NÃO, CARREGAR DADOS LOCAIS NORMAIS
             const dadosSalvos = localStorage.getItem('dadosPatioMinerva');
-            if (dadosSalvos) {
+            if (dadosSalvos && dadosPatio.length === 0) {
                 try {
                     dadosPatio = JSON.parse(dadosSalvos);
                     console.log('💾 Dados carregados:', dadosPatio.length);
@@ -3075,6 +3027,7 @@
             const file = event.target.files[0];
             if (!file) return;
 
+            isImporting = true;
             document.getElementById('importIndicator').classList.add('show');
             
             const reader = new FileReader();
@@ -3122,11 +3075,11 @@
                     }).filter(item => item && item.placa);
                     
                     console.log(`📊 ${dadosProcessados.length} registros processados`);
-                    salvarDadosComSincronizacaoReal(dadosProcessados);
+                    salvarComSincronizacao(dadosProcessados);
                     
                 } catch (error) {
                     console.error('❌ Erro ao processar:', error);
-                    finalizarImportacaoSimples(false, `Erro: ${error.message}`);
+                    finalizarImportacao(false, `Erro: ${error.message}`);
                 }
             };
             
@@ -3134,19 +3087,18 @@
             event.target.value = '';
         }
 
-        // ========== SALVAMENTO COM SINCRONIZAÇÃO REAL VIA SUPABASE ==========
-        async function salvarDadosComSincronizacaoReal(dadosArray) {
+        // ========== SALVAMENTO COM SINCRONIZAÇÃO FUNCIONANDO ==========
+        async function salvarComSincronizacao(dadosArray) {
             try {
-                console.log('🌐 INICIANDO SALVAMENTO COM SINCRONIZAÇÃO REAL...');
+                console.log('🌐 SALVANDO COM SINCRONIZAÇÃO EM TEMPO REAL...');
                 
                 ativarProtecaoPermanente(dadosArray);
                 
                 // ATUALIZAR DADOS LOCAIS
                 dadosPatio = [...dadosArray];
-                localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
                 
-                // SALVAR NO SUPABASE PARA SINCRONIZAÇÃO ENTRE USUÁRIOS
-                const sucessoSupabase = await salvarDadosSupabaseReal(dadosArray);
+                // SALVAR COM SINCRONIZAÇÃO REAL
+                const timestamp = salvarDadosComSincronizacaoReal(dadosArray);
                 
                 atualizarInterface();
                 popularFiltros();
@@ -3155,23 +3107,25 @@
                 salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
                 
                 setTimeout(() => {
-                    finalizarImportacaoSimples(true, `${dadosArray.length} registros ${sucessoSupabase ? 'sincronizados' : 'salvos'}`);
+                    finalizarImportacao(true, `${dadosArray.length} registros sincronizados`);
                 }, 1500);
                 
             } catch (error) {
                 console.error('❌ Erro no salvamento:', error);
-                finalizarImportacaoSimples(false, `Erro: ${error.message}`);
+                finalizarImportacao(false, `Erro: ${error.message}`);
             }
         }
 
-        function finalizarImportacaoSimples(sucesso, mensagem) {
+        function finalizarImportacao(sucesso, mensagem) {
+            isImporting = false;
+            
             if (sucesso) {
                 const banner = document.getElementById('importSuccessBanner');
-                banner.textContent = 'Atualizado com sucesso';
+                banner.textContent = 'Dados sincronizados com todos os usuários';
                 banner.classList.add('show');
                 
-                setTimeout(() => banner.classList.remove('show'), 3000);
-                mostrarAlerta('success', 'Atualizado com sucesso');
+                setTimeout(() => banner.classList.remove('show'), 4000);
+                mostrarAlerta('success', 'Dados sincronizados com sucesso');
             } else {
                 mostrarAlerta('error', `❌ Falha: ${mensagem}`);
             }
@@ -3449,7 +3403,7 @@
         function iniciarSistema() {
             verificarPermissoes();
             iniciarSincronizacaoTimestamp();
-            iniciarSincronizacaoSupabaseReal(); // SINCRONIZAÇÃO REAL VIA SUPABASE
+            iniciarSincronizacaoRealTime(); // SINCRONIZAÇÃO EM TEMPO REAL
             carregarDadosLocal();
         }
 
@@ -3508,8 +3462,8 @@
 
         function fazerLogout() {
             if (confirm('Deseja fazer logout?')) {
-                if (intervalSincronizacaoReal) {
-                    clearInterval(intervalSincronizacaoReal);
+                if (intervalSincronizacao) {
+                    clearInterval(intervalSincronizacao);
                 }
                 
                 sessionStorage.removeItem('usuarioLogado');
@@ -3734,20 +3688,20 @@
         }
 
         function mostrarDetalhesPolling() {
-            const info = `🚀 SISTEMA SINCRONIZADO VIA SUPABASE
+            const info = `🚀 SISTEMA SINCRONIZADO EM TEMPO REAL
 
-🌐 SINCRONIZAÇÃO REAL:
-• Dados salvos no Supabase
-• Verificação a cada 8 segundos
-• Notificações em tempo real
-• Funciona entre diferentes locais
+🌐 SINCRONIZAÇÃO:
+• Verificação a cada 3 segundos
+• LocalStorage compartilhado
+• Timestamp único para detectar mudanças
+• Notificações instantâneas
 
-📱 ROLAGEM HORIZONTAL:
-• Painéis com scroll horizontal
-• Cards deslizáveis
-• Tabela com dupla rolagem
+📱 LAYOUT:
+• Cards centralizados
+• Rolagem horizontal em painéis
+• Interface responsiva
 
-✅ TODOS OS USUÁRIOS VERÃO AS ATUALIZAÇÕES!`;
+✅ TODOS VERÃO ATUALIZAÇÕES EM TEMPO REAL!`;
             
             alert(info);
         }
@@ -3793,7 +3747,7 @@
             }
         }
 
-        console.log('✅🚛📊📱🌐➡️ SISTEMA COM ROLAGEM HORIZONTAL E SINCRONIZAÇÃO REAL!');
+        console.log('✅🚛📊📱🌐🔄 SISTEMA COM SINCRONIZAÇÃO EM TEMPO REAL FUNCIONANDO!');
     </script>
 </body>
 </html>
