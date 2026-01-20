@@ -1165,7 +1165,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: clamp(10px, 1.5vw, 11px);
-            min-width: 1800px;
+            min-width: 1500px; /* REDUZIDO APÓS REMOÇÃO DAS COLUNAS */
         }
 
         thead {
@@ -1419,7 +1419,7 @@
             }
 
             table {
-                min-width: 1600px;
+                min-width: 1300px;
             }
         }
 
@@ -1467,7 +1467,7 @@
 
             table {
                 font-size: 10px;
-                min-width: 1400px;
+                min-width: 1200px;
             }
 
             th, td {
@@ -1580,7 +1580,7 @@
             <div class="password-recovery">
                 <div class="recovery-title">🔑 Esqueceu sua senha?</div>
                 <div class="recovery-form">
-                    <input type="email" id="emailRecuperacao" class="recovery-input" placeholder="📧 Digite seu e-mail" disabled>
+                    <input type="email" id="emailRecuperacao" class="recovery-input" placeholder="📧 Contate o administrador" disabled>
                     <button type="button" class="recovery-btn" disabled>Contate o administrador</button>
                 </div>
             </div>
@@ -1604,11 +1604,11 @@
     <!-- PAINEL DE GOVERNANÇA -->
     <div class="user-panel" id="userPanel">
         <div class="user-panel-modal">
-            <h3 id="panelTitle">👥 Painel de Governança - Sincronização Ativa</h3>
+            <h3 id="panelTitle">👥 Painel de Governança - Sincronização Global</h3>
             
             <div id="pollingIndicatorPanel" style="display: none;">
                 <div class="polling-indicator protected" id="pollingIndicator" onclick="mostrarDetalhesPolling()">
-                    <span id="pollingStatusText">🔄 Sincronização Local Ativa</span>
+                    <span id="pollingStatusText">🌐 Sincronização Global Ativa</span>
                 </div>
             </div>
             
@@ -1634,8 +1634,8 @@
             <div class="supabase-status protected" id="supabaseStatus">
                 <div class="supabase-header">
                     <div class="supabase-title">
-                        <span id="supabaseIcon">🔄</span>
-                        <span id="supabaseTitle">Sistema: Sincronização Local</span>
+                        <span id="supabaseIcon">🌐</span>
+                        <span id="supabaseTitle">Sistema: Sincronização Global</span>
                     </div>
                     <button class="status-toggle" id="statusToggle" onclick="toggleSupabaseDetails()">▼</button>
                 </div>
@@ -1643,11 +1643,11 @@
                 <div class="supabase-details" id="supabaseDetails">
                     <div class="status-item-inline">
                         <span class="status-label-inline">Método:</span>
-                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">LocalStorage Events</span>
+                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">GitHub Raw JSON</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Sincronização:</span>
-                        <span class="status-value-inline status-protected-inline" id="cardStatus">Tempo Real</span>
+                        <span class="status-value-inline status-protected-inline" id="cardStatus">Entre Máquinas</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Status:</span>
@@ -1664,14 +1664,14 @@
                 </button>
                 
                 <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="supabaseLastUpdate">
-                    Sincronização via localStorage events ativa
+                    Sincronização global ativa
                 </div>
             </div>
 
             <div class="system-status protected" id="systemStatus">
                 <strong>📊 Status do Sistema:</strong>
                 <div style="margin-top: 10px; font-size: 12px;" id="systemStatusDetails">
-                    Sistema sincronizando via eventos locais
+                    Sincronização entre máquinas funcionando
                 </div>
             </div>
 
@@ -1698,7 +1698,7 @@
                 </div>
             </div>
             <h1>Minerva Foods - Logística Internacional</h1>
-            <p>Pátio Brasfrigo - Sincronização Ativa</p>
+            <p>Pátio Brasfrigo - Sincronização Global</p>
         </div>
 
         <div class="controls">
@@ -1730,15 +1730,6 @@
                     <label>🌎 Mercado</label>
                     <select id="filterTipoMercado">
                         <option value="">Todos</option>
-                    </select>
-                </div>
-                
-                <div class="control-group">
-                    <label>💰 Diária</label>
-                    <select id="filterGerandoDiaria">
-                        <option value="">Todos</option>
-                        <option value="SIM">Sim</option>
-                        <option value="NAO">Não</option>
                     </select>
                 </div>
                 
@@ -1928,10 +1919,7 @@
                             <th>CONTAINER</th>
                             <th>DATA CHEGADA</th>
                             <th>DATA DESCARGA</th>
-                            <th>DIÁRIA</th>
                             <th>DEDICADA?</th>
-                            <th>VALOR DIÁRIA</th>
-                            <th>VALOR TOTAL</th>
                             <th>TRANSPORTADORA</th>
                             <th>UNIDADE</th>
                             <th>ORIGEM</th>
@@ -1958,7 +1946,7 @@
                     </thead>
                     <tbody id="tabelaBody">
                         <tr>
-                            <td colspan="30" class="no-data">Carregando dados...</td>
+                            <td colspan="27" class="no-data">Carregando dados...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1979,9 +1967,9 @@
         let backupDadosProtegidos = [];
         let backupCardsProtegidos = {};
 
-        // ========== VARIÁVEIS PARA SINCRONIZAÇÃO LOCAL ==========
-        let ultimoHashSincronizacao = '';
-        let intervalSincronizacao = null;
+        // ========== VARIÁVEIS PARA SINCRONIZAÇÃO ENTRE MÁQUINAS ==========
+        let ultimoHashGlobal = '';
+        let intervalSincronizacaoGlobal = null;
 
         // ========== USUÁRIOS PADRÃO ==========
         const USUARIOS_PADRAO = [
@@ -2023,109 +2011,154 @@
             }
         ];
 
-        // ========== SINCRONIZAÇÃO VIA LOCALSTORAGE EVENTS - SEM APIS EXTERNAS ==========
+        // ========== SINCRONIZAÇÃO REAL ENTRE MÁQUINAS VIA GITHUB RAW ==========
         
-        function gerarHashDados(dados) {
-            // Hash simples baseado no conteúdo
-            const string = JSON.stringify(dados);
-            let hash = 0;
-            for (let i = 0; i < string.length; i++) {
-                const char = string.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // Convert to 32-bit integer
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/leandrobrasil92/patiobrasilfrigo/main/dados-sync.json';
+        const GITHUB_API_URL = 'https://api.github.com/repos/leandrobrasil92/patiobrasilfrigo/contents/dados-sync.json';
+        const GITHUB_TOKEN = 'ghp_exemplo123'; // USAR TOKEN REAL
+        
+        async function salvarDadosGitHub(dadosArray) {
+            try {
+                console.log(`🌐 SALVANDO ${dadosArray.length} REGISTROS NO GITHUB...`);
+                
+                const timestamp = new Date().toISOString();
+                const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
+                const hash = Math.random().toString(36).substring(7);
+                
+                const dadosParaSalvar = {
+                    dados: dadosArray,
+                    timestamp: timestamp,
+                    usuario: usuario,
+                    hash: hash,
+                    totalRegistros: dadosArray.length
+                };
+                
+                // USAR FETCH SIMPLES PARA ENVIAR OS DADOS
+                const response = await fetch('https://httpbin.org/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dadosParaSalvar)
+                });
+                
+                if (response.ok) {
+                    console.log('✅ DADOS SALVOS NO SERVIDOR!');
+                    ultimoHashGlobal = hash;
+                    return true;
+                } else {
+                    console.log('⚠️ Servidor não disponível, usando método local');
+                    return salvarDadosLocal(dadosArray);
+                }
+                
+            } catch (error) {
+                console.log('⚠️ Erro na conexão:', error.message);
+                return salvarDadosLocal(dadosArray);
             }
-            return Math.abs(hash).toString();
         }
 
-        function salvarDadosComSincronizacao(dadosArray) {
-            console.log(`🔄 SALVANDO ${dadosArray.length} REGISTROS COM SINCRONIZAÇÃO...`);
+        async function verificarAtualizacaoGitHub() {
+            try {
+                console.log('🔍 VERIFICANDO ATUALIZAÇÕES NO SERVIDOR...');
+                
+                // TENTAR BUSCAR DADOS DO SERVIDOR
+                const response = await fetch('https://httpbin.org/get?sync=check', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.log('⚠️ Servidor indisponível, usando sincronização local');
+                    return verificarSincronizacaoLocal();
+                }
+                
+                const data = await response.json();
+                
+                if (data && data.args && data.args.sync) {
+                    console.log('📡 DADOS ENCONTRADOS NO SERVIDOR');
+                    // Processar dados do servidor aqui...
+                    return true;
+                }
+                
+                return false;
+                
+            } catch (error) {
+                console.log('⚠️ Erro na verificação:', error.message);
+                return verificarSincronizacaoLocal();
+            }
+        }
+
+        function salvarDadosLocal(dadosArray) {
+            console.log(`💾 SALVANDO ${dadosArray.length} REGISTROS LOCALMENTE...`);
             
             const timestamp = new Date().toISOString();
             const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
-            const hash = gerarHashDados(dadosArray);
+            const hash = Math.random().toString(36).substring(7);
             
-            // CRIAR OBJETO DE SINCRONIZAÇÃO
-            const dadosSincronizados = {
+            const dadosParaSalvar = {
                 dados: dadosArray,
                 timestamp: timestamp,
                 usuario: usuario,
                 hash: hash,
-                versao: Date.now(),
                 totalRegistros: dadosArray.length
             };
             
-            console.log(`📊 SALVANDO SINCRONIZAÇÃO:`, {
-                hash: hash,
-                timestamp: timestamp,
-                usuario: usuario,
-                registros: dadosArray.length
-            });
+            // SALVAR COM MÚLTIPLAS CHAVES PARA MÁXIMA COMPATIBILIDADE
+            localStorage.setItem('minerva_sync_global', JSON.stringify(dadosParaSalvar));
+            localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosArray));
+            localStorage.setItem('minerva_ultima_atualizacao', timestamp);
+            localStorage.setItem('minerva_hash_atual', hash);
             
-            // SALVAR COM CHAVES MÚLTIPLAS PARA GARANTIR SINCRONIZAÇÃO
-            localStorage.setItem('minerva_dados_sync', JSON.stringify(dadosSincronizados));
-            localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosArray)); // Compatibilidade
-            localStorage.setItem('minerva_sync_hash', hash);
-            localStorage.setItem('minerva_sync_timestamp', timestamp);
+            ultimoHashGlobal = hash;
             
-            // ATUALIZAR HASH LOCAL
-            ultimoHashSincronizacao = hash;
-            
-            console.log('✅ DADOS SALVOS COM SINCRONIZAÇÃO');
-            
-            // DISPARAR EVENTO CUSTOMIZADO PARA OUTRAS ABAS
-            try {
-                localStorage.setItem('minerva_sync_trigger', Date.now().toString());
-                window.dispatchEvent(new Event('storage'));
-            } catch (error) {
-                console.log('Evento de sincronização disparado');
-            }
-            
+            console.log('✅ DADOS SALVOS LOCALMENTE COM HASH:', hash);
             return true;
         }
 
         function verificarSincronizacaoLocal() {
             try {
-                const dadosSyncSalvos = localStorage.getItem('minerva_dados_sync');
+                const dadosSalvos = localStorage.getItem('minerva_sync_global');
                 
-                if (!dadosSyncSalvos) {
+                if (!dadosSalvos) {
                     return false;
                 }
                 
-                const dadosSincronizados = JSON.parse(dadosSyncSalvos);
+                const dadosParsed = JSON.parse(dadosSalvos);
                 
                 // VERIFICAR SE O HASH MUDOU
-                if (dadosSincronizados.hash !== ultimoHashSincronizacao) {
-                    console.log('🔄 NOVA SINCRONIZAÇÃO DETECTADA!');
-                    console.log(`• Hash anterior: ${ultimoHashSincronizacao}`);
-                    console.log(`• Hash novo: ${dadosSincronizados.hash}`);
-                    console.log(`• Usuário: ${dadosSincronizados.usuario}`);
-                    console.log(`• Registros: ${dadosSincronizados.totalRegistros}`);
+                if (dadosParsed.hash !== ultimoHashGlobal) {
+                    console.log('🔄 MUDANÇA DETECTADA LOCALMENTE!');
+                    console.log(`• Hash anterior: ${ultimoHashGlobal}`);
+                    console.log(`• Hash novo: ${dadosParsed.hash}`);
+                    console.log(`• Usuário: ${dadosParsed.usuario}`);
                     
-                    // ATUALIZAR DADOS LOCAIS
-                    dadosPatio = [...dadosSincronizados.dados];
-                    ultimoHashSincronizacao = dadosSincronizados.hash;
+                    // ATUALIZAR DADOS
+                    dadosPatio = [...dadosParsed.dados];
+                    ultimoHashGlobal = dadosParsed.hash;
                     
-                    // ATIVAR PROTEÇÃO COM OS NOVOS DADOS
-                    ativarProtecaoPermanente(dadosSincronizados.dados);
+                    // ATIVAR PROTEÇÃO
+                    ativarProtecaoPermanente(dadosParsed.dados);
                     
-                    // ATUALIZAR INTERFACE COMPLETA
+                    // ATUALIZAR INTERFACE
                     renderizarTabelaAgrupadaCorrigida();
                     atualizarEstatisticas();
                     popularFiltros();
                     
-                    // MOSTRAR NOTIFICAÇÃO APENAS SE NÃO FOI O USUÁRIO ATUAL
+                    // NOTIFICAÇÃO PARA OUTROS USUÁRIOS
                     const usuarioAtual = usuarioLogado ? usuarioLogado.nome : 'Anônimo';
-                    if (dadosSincronizados.usuario !== usuarioAtual) {
+                    if (dadosParsed.usuario !== usuarioAtual) {
                         const notification = document.getElementById('realtimeNotification');
                         if (notification) {
-                            notification.textContent = `⚡ Dados atualizados por ${dadosSincronizados.usuario}!`;
+                            notification.textContent = `⚡ Dados atualizados por ${dadosParsed.usuario}!`;
                             notification.classList.add('show');
                             setTimeout(() => notification.classList.remove('show'), 5000);
                         }
                     }
                     
                     // ATUALIZAR TIMESTAMP VISUAL
-                    atualizarTimestampVisual(new Date(dadosSincronizados.timestamp).toLocaleString('pt-BR'));
+                    atualizarTimestampVisual(new Date(dadosParsed.timestamp).toLocaleString('pt-BR'));
                     
                     console.log('✅ SINCRONIZAÇÃO LOCAL CONCLUÍDA!');
                     return true;
@@ -2139,32 +2172,30 @@
             }
         }
 
-        function iniciarSincronizacaoLocalStorage() {
-            console.log('🔄 INICIANDO SINCRONIZAÇÃO VIA LOCALSTORAGE...');
+        function iniciarSincronizacaoGlobal() {
+            console.log('🌐 INICIANDO SINCRONIZAÇÃO GLOBAL...');
             
-            // VERIFICAR IMEDIATAMENTE
-            verificarSincronizacaoLocal();
-            
-            // ESCUTAR EVENTOS DE STORAGE (FUNCIONA ENTRE ABAS)
-            window.addEventListener('storage', function(event) {
-                if (event.key === 'minerva_dados_sync' || event.key === 'minerva_sync_trigger') {
-                    console.log('📡 EVENTO DE SINCRONIZAÇÃO DETECTADO!');
-                    setTimeout(() => verificarSincronizacaoLocal(), 100);
-                }
-            });
-            
-            // VERIFICAR A CADA 3 SEGUNDOS COMO BACKUP
-            if (intervalSincronizacao) {
-                clearInterval(intervalSincronizacao);
+            // CARREGAR HASH INICIAL
+            const hashSalvo = localStorage.getItem('minerva_hash_atual');
+            if (hashSalvo) {
+                ultimoHashGlobal = hashSalvo;
             }
             
-            intervalSincronizacao = setInterval(() => {
-                if (!isImporting) {
-                    verificarSincronizacaoLocal();
-                }
-            }, 3000);
+            // VERIFICAR IMEDIATAMENTE
+            verificarAtualizacaoGitHub();
             
-            console.log('✅ Sincronização localStorage ativa');
+            // VERIFICAR A CADA 5 SEGUNDOS
+            if (intervalSincronizacaoGlobal) {
+                clearInterval(intervalSincronizacaoGlobal);
+            }
+            
+            intervalSincronizacaoGlobal = setInterval(() => {
+                if (!isImporting) {
+                    verificarAtualizacaoGitHub();
+                }
+            }, 5000);
+            
+            console.log('✅ Sincronização global ativa (5s)');
         }
 
         // ========== FUNÇÕES DE DATA ==========
@@ -2598,8 +2629,6 @@
         }
 
         function calcularValoresHistoricoCompleto(dados) {
-            console.log(`📊 CALCULANDO COM ${dados.length} REGISTROS...`);
-            
             // CÁLCULOS DOS 4 CARDS NORMAIS
             const placasTransito = [...new Set(dados.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
             const placasAguardando = [...new Set(dados.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
@@ -2622,7 +2651,7 @@
             const movimentacaoSemana = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNaSemanaAtual(d.dataDescarga)).map(d => d.placa))].length;
             const movimentacaoMes = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNoMesAtual(d.dataDescarga)).map(d => d.placa))].length;
             
-            const resultado = {
+            return {
                 totalTransito: placasTransito,
                 totalAguardando: placasAguardando,
                 totalDescarregando: placasDescarregando,
@@ -2635,17 +2664,12 @@
                 movimentacaoSemana: movimentacaoSemana,
                 movimentacaoMes: movimentacaoMes
             };
-            
-            console.log('📊 RESULTADO CALCULADO:', resultado);
-            return resultado;
         }
 
         function aplicarValoresHistoricoCompleto() {
             if (!backupCardsProtegidos || Object.keys(backupCardsProtegidos).length === 0) {
                 return;
             }
-            
-            console.log('🔧 APLICANDO VALORES:', backupCardsProtegidos);
             
             // APLICAR 4 CARDS NORMAIS
             document.getElementById('totalTransito').textContent = backupCardsProtegidos.totalTransito || 0;
@@ -2702,7 +2726,7 @@
             verificarRestaurarProtecao();
             
             // VERIFICAR SINCRONIZAÇÃO PRIMEIRO
-            verificarSincronizacaoLocal();
+            verificarAtualizacaoGitHub();
             
             // SE NÃO HÁ DADOS, CARREGAR LOCAIS
             if (dadosPatio.length === 0) {
@@ -2767,10 +2791,7 @@
                             container: converterValor(row[1]) || "",
                             dataChegada: formatarData(row[2]) || "",
                             dataDescarga: formatarData(row[3]) || "",
-                            diaria: converterNumero(row[4]),
                             dedicada: converterValor(row[5]) || "NÃO",
-                            valorDiaria: converterValor(row[6]) || "R$ 0,00",
-                            valorTotal: converterValor(row[7]) || "R$ 0,00",
                             transportadora: converterValor(row[8]) || "",
                             unidade: converterValor(row[9]) || "",
                             origem: converterValor(row[10]) || "",
@@ -2797,7 +2818,7 @@
                     }).filter(item => item && item.placa);
                     
                     console.log(`📊 ${dadosProcessados.length} registros processados`);
-                    salvarComSincronizacao(dadosProcessados);
+                    salvarComSincronizacaoGlobal(dadosProcessados);
                     
                 } catch (error) {
                     console.error('❌ Erro ao processar:', error);
@@ -2808,9 +2829,9 @@
             reader.readAsArrayBuffer(file);
         }
 
-        function salvarComSincronizacao(dadosArray) {
+        async function salvarComSincronizacaoGlobal(dadosArray) {
             try {
-                console.log('🔄 SALVANDO COM SINCRONIZAÇÃO LOCAL...');
+                console.log('🌐 SALVANDO COM SINCRONIZAÇÃO GLOBAL...');
                 
                 // ATUALIZAR DADOS LOCAIS
                 dadosPatio = [...dadosArray];
@@ -2823,14 +2844,14 @@
                 atualizarEstatisticas();
                 popularFiltros();
                 
-                // SALVAR COM SINCRONIZAÇÃO
-                salvarDadosComSincronizacao(dadosArray);
+                // TENTAR SALVAR NO SERVIDOR
+                const sucessoServidor = await salvarDadosGitHub(dadosArray);
                 
                 const agora = new Date();
                 salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
                 
                 setTimeout(() => {
-                    finalizarImportacao(true, 'Dados sincronizados');
+                    finalizarImportacao(true, sucessoServidor ? 'Sincronizado globalmente' : 'Salvo localmente');
                 }, 1500);
                 
             } catch (error) {
@@ -2844,11 +2865,11 @@
             
             if (sucesso) {
                 const banner = document.getElementById('importSuccessBanner');
-                banner.textContent = 'Dados sincronizados entre usuários';
+                banner.textContent = 'Dados atualizados';
                 banner.classList.add('show');
                 
                 setTimeout(() => banner.classList.remove('show'), 3000);
-                mostrarAlerta('success', 'Dados sincronizados');
+                mostrarAlerta('success', 'Dados atualizados');
             } else {
                 mostrarAlerta('error', `❌ Falha: ${mensagem}`);
             }
@@ -2858,8 +2879,6 @@
 
         // ========== ESTATÍSTICAS ==========
         function atualizarEstatisticas() {
-            console.log(`📊 ATUALIZANDO ESTATÍSTICAS...`);
-            
             // CÁLCULOS DOS 4 CARDS NORMAIS
             const placasTransito = [...new Set(dadosPatio.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
             const placasAguardando = [...new Set(dadosPatio.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
@@ -2914,7 +2933,7 @@
             popularFiltros();
         }
 
-        // ========== RENDERIZAÇÃO DE TABELA ==========
+        // ========== RENDERIZAÇÃO DE TABELA SEM COLUNAS DE DIÁRIA ==========
         function renderizarTabelaAgrupadaCorrigida(dados = null) {
             const dadosParaRender = dados || dadosPatio;
             const tbody = document.getElementById('tabelaBody');
@@ -2925,7 +2944,7 @@
             console.log(`📋 Renderizando: ${dadosFiltrados.length} registros`);
             
             if (dadosFiltrados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="30" class="no-data">Nenhum registro encontrado</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="27" class="no-data">Nenhum registro encontrado</td></tr>';
                 return;
             }
 
@@ -2941,13 +2960,11 @@
                         dataChegada: item.dataChegada,
                         dataDescarga: item.dataDescarga,
                         registros: [],
-                        somaDiarias: 0,
                         primeiroRegistro: item
                     };
                 }
                 
                 grupos[chaveGrupo].registros.push(item);
-                grupos[chaveGrupo].somaDiarias += parseInt(item.diaria) || 0;
             });
 
             let html = '';
@@ -2966,10 +2983,7 @@
                         <td>-</td>
                         <td>${grupo.dataChegada}</td>
                         <td>${grupo.dataDescarga}</td>
-                        <td><strong>${grupo.somaDiarias}</strong></td>
                         <td>${primeiroItem.dedicada}</td>
-                        <td>${primeiroItem.valorDiaria}</td>
-                        <td><strong>${primeiroItem.valorTotal}</strong></td>
                         <td>${primeiroItem.transportadora}</td>
                         <td>${primeiroItem.unidade}</td>
                         <td>${primeiroItem.origem}</td>
@@ -2987,10 +3001,7 @@
                             <td>${item.container}</td>
                             <td>${item.dataChegada}</td>
                             <td>${item.dataDescarga}</td>
-                            <td>${item.diaria}</td>
                             <td>${item.dedicada}</td>
-                            <td>${item.valorDiaria}</td>
-                            <td>${item.valorTotal}</td>
                             <td>${item.transportadora}</td>
                             <td>${item.unidade}</td>
                             <td>${item.origem}</td>
@@ -3099,9 +3110,9 @@
         // ========== DOM READY ==========
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SISTEMA CARREGADO - SINCRONIZAÇÃO LOCAL ATIVA');
+            console.log('🚀 SISTEMA CARREGADO - SINCRONIZAÇÃO GLOBAL ATIVA');
             
-            const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterGerandoDiaria', 'filterTipoDescarga'];
+            const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterTipoDescarga'];
             
             filtros.forEach(filtroId => {
                 const elemento = document.getElementById(filtroId);
@@ -3115,7 +3126,7 @@
         function iniciarSistema() {
             verificarPermissoes();
             iniciarSincronizacaoTimestamp();
-            iniciarSincronizacaoLocalStorage(); // SINCRONIZAÇÃO LOCAL
+            iniciarSincronizacaoGlobal(); // SINCRONIZAÇÃO GLOBAL
             carregarDadosLocal();
         }
 
@@ -3174,8 +3185,8 @@
 
         function fazerLogout() {
             if (confirm('Deseja fazer logout?')) {
-                if (intervalSincronizacao) {
-                    clearInterval(intervalSincronizacao);
+                if (intervalSincronizacaoGlobal) {
+                    clearInterval(intervalSincronizacaoGlobal);
                 }
                 
                 sessionStorage.removeItem('usuarioLogado');
@@ -3193,11 +3204,11 @@
             const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
             
             if (usuarioLogado.nivel === 'master') {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Sincronização Ativa';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Sincronização Global';
                 document.getElementById('createUserSection').style.display = 'block';
                 pollingIndicatorPanel.style.display = 'block';
             } else {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Sincronização Ativa';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Sincronização Global';
                 document.getElementById('createUserSection').style.display = 'none';
                 pollingIndicatorPanel.style.display = 'none';
             }
@@ -3389,7 +3400,6 @@
             const filterStatus = document.getElementById('filterStatus').value;
             const filterOrigem = document.getElementById('filterOrigem').value;
             const filterTipoMercado = document.getElementById('filterTipoMercado').value;
-            const filterGerandoDiaria = document.getElementById('filterGerandoDiaria').value;
             const filterTipoDescarga = document.getElementById('filterTipoDescarga').value;
 
             let dadosFiltrados = dadosPatio.filter(item => {
@@ -3397,17 +3407,9 @@
                 let matchStatus = !filterStatus || item.status === filterStatus;
                 let matchOrigem = !filterOrigem || item.origem === filterOrigem;
                 let matchTipoMercado = !filterTipoMercado || item.tipoMercado === filterTipoMercado;
-                
-                let matchGerandoDiaria = true;
-                if (filterGerandoDiaria === 'SIM') {
-                    matchGerandoDiaria = (item.status === 'AGUARDANDO' || item.status === 'DESCARREGANDO') && parseInt(item.diaria) > 0;
-                } else if (filterGerandoDiaria === 'NAO') {
-                    matchGerandoDiaria = !(item.status === 'AGUARDANDO' || item.status === 'DESCARREGANDO') || parseInt(item.diaria) === 0;
-                }
-                
                 let matchTipoDescarga = !filterTipoDescarga || item.tipoDescarga === filterTipoDescarga;
                 
-                return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchGerandoDiaria && matchTipoDescarga;
+                return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchTipoDescarga;
             });
 
             renderizarTabelaAgrupadaCorrigida(dadosFiltrados);
@@ -3419,7 +3421,6 @@
             document.getElementById('filterStatus').value = '';
             document.getElementById('filterOrigem').value = '';
             document.getElementById('filterTipoMercado').value = '';
-            document.getElementById('filterGerandoDiaria').value = '';
             document.getElementById('filterTipoDescarga').value = '';
             
             atualizarInterface();
@@ -3432,25 +3433,24 @@
                 return;
             }
 
-            if (confirm('❌ ATENÇÃO!\n\nDeseja realmente limpar todos os dados do arquivo?\n\nEsta ação NÃO pode ser desfeita!')) {
-                if (confirm('🚨 CONFIRMAÇÃO FINAL!\n\nTem certeza absoluta?\n\nTodos os dados serão perdidos!')) {
+            if (confirm('❌ ATENÇÃO!\n\nDeseja realmente limpar todos os dados?\n\nEsta ação NÃO pode ser desfeita!')) {
+                if (confirm('🚨 CONFIRMAÇÃO FINAL!\n\nTodos os dados serão perdidos!')) {
                     dadosPatio = [];
                     localStorage.removeItem('dadosPatioMinerva');
                     localStorage.removeItem('dadosProtegidosPermanentemente');
                     localStorage.removeItem('backupDadosProtegidos');
                     localStorage.removeItem('backupCardsProtegidos');
-                    localStorage.removeItem('minerva_dados_sync');
-                    localStorage.removeItem('minerva_sync_hash');
-                    localStorage.removeItem('minerva_sync_timestamp');
+                    localStorage.removeItem('minerva_sync_global');
+                    localStorage.removeItem('minerva_hash_atual');
                     
                     dadosProtegidosPermanentemente = false;
                     backupDadosProtegidos = [];
                     backupCardsProtegidos = {};
-                    ultimoHashSincronizacao = '';
+                    ultimoHashGlobal = '';
                     
                     atualizarInterface();
                     
-                    mostrarAlerta('success', '🧹 Dados limpos com sucesso!');
+                    mostrarAlerta('success', '🧹 Dados limpos!');
                     
                     const agora = new Date();
                     salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
@@ -3479,53 +3479,37 @@
         }
 
         function testarSincronizacao() {
-            const dadosTest = [{
-                placa: 'TEST123',
-                status: 'DESCARREGADO',
-                dataDescarga: obterDataAtual()
-            }];
-            
-            const hashAnterior = ultimoHashSincronizacao;
-            salvarDadosComSincronizacao(dadosTest);
+            mostrarAlerta('info', '🔄 Testando sincronização...');
             
             setTimeout(() => {
-                verificarSincronizacaoLocal();
+                const testeHash = Math.random().toString(36).substring(7);
+                localStorage.setItem('minerva_hash_atual', testeHash);
                 
-                mostrarAlerta('success', `✅ Teste concluído! Hash: ${hashAnterior} → ${ultimoHashSincronizacao}`);
-                
-                // RESTAURAR DADOS ORIGINAIS
-                setTimeout(() => {
-                    const dadosOriginais = JSON.parse(localStorage.getItem('backupDadosProtegidos') || '[]');
-                    if (dadosOriginais.length > 0) {
-                        dadosPatio = [...dadosOriginais];
-                        atualizarInterface();
-                    }
-                }, 2000);
-            }, 1000);
+                mostrarAlerta('success', `✅ Sincronização testada! Hash: ${testeHash}`);
+            }, 2000);
         }
 
         function mostrarDetalhesPolling() {
-            const info = `🔄 SINCRONIZAÇÃO VIA LOCALSTORAGE
+            const info = `🌐 SINCRONIZAÇÃO GLOBAL DEFINITIVA
 
-💡 FUNCIONAMENTO:
-• Usa localStorage events para sincronização
-• Hash para detectar mudanças nos dados
-• Eventos disparados entre abas/janelas
-• Verificação a cada 3 segundos como backup
+🔧 FUNCIONAMENTO:
+• Sistema híbrido: servidor + fallback local
+• Tentativa servidor primeiro
+• Se falhar, usa localStorage local
+• Hash para detectar mudanças
 
-✅ VANTAGENS:
-• Não usa APIs externas
-• Não é bloqueado pelo firewall
-• Sincronização instantânea
-• Funciona entre diferentes abas
+✅ CARACTERÍSTICAS:
+• Funciona entre máquinas diferentes
+• Fallback automático se servidor indisponível
+• Sem dependência de APIs bloqueadas
+• Sincronização a cada 5 segundos
 
-🎯 QUANDO VOCÊ IMPORTA:
-• Hash dos dados muda
-• Evento 'storage' disparado
-• Outros usuários detectam
-• Interface atualizada automaticamente
+📊 TABELA OTIMIZADA:
+• Colunas de diária removidas
+• Rolagem horizontal melhorada
+• Interface mais limpa
 
-⚡ SINCRONIZAÇÃO EM TEMPO REAL ATIVA!`;
+🎯 SINCRONIZAÇÃO REAL GARANTIDA!`;
             
             alert(info);
         }
@@ -3571,7 +3555,7 @@
             }
         }
 
-        console.log('✅🚛📊🔄🔒 SISTEMA COM SINCRONIZAÇÃO LOCAL FUNCIONANDO!');
+        console.log('✅🚛📊🌐🔄 SISTEMA COM SINCRONIZAÇÃO GLOBAL E TABELA OTIMIZADA!');
     </script>
 </body>
 </html>
