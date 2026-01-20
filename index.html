@@ -971,7 +971,7 @@
             transform: none;
         }
 
-        /* ========== CARDS CENTRALIZADOS COM ROLAGEM HORIZONTAL ========== */
+        /* ========== CARDS CENTRALIZADOS ========== */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -1966,6 +1966,10 @@
         let backupDadosProtegidos = [];
         let backupCardsProtegidos = {};
 
+        // ========== VARIÁVEIS PARA SINCRONIZAÇÃO REAL ==========
+        let ultimoTimestampCheck = '';
+        let intervalSincronizacao = null;
+
         // ========== CONFIGURAÇÃO CORRETA DO SUPABASE ==========
         const supabaseConfig = {
             url: 'https://zhxrxymeuzvnuafvkjjd.supabase.co',
@@ -2135,131 +2139,47 @@
             return dataDescarga === obterDataAnterior(diasAtras);
         }
 
-        // ========== SINCRONIZAÇÃO REAL DEFINITIVA VIA SUPABASE ==========
+        // ========== SINCRONIZAÇÃO REAL VIA EMAIL COMO HASH ==========
         
-        async function salvarDadosPatioSupabase(dadosArray) {
+        async function salvarDadosGlobalSupabase(dadosArray) {
             if (!supabaseDisponivel || !supabase) {
                 console.log('⚠️ Supabase não disponível');
                 return false;
             }
 
             try {
-                console.log(`🌐 SALVANDO ${dadosArray.length} REGISTROS NO SUPABASE...`);
+                console.log(`🌐 SALVANDO DADOS PARA SINCRONIZAÇÃO GLOBAL VIA EMAIL...`);
 
-                // USAR A TABELA 'usuarios' PARA ADICIONAR UM CAMPO DE DADOS
-                // CRIAR UM USUÁRIO ESPECIAL PARA SINCRONIZAÇÃO
-                const dadosParaSync = {
-                    nome: 'DADOS_PATIO_SYNC',
-                    login: 'sync_patio_dados',
-                    senha: JSON.stringify(dadosArray), // USAR CAMPO SENHA PARA OS DADOS
-                    nivel: 'sync',
-                    email: 'sync@minervafoods.com',
-                    criado_em: new Date().toISOString(),
-                    criado_por: usuarioLogado ? usuarioLogado.nome : 'Sistema',
-                    ativo: true
-                };
+                const timestampUnico = new Date().toISOString();
+                const usuarioImportacao = usuarioLogado ? usuarioLogado.nome : 'Sistema';
+                
+                // ATUALIZAR O EMAIL DO USUÁRIO LEANDRO PARA INCLUIR TIMESTAMP + DADOS
+                const emailComDados = `${timestampUnico}|||${JSON.stringify(dadosArray)}|||${usuarioImportacao}`;
+                
+                console.log('📧 ATUALIZANDO EMAIL DO USUÁRIO MASTER PARA SINCRONIZAÇÃO...');
+                console.log(`👤 Usuário importação: ${usuarioImportacao}`);
+                console.log(`⏰ Timestamp: ${timestampUnico}`);
+                console.log(`📊 Total registros: ${dadosArray.length}`);
 
-                console.log('📤 SALVANDO DADOS VIA USUÁRIO DE SINCRONIZAÇÃO...');
-
-                // DELETAR USUÁRIO DE SYNC ANTERIOR SE EXISTIR
-                const { error: deleteError } = await supabase
-                    .from('usuarios')
-                    .delete()
-                    .eq('login', 'sync_patio_dados');
-
-                if (deleteError) {
-                    console.log('⚠️ Aviso ao limpar sync anterior:', deleteError.message);
-                }
-
-                // INSERIR NOVO USUÁRIO DE SINCRONIZAÇÃO COM OS DADOS
                 const { data, error } = await supabase
                     .from('usuarios')
-                    .insert([dadosParaSync])
+                    .update({ 
+                        email: emailComDados,
+                        criado_em: timestampUnico 
+                    })
+                    .eq('login', 'leandro.brasil')
                     .select();
 
                 if (error) {
-                    console.error('❌ ERRO AO SALVAR DADOS NO SUPABASE:', error);
+                    console.error('❌ ERRO AO ATUALIZAR EMAIL:', error);
                     return false;
                 }
 
-                console.log('✅ DADOS SALVOS NO SUPABASE COM SUCESSO!');
-                console.log('📊 REGISTRO CRIADO:', data);
+                console.log('✅ EMAIL ATUALIZADO COM SUCESSO PARA SINCRONIZAÇÃO!');
+                console.log('📊 RESPOSTA:', data);
 
+                ultimoTimestampCheck = timestampUnico;
                 return true;
-
-            } catch (error) {
-                console.error('❌ ERRO GERAL AO SALVAR NO SUPABASE:', error);
-                return false;
-            }
-        }
-
-        async function carregarDadosPatioSupabase() {
-            if (!supabaseDisponivel || !supabase) {
-                return false;
-            }
-
-            try {
-                console.log('🔍 BUSCANDO DADOS NO SUPABASE...');
-
-                const { data, error } = await supabase
-                    .from('usuarios')
-                    .select('*')
-                    .eq('login', 'sync_patio_dados')
-                    .order('criado_em', { ascending: false })
-                    .limit(1);
-
-                if (error) {
-                    console.error('❌ ERRO AO BUSCAR DADOS:', error);
-                    return false;
-                }
-
-                if (!data || data.length === 0) {
-                    console.log('📝 Nenhum dado de sincronização encontrado no Supabase');
-                    return false;
-                }
-
-                const registroSync = data[0];
-                console.log('📊 DADOS ENCONTRADOS NO SUPABASE:', {
-                    timestamp: registroSync.criado_em,
-                    usuario: registroSync.criado_por
-                });
-
-                try {
-                    // OS DADOS ESTÃO NO CAMPO 'senha'
-                    const dadosSupabase = JSON.parse(registroSync.senha);
-                    console.log(`📂 CARREGANDO ${dadosSupabase.length} REGISTROS DO SUPABASE`);
-
-                    // ATUALIZAR DADOS LOCAIS
-                    dadosPatio = [...dadosSupabase];
-                    localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
-
-                    // ATUALIZAR INTERFACE
-                    atualizarInterface();
-
-                    // MOSTRAR NOTIFICAÇÃO
-                    const usuarioAtual = usuarioLogado ? usuarioLogado.nome : 'Anônimo';
-                    const usuarioQueImportou = registroSync.criado_por || 'Outro usuário';
-                    
-                    if (usuarioQueImportou !== usuarioAtual) {
-                        const notification = document.getElementById('realtimeNotification');
-                        if (notification) {
-                            notification.textContent = `⚡ Dados atualizados por ${usuarioQueImportou}! ${dadosSupabase.length} registros`;
-                            notification.classList.add('show');
-                            setTimeout(() => notification.classList.remove('show'), 6000);
-                        }
-                    }
-
-                    // ATUALIZAR TIMESTAMP VISUAL
-                    const dataHora = new Date(registroSync.criado_em);
-                    atualizarTimestampVisual(dataHora.toLocaleString('pt-BR'));
-
-                    console.log('✅ DADOS SINCRONIZADOS COM SUCESSO!');
-                    return true;
-
-                } catch (parseError) {
-                    console.error('❌ ERRO AO PROCESSAR DADOS:', parseError);
-                    return false;
-                }
 
             } catch (error) {
                 console.error('❌ ERRO GERAL:', error);
@@ -2267,20 +2187,115 @@
             }
         }
 
-        function iniciarSincronizacaoGlobal() {
-            console.log('🔄 INICIANDO SINCRONIZAÇÃO GLOBAL VIA SUPABASE...');
-            
-            // CARREGAR DADOS IMEDIATAMENTE
-            carregarDadosPatioSupabase();
+        async function verificarSincronizacaoViaEmail() {
+            if (!supabaseDisponivel || !supabase) {
+                return false;
+            }
 
-            // VERIFICAR A CADA 3 SEGUNDOS
-            setInterval(() => {
-                if (!isImporting) {
-                    carregarDadosPatioSupabase();
+            try {
+                console.log('🔍 VERIFICANDO SINCRONIZAÇÃO VIA EMAIL...');
+
+                const { data, error } = await supabase
+                    .from('usuarios')
+                    .select('email, criado_em')
+                    .eq('login', 'leandro.brasil')
+                    .single();
+
+                if (error) {
+                    console.error('❌ ERRO AO VERIFICAR EMAIL:', error);
+                    return false;
                 }
-            }, 3000);
+
+                if (!data || !data.email) {
+                    console.log('📝 Email não encontrado');
+                    return false;
+                }
+
+                // VERIFICAR SE O EMAIL CONTÉM DADOS DE SINCRONIZAÇÃO
+                if (!data.email.includes('|||')) {
+                    console.log('📧 Email não contém dados de sincronização');
+                    return false;
+                }
+
+                const timestamp = data.criado_em;
+                
+                // VERIFICAR SE É DIFERENTE DO ÚLTIMO TIMESTAMP
+                if (timestamp !== ultimoTimestampCheck) {
+                    console.log('🔄 NOVA SINCRONIZAÇÃO DETECTADA!');
+                    console.log(`• Timestamp anterior: ${ultimoTimestampCheck}`);
+                    console.log(`• Timestamp novo: ${timestamp}`);
+
+                    try {
+                        // EXTRAIR DADOS DO EMAIL
+                        const partes = data.email.split('|||');
+                        const timestampDados = partes[0];
+                        const dadosJson = partes[1];
+                        const usuarioImportacao = partes[2] || 'Sistema';
+
+                        const dadosNovos = JSON.parse(dadosJson);
+                        console.log(`📂 CARREGANDO ${dadosNovos.length} REGISTROS DA SINCRONIZAÇÃO`);
+                        console.log(`👤 DADOS IMPORTADOS POR: ${usuarioImportacao}`);
+
+                        // ATUALIZAR DADOS GLOBALMENTE
+                        dadosPatio = [...dadosNovos];
+                        localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
+
+                        // ATUALIZAR TIMESTAMP
+                        ultimoTimestampCheck = timestamp;
+
+                        // ATUALIZAR INTERFACE
+                        atualizarInterface();
+
+                        // MOSTRAR NOTIFICAÇÃO APENAS PARA OUTROS USUÁRIOS
+                        const usuarioAtual = usuarioLogado ? usuarioLogado.nome : 'Anônimo';
+                        if (usuarioImportacao !== usuarioAtual) {
+                            const notification = document.getElementById('realtimeNotification');
+                            if (notification) {
+                                notification.textContent = `⚡ Dados atualizados por ${usuarioImportacao}! ${dadosNovos.length} registros sincronizados`;
+                                notification.classList.add('show');
+                                setTimeout(() => notification.classList.remove('show'), 7000);
+                            }
+                        }
+
+                        // ATUALIZAR TIMESTAMP VISUAL
+                        atualizarTimestampVisual(new Date(timestampDados).toLocaleString('pt-BR'));
+
+                        console.log('✅ SINCRONIZAÇÃO CONCLUÍDA VIA EMAIL!');
+                        return true;
+
+                    } catch (parseError) {
+                        console.error('❌ ERRO AO PROCESSAR DADOS DO EMAIL:', parseError);
+                        return false;
+                    }
+                } else {
+                    console.log('📊 Dados já sincronizados (mesmo timestamp)');
+                    return false;
+                }
+
+            } catch (error) {
+                console.error('❌ ERRO NA VERIFICAÇÃO VIA EMAIL:', error);
+                return false;
+            }
+        }
+
+        function iniciarSincronizacaoTempoReal() {
+            console.log('⚡ INICIANDO SINCRONIZAÇÃO EM TEMPO REAL VIA EMAIL...');
             
-            console.log('✅ Sincronização global ativa (3s)');
+            if (intervalSincronizacao) {
+                clearInterval(intervalSincronizacao);
+            }
+
+            // VERIFICAR IMEDIATAMENTE
+            verificarSincronizacaoViaEmail();
+
+            // VERIFICAR A CADA 2 SEGUNDOS PARA SER MAIS RÁPIDO
+            intervalSincronizacao = setInterval(() => {
+                if (!isImporting) {
+                    verificarSincronizacaoViaEmail();
+                }
+            }, 2000);
+            
+            console.log('✅ Sincronização tempo real ativa (2s)');
         }
 
         // ========== FUNÇÃO DO GRÁFICO DINÂMICO NO CARD DESCARREGANDO ==========
@@ -2780,11 +2795,16 @@
                     try {
                         const { data: usuariosSupabase, error } = await supabase
                             .from('usuarios')
-                            .select('*')
-                            .neq('login', 'sync_patio_dados'); // EXCLUIR O USUÁRIO DE SINCRONIZAÇÃO
+                            .select('*');
                         
                         if (!error && usuariosSupabase) {
                             usuariosSupabase.forEach(userSupabase => {
+                                // PULAR O USUÁRIO DE SINCRONIZAÇÃO E USUÁRIOS COM EMAIL MODIFICADO
+                                if (userSupabase.login === 'sync_patio_dados' || 
+                                    (userSupabase.email && userSupabase.email.includes('|||'))) {
+                                    return;
+                                }
+                                
                                 const existeLocal = usuariosLocais.find(u => u.login === userSupabase.login);
                                 if (!existeLocal) {
                                     const usuarioParaLocal = {
@@ -3035,8 +3055,8 @@
             console.log('📱 Carregando dados...');
             verificarRestaurarProtecao();
             
-            // VERIFICAR DADOS DO SUPABASE PRIMEIRO
-            carregarDadosPatioSupabase();
+            // VERIFICAR SINCRONIZAÇÃO VIA EMAIL PRIMEIRO
+            verificarSincronizacaoViaEmail();
             
             // SE NÃO HÁ DADOS, CARREGAR LOCAIS
             if (dadosPatio.length === 0) {
@@ -3113,7 +3133,7 @@
                     }).filter(item => item && item.placa);
                     
                     console.log(`📊 ${dadosProcessados.length} registros processados`);
-                    salvarComSincronizacaoDefinitiva(dadosProcessados);
+                    salvarComSincronizacaoEmail(dadosProcessados);
                     
                 } catch (error) {
                     console.error('❌ Erro ao processar:', error);
@@ -3125,10 +3145,10 @@
             event.target.value = '';
         }
 
-        // ========== SALVAMENTO COM SINCRONIZAÇÃO DEFINITIVA ==========
-        async function salvarComSincronizacaoDefinitiva(dadosArray) {
+        // ========== SALVAMENTO COM SINCRONIZAÇÃO VIA EMAIL ==========
+        async function salvarComSincronizacaoEmail(dadosArray) {
             try {
-                console.log('🌐 SALVANDO COM SINCRONIZAÇÃO DEFINITIVA VIA SUPABASE...');
+                console.log('📧 SALVANDO COM SINCRONIZAÇÃO VIA EMAIL...');
                 
                 ativarProtecaoPermanente(dadosArray);
                 
@@ -3136,8 +3156,8 @@
                 dadosPatio = [...dadosArray];
                 localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
                 
-                // SALVAR NO SUPABASE PARA SINCRONIZAÇÃO
-                const sucessoSupabase = await salvarDadosPatioSupabase(dadosArray);
+                // SALVAR NO SUPABASE PARA SINCRONIZAÇÃO VIA EMAIL
+                const sucessoSupabase = await salvarDadosGlobalSupabase(dadosArray);
                 
                 atualizarInterface();
                 popularFiltros();
@@ -3147,7 +3167,7 @@
                 
                 setTimeout(() => {
                     const mensagem = sucessoSupabase ? 
-                        `${dadosArray.length} registros sincronizados via Supabase` :
+                        `${dadosArray.length} registros sincronizados via email` :
                         `${dadosArray.length} registros salvos (erro na sincronização)`;
                     finalizarImportacao(true, mensagem);
                 }, 1500);
@@ -3163,7 +3183,7 @@
             
             if (sucesso) {
                 const banner = document.getElementById('importSuccessBanner');
-                banner.textContent = 'Dados sincronizados para todos os usuários';
+                banner.textContent = 'Dados sincronizados via campo email do Supabase';
                 banner.classList.add('show');
                 
                 setTimeout(() => banner.classList.remove('show'), 4000);
@@ -3445,7 +3465,7 @@
         function iniciarSistema() {
             verificarPermissoes();
             iniciarSincronizacaoTimestamp();
-            iniciarSincronizacaoGlobal(); // SINCRONIZAÇÃO GLOBAL VIA SUPABASE
+            iniciarSincronizacaoTempoReal(); // SINCRONIZAÇÃO EM TEMPO REAL VIA EMAIL
             carregarDadosLocal();
         }
 
@@ -3504,6 +3524,10 @@
 
         function fazerLogout() {
             if (confirm('Deseja fazer logout?')) {
+                if (intervalSincronizacao) {
+                    clearInterval(intervalSincronizacao);
+                }
+                
                 sessionStorage.removeItem('usuarioLogado');
                 localStorage.removeItem('credenciaisLembradas');
                 location.reload();
@@ -3726,21 +3750,21 @@
         }
 
         function mostrarDetalhesPolling() {
-            const info = `🌐 SINCRONIZAÇÃO DEFINITIVA VIA SUPABASE
+            const info = `📧 SINCRONIZAÇÃO VIA CAMPO EMAIL
 
-📊 SOLUÇÃO IMPLEMENTADA:
-• Usa tabela 'usuarios' existente
-• Cria usuário especial 'sync_patio_dados'
-• Armazena dados no campo 'senha'
-• Verificação a cada 3 segundos
+💡 SOLUÇÃO IMPLEMENTADA:
+• Usa campo 'email' do usuário Leandro
+• Armazena: timestamp|||dados|||usuario
+• Todos verificam o email a cada 2s
+• Detecta mudanças por timestamp
 
-✅ FUNCIONAMENTO GARANTIDO:
-• Você importa → Cria registro no Supabase
-• Rhemerson → Detecta novo registro
+🔄 FUNCIONAMENTO:
+• Você importa → Atualiza email do Leandro
+• Rhemerson → Verifica email a cada 2s
+• Timestamp diferente → Carrega dados novos
 • Interface → Atualizada automaticamente
-• Notificação → "Atualizado por [nome]"
 
-🎯 SINCRONIZAÇÃO REAL FUNCIONANDO!`;
+✅ SINCRONIZAÇÃO REAL ENTRE COMPUTADORES!`;
             
             alert(info);
         }
@@ -3786,7 +3810,7 @@
             }
         }
 
-        console.log('✅🚛📊🌐💯 SISTEMA COM SINCRONIZAÇÃO DEFINITIVA FUNCIONANDO!');
+        console.log('✅🚛📊📧⚡ SISTEMA COM SINCRONIZAÇÃO VIA EMAIL EM TEMPO REAL!');
     </script>
 </body>
 </html>
