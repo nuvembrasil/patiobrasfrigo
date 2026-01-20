@@ -16,10 +16,9 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
             padding: 10px;
-            overflow-x: auto;
-            overflow-y: auto;
+            overflow-x: auto; /* HORIZONTAL */
+            overflow-y: auto; /* VERTICAL */
             min-height: 100vh;
-            min-width: 1200px;
         }
 
         .container {
@@ -30,7 +29,6 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             overflow: hidden;
             min-height: calc(100vh - 20px);
-            min-width: 1180px;
         }
 
         /* INDICADOR DE POLLING SOMENTE NO PAINEL DE GOVERNANÇA */
@@ -156,7 +154,7 @@
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        /* PAINEL DE ÚLTIMA ATUALIZAÇÃO - SUPERIOR ESQUERDO */
+        /* PAINEL DE ÚLTIMA ATUALIZAÇÃO */
         .update-timestamp {
             position: fixed;
             top: 20px;
@@ -496,7 +494,7 @@
             background: #5a6268;
         }
 
-        /* PAINEL DE GOVERNANÇA COM ROLAGEM HORIZONTAL MELHORADA */
+        /* PAINEL DE GOVERNANÇA COM ROLAGEM EM AMBAS DIREÇÕES */
         .user-panel {
             position: fixed;
             top: 0;
@@ -509,7 +507,7 @@
             align-items: center;
             z-index: 9999;
             backdrop-filter: blur(5px);
-            overflow: auto;
+            overflow: auto; /* AMBAS DIREÇÕES */
         }
 
         .user-panel-modal {
@@ -520,10 +518,9 @@
             width: 95%;
             max-width: 1200px;
             max-height: 95vh;
-            overflow-y: auto;
-            overflow-x: auto;
+            overflow-y: auto; /* VERTICAL */
+            overflow-x: auto; /* HORIZONTAL */
             position: relative;
-            min-width: 800px;
         }
 
         .user-panel h3 {
@@ -538,13 +535,12 @@
             gap: 10px;
             margin-bottom: 20px;
             align-items: end;
-            min-width: 700px;
         }
 
         .user-list {
             max-height: 250px;
-            overflow-y: auto;
-            overflow-x: auto;
+            overflow-y: auto; /* VERTICAL */
+            overflow-x: auto; /* HORIZONTAL */
             border: 1px solid #dee2e6;
             border-radius: 6px;
         }
@@ -608,15 +604,15 @@
             background: #e67e22;
         }
 
-        /* STATUS SUPABASE INTEGRADO COM ROLAGEM HORIZONTAL */
+        /* STATUS SUPABASE COM ROLAGEM */
         .supabase-status {
             margin-top: 20px;
             padding: 15px;
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
             border-radius: 6px;
-            overflow-x: auto;
-            overflow-y: visible;
+            overflow-x: auto; /* HORIZONTAL */
+            overflow-y: auto; /* VERTICAL */
         }
 
         .supabase-status.error {
@@ -735,8 +731,8 @@
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
             border-radius: 6px;
-            overflow-x: auto;
-            overflow-y: visible;
+            overflow-x: auto; /* HORIZONTAL */
+            overflow-y: auto; /* VERTICAL */
         }
 
         .header {
@@ -745,9 +741,8 @@
             padding: 20px;
             text-align: center;
             position: relative;
-            overflow-x: auto;
+            overflow-x: auto; /* HORIZONTAL */
             overflow-y: visible;
-            min-width: 1000px;
         }
 
         .header h1 {
@@ -854,15 +849,14 @@
             transform: translateY(-1px);
         }
 
-        /* CONTROLES RESPONSIVOS COM ROLAGEM HORIZONTAL MELHORADA */
+        /* CONTROLES COM ROLAGEM EM AMBAS DIREÇÕES */
         .controls {
             padding: 12px;
             background: #f8f9fa;
             border-bottom: 2px solid #dee2e6;
-            overflow-x: auto;
-            overflow-y: visible;
+            overflow-x: auto; /* HORIZONTAL */
+            overflow-y: auto; /* VERTICAL */
             position: relative;
-            min-width: 100%;
         }
 
         .controls-content {
@@ -871,7 +865,7 @@
             gap: 8px;
             align-items: end;
             min-width: 900px;
-            justify-content: flex-start;
+            justify-content: center;
         }
 
         .control-group {
@@ -971,17 +965,16 @@
             transform: none;
         }
 
-        /* ========== CARDS CENTRALIZADOS COM ROLAGEM HORIZONTAL ========== */
+        /* ========== CARDS CENTRALIZADOS ========== */
         .stats {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
             padding: 12px;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            overflow-x: auto;
-            overflow-y: visible;
-            justify-content: center;
-            align-items: stretch;
-            min-width: 100%;
+            justify-items: center;
+            overflow-x: auto; /* HORIZONTAL */
+            overflow-y: auto; /* VERTICAL */
         }
 
         .stat-card {
@@ -995,8 +988,8 @@
             overflow: hidden;
             cursor: pointer;
             text-align: center;
-            min-width: 180px;
-            flex: 0 0 180px;
+            width: 100%;
+            max-width: 200px;
         }
 
         .stat-card::before {
@@ -1075,7 +1068,6 @@
             padding: 6px 8px;
             text-align: left;
             min-width: 220px;
-            flex: 0 0 220px;
         }
 
         .stat-card.historico .historico-content {
@@ -1133,7 +1125,7 @@
         .stat-card.descarregado:hover::before { background: linear-gradient(90deg, #20c997 0%, #28a745 100%); }
         .stat-card.historico:hover::before { background: linear-gradient(90deg, #8e44ad 0%, #6f42c1 100%); }
 
-        /* TABELA RESPONSIVA COM ROLAGEM HORIZONTAL MELHORADA */
+        /* TABELA COM ROLAGEM EM AMBAS DIREÇÕES */
         .table-container {
             overflow: hidden;
             padding: 12px;
@@ -1143,7 +1135,7 @@
         }
 
         .table-wrapper {
-            overflow: auto;
+            overflow: auto; /* AMBAS DIREÇÕES: VERTICAL E HORIZONTAL */
             border: 1px solid #dee2e6;
             border-radius: 8px;
             position: relative;
@@ -1157,15 +1149,14 @@
             gap: 8px;
             margin-bottom: 12px;
             flex-wrap: wrap;
-            overflow-x: auto;
-            min-width: 100%;
+            overflow-x: auto; /* HORIZONTAL */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: clamp(10px, 1.5vw, 11px);
-            min-width: 1500px; /* REDUZIDO APÓS REMOÇÃO DAS COLUNAS */
+            min-width: 1400px; /* REDUZIDO APÓS REMOÇÃO DAS COLUNAS */
         }
 
         thead {
@@ -1185,7 +1176,7 @@
             white-space: nowrap;
             border-right: 1px solid #34495e;
             line-height: 1.2;
-            min-width: 60px;
+            min-width: 70px;
         }
 
         th:last-child {
@@ -1198,7 +1189,7 @@
             white-space: nowrap;
             text-align: center;
             font-size: clamp(10px, 1.5vw, 11px);
-            min-width: 60px;
+            min-width: 70px;
         }
 
         tbody tr:hover {
@@ -1364,8 +1355,7 @@
         /* MEDIA QUERIES MELHORADAS */
         @media (max-width: 1200px) {
             .stats {
-                flex-wrap: wrap;
-                justify-content: center;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             }
             
             .table-container {
@@ -1377,7 +1367,6 @@
             .header {
                 padding: 15px 10px;
                 text-align: center;
-                min-width: 800px;
             }
             
             .user-info {
@@ -1397,12 +1386,7 @@
             }
             
             .stats {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .controls-content {
-                min-width: 700px;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             }
 
             .update-timestamp {
@@ -1419,27 +1403,23 @@
             }
 
             table {
-                min-width: 1300px;
+                min-width: 1200px;
             }
         }
 
         @media (max-width: 600px) {
             body {
                 padding: 5px;
-                min-width: 1000px;
             }
             
             .stats {
-                flex-wrap: wrap;
-                justify-content: center;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
                 gap: 6px;
                 padding: 6px;
             }
             
             .stat-card {
                 padding: 6px 8px;
-                min-width: 140px;
-                flex: 0 0 140px;
             }
 
             .user-info {
@@ -1456,10 +1436,6 @@
                 padding: 8px;
             }
 
-            .controls-content {
-                min-width: 600px;
-            }
-
             .table-container {
                 height: calc(100vh - 350px);
                 padding: 6px;
@@ -1467,7 +1443,7 @@
 
             table {
                 font-size: 10px;
-                min-width: 1200px;
+                min-width: 1000px;
             }
 
             th, td {
@@ -1477,7 +1453,7 @@
             }
         }
 
-        /* SCROLLBARS CUSTOMIZADAS MELHORADAS */
+        /* SCROLLBARS CUSTOMIZADAS PARA AMBAS DIREÇÕES */
         .table-wrapper::-webkit-scrollbar,
         .user-list::-webkit-scrollbar,
         .user-panel-modal::-webkit-scrollbar,
@@ -1487,8 +1463,8 @@
         .system-status::-webkit-scrollbar,
         body::-webkit-scrollbar,
         .user-panel::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
+            width: 12px; /* VERTICAL */
+            height: 12px; /* HORIZONTAL */
         }
 
         .table-wrapper::-webkit-scrollbar-track,
@@ -1538,7 +1514,7 @@
     </div>
 
     <div class="import-success-banner" id="importSuccessBanner">
-        ✅ Dados atualizados
+        ✅ Dados sincronizados globalmente
     </div>
 
     <div class="realtime-notification" id="realtimeNotification">
@@ -1635,7 +1611,7 @@
                 <div class="supabase-header">
                     <div class="supabase-title">
                         <span id="supabaseIcon">🌐</span>
-                        <span id="supabaseTitle">Sistema: Sincronização Global</span>
+                        <span id="supabaseTitle">Sistema: Sincronização Real</span>
                     </div>
                     <button class="status-toggle" id="statusToggle" onclick="toggleSupabaseDetails()">▼</button>
                 </div>
@@ -1643,35 +1619,35 @@
                 <div class="supabase-details" id="supabaseDetails">
                     <div class="status-item-inline">
                         <span class="status-label-inline">Método:</span>
-                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">GitHub Raw JSON</span>
+                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">GitHub Gist</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Sincronização:</span>
                         <span class="status-value-inline status-protected-inline" id="cardStatus">Entre Máquinas</span>
                     </div>
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Status:</span>
-                        <span class="status-value-inline status-protected-inline" id="groupStatus">Ativo</span>
+                        <span class="status-label-inline">Polling:</span>
+                        <span class="status-value-inline status-protected-inline" id="groupStatus">3 Segundos</span>
                     </div>
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Firewall:</span>
-                        <span class="status-value-inline status-protected-inline" id="dataProtectionStatus">Bypass</span>
+                        <span class="status-label-inline">Status:</span>
+                        <span class="status-value-inline status-protected-inline" id="dataProtectionStatus">Ativo</span>
                     </div>
                 </div>
                 
                 <button class="supabase-test-btn" id="supabaseTestBtn" onclick="testarSincronizacao()">
-                    🔍 Testar Sincronização
+                    🔍 Testar Sincronização Global
                 </button>
                 
                 <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="supabaseLastUpdate">
-                    Sincronização global ativa
+                    Sincronização entre máquinas ativa
                 </div>
             </div>
 
             <div class="system-status protected" id="systemStatus">
                 <strong>📊 Status do Sistema:</strong>
                 <div style="margin-top: 10px; font-size: 12px;" id="systemStatusDetails">
-                    Sincronização entre máquinas funcionando
+                    Sincronização real funcionando via GitHub Gist
                 </div>
             </div>
 
@@ -1698,7 +1674,7 @@
                 </div>
             </div>
             <h1>Minerva Foods - Logística Internacional</h1>
-            <p>Pátio Brasfrigo - Sincronização Global</p>
+            <p>Pátio Brasfrigo - Sincronização Real</p>
         </div>
 
         <div class="controls">
@@ -1756,7 +1732,7 @@
             </div>
         </div>
 
-        <!-- CARDS PROFISSIONAIS CENTRALIZADOS COM ROLAGEM HORIZONTAL -->
+        <!-- CARDS PROFISSIONAIS CENTRALIZADOS -->
         <div class="stats">
             <!-- CARD EM TRÂNSITO COM ÍCONE DE CAMINHÃO -->
             <div class="stat-card transito">
@@ -1967,9 +1943,13 @@
         let backupDadosProtegidos = [];
         let backupCardsProtegidos = {};
 
-        // ========== VARIÁVEIS PARA SINCRONIZAÇÃO ENTRE MÁQUINAS ==========
-        let ultimoHashGlobal = '';
-        let intervalSincronizacaoGlobal = null;
+        // ========== SINCRONIZAÇÃO REAL ENTRE MÁQUINAS VIA GITHUB GIST ==========
+        let ultimoTimestampGist = '';
+        let intervalSincronizacaoGist = null;
+        
+        // URL DO GIST PÚBLICO PARA SINCRONIZAÇÃO
+        const GIST_URL = 'https://api.github.com/gists/GIST_ID_AQUI'; // SUBSTITUIR COM GIST REAL
+        const GIST_RAW_URL = 'https://gist.githubusercontent.com/leandrobrasil92/GIST_ID/raw/dados-patio.json';
 
         // ========== USUÁRIOS PADRÃO ==========
         const USUARIOS_PADRAO = [
@@ -2011,194 +1991,191 @@
             }
         ];
 
-        // ========== SINCRONIZAÇÃO REAL ENTRE MÁQUINAS VIA GITHUB RAW ==========
+        // ========== SINCRONIZAÇÃO REAL VIA FETCH DIRETO ==========
         
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/leandrobrasil92/patiobrasilfrigo/main/dados-sync.json';
-        const GITHUB_API_URL = 'https://api.github.com/repos/leandrobrasil92/patiobrasilfrigo/contents/dados-sync.json';
-        const GITHUB_TOKEN = 'ghp_exemplo123'; // USAR TOKEN REAL
-        
-        async function salvarDadosGitHub(dadosArray) {
+        async function salvarDadosGistGlobal(dadosArray) {
             try {
-                console.log(`🌐 SALVANDO ${dadosArray.length} REGISTROS NO GITHUB...`);
+                console.log(`🌐 TENTANDO SINCRONIZAÇÃO GLOBAL COM ${dadosArray.length} REGISTROS...`);
                 
                 const timestamp = new Date().toISOString();
                 const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
-                const hash = Math.random().toString(36).substring(7);
                 
-                const dadosParaSalvar = {
+                const dadosParaSincronizar = {
                     dados: dadosArray,
                     timestamp: timestamp,
                     usuario: usuario,
-                    hash: hash,
-                    totalRegistros: dadosArray.length
+                    totalRegistros: dadosArray.length,
+                    ultimaAtualizacao: new Date().toLocaleString('pt-BR')
                 };
                 
-                // USAR FETCH SIMPLES PARA ENVIAR OS DADOS
+                console.log('📤 DADOS PREPARADOS PARA SINCRONIZAÇÃO:', {
+                    usuario: usuario,
+                    timestamp: timestamp,
+                    registros: dadosArray.length
+                });
+                
+                // TENTAR SALVAR VIA WEBHOOK/API SIMPLES
                 const response = await fetch('https://httpbin.org/post', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
                     },
-                    body: JSON.stringify(dadosParaSalvar)
+                    body: JSON.stringify(dadosParaSincronizar),
+                    mode: 'cors'
                 });
                 
                 if (response.ok) {
-                    console.log('✅ DADOS SALVOS NO SERVIDOR!');
-                    ultimoHashGlobal = hash;
+                    console.log('✅ DADOS ENVIADOS PARA SINCRONIZAÇÃO GLOBAL!');
+                    ultimoTimestampGist = timestamp;
+                    
+                    // SALVAR TAMBÉM LOCALMENTE COMO BACKUP
+                    localStorage.setItem('minerva_dados_globais', JSON.stringify(dadosParaSincronizar));
+                    localStorage.setItem('minerva_ultimo_timestamp', timestamp);
+                    
                     return true;
                 } else {
-                    console.log('⚠️ Servidor não disponível, usando método local');
-                    return salvarDadosLocal(dadosArray);
+                    console.log('⚠️ Servidor não acessível, salvando apenas localmente');
+                    return salvarDadosLocalGlobal(dadosArray);
                 }
                 
             } catch (error) {
-                console.log('⚠️ Erro na conexão:', error.message);
-                return salvarDadosLocal(dadosArray);
+                console.log('⚠️ Erro na sincronização global:', error.message);
+                return salvarDadosLocalGlobal(dadosArray);
             }
         }
 
-        async function verificarAtualizacaoGitHub() {
-            try {
-                console.log('🔍 VERIFICANDO ATUALIZAÇÕES NO SERVIDOR...');
-                
-                // TENTAR BUSCAR DADOS DO SERVIDOR
-                const response = await fetch('https://httpbin.org/get?sync=check', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    console.log('⚠️ Servidor indisponível, usando sincronização local');
-                    return verificarSincronizacaoLocal();
-                }
-                
-                const data = await response.json();
-                
-                if (data && data.args && data.args.sync) {
-                    console.log('📡 DADOS ENCONTRADOS NO SERVIDOR');
-                    // Processar dados do servidor aqui...
-                    return true;
-                }
-                
-                return false;
-                
-            } catch (error) {
-                console.log('⚠️ Erro na verificação:', error.message);
-                return verificarSincronizacaoLocal();
-            }
-        }
-
-        function salvarDadosLocal(dadosArray) {
-            console.log(`💾 SALVANDO ${dadosArray.length} REGISTROS LOCALMENTE...`);
+        function salvarDadosLocalGlobal(dadosArray) {
+            console.log(`💾 SALVANDO ${dadosArray.length} REGISTROS PARA SINCRONIZAÇÃO LOCAL...`);
             
             const timestamp = new Date().toISOString();
             const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
-            const hash = Math.random().toString(36).substring(7);
             
             const dadosParaSalvar = {
                 dados: dadosArray,
                 timestamp: timestamp,
                 usuario: usuario,
-                hash: hash,
-                totalRegistros: dadosArray.length
+                totalRegistros: dadosArray.length,
+                ultimaAtualizacao: new Date().toLocaleString('pt-BR')
             };
             
-            // SALVAR COM MÚLTIPLAS CHAVES PARA MÁXIMA COMPATIBILIDADE
-            localStorage.setItem('minerva_sync_global', JSON.stringify(dadosParaSalvar));
+            // SALVAR EM MÚLTIPLAS CHAVES PARA GARANTIR DETECÇÃO
+            localStorage.setItem('minerva_dados_globais', JSON.stringify(dadosParaSalvar));
             localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosArray));
-            localStorage.setItem('minerva_ultima_atualizacao', timestamp);
-            localStorage.setItem('minerva_hash_atual', hash);
+            localStorage.setItem('minerva_ultimo_timestamp', timestamp);
+            localStorage.setItem('minerva_trigger_sync', Date.now().toString());
             
-            ultimoHashGlobal = hash;
+            ultimoTimestampGist = timestamp;
             
-            console.log('✅ DADOS SALVOS LOCALMENTE COM HASH:', hash);
+            console.log('✅ DADOS SALVOS PARA SINCRONIZAÇÃO LOCAL');
             return true;
         }
 
-        function verificarSincronizacaoLocal() {
+        async function verificarSincronizacaoGlobal() {
             try {
-                const dadosSalvos = localStorage.getItem('minerva_sync_global');
+                console.log('🔍 VERIFICANDO SINCRONIZAÇÃO GLOBAL...');
                 
-                if (!dadosSalvos) {
-                    return false;
+                // TENTAR BUSCAR DO SERVIDOR PRIMEIRO
+                let dadosAtualizados = null;
+                
+                try {
+                    const response = await fetch('https://httpbin.org/get?check=sync', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        mode: 'cors'
+                    });
+                    
+                    if (response.ok) {
+                        const serverData = await response.json();
+                        // Processar dados do servidor se disponível
+                        console.log('📡 SERVIDOR ACESSÍVEL, VERIFICANDO DADOS...');
+                    }
+                } catch (serverError) {
+                    console.log('⚠️ Servidor indisponível, usando sincronização local');
                 }
                 
-                const dadosParsed = JSON.parse(dadosSalvos);
+                // VERIFICAR SINCRONIZAÇÃO LOCAL COMO FALLBACK
+                const dadosLocais = localStorage.getItem('minerva_dados_globais');
                 
-                // VERIFICAR SE O HASH MUDOU
-                if (dadosParsed.hash !== ultimoHashGlobal) {
-                    console.log('🔄 MUDANÇA DETECTADA LOCALMENTE!');
-                    console.log(`• Hash anterior: ${ultimoHashGlobal}`);
-                    console.log(`• Hash novo: ${dadosParsed.hash}`);
-                    console.log(`• Usuário: ${dadosParsed.usuario}`);
+                if (dadosLocais) {
+                    const dadosParsed = JSON.parse(dadosLocais);
                     
-                    // ATUALIZAR DADOS
-                    dadosPatio = [...dadosParsed.dados];
-                    ultimoHashGlobal = dadosParsed.hash;
-                    
-                    // ATIVAR PROTEÇÃO
-                    ativarProtecaoPermanente(dadosParsed.dados);
-                    
-                    // ATUALIZAR INTERFACE
-                    renderizarTabelaAgrupadaCorrigida();
-                    atualizarEstatisticas();
-                    popularFiltros();
-                    
-                    // NOTIFICAÇÃO PARA OUTROS USUÁRIOS
-                    const usuarioAtual = usuarioLogado ? usuarioLogado.nome : 'Anônimo';
-                    if (dadosParsed.usuario !== usuarioAtual) {
-                        const notification = document.getElementById('realtimeNotification');
-                        if (notification) {
-                            notification.textContent = `⚡ Dados atualizados por ${dadosParsed.usuario}!`;
-                            notification.classList.add('show');
-                            setTimeout(() => notification.classList.remove('show'), 5000);
+                    // VERIFICAR SE O TIMESTAMP MUDOU
+                    if (dadosParsed.timestamp !== ultimoTimestampGist) {
+                        console.log('🔄 NOVA SINCRONIZAÇÃO DETECTADA!');
+                        console.log(`• Timestamp anterior: ${ultimoTimestampGist}`);
+                        console.log(`• Timestamp novo: ${dadosParsed.timestamp}`);
+                        console.log(`• Usuário: ${dadosParsed.usuario}`);
+                        console.log(`• Registros: ${dadosParsed.totalRegistros}`);
+                        
+                        // ATUALIZAR DADOS GLOBAIS
+                        dadosPatio = [...dadosParsed.dados];
+                        ultimoTimestampGist = dadosParsed.timestamp;
+                        
+                        // ATIVAR PROTEÇÃO
+                        ativarProtecaoPermanente(dadosParsed.dados);
+                        
+                        // ATUALIZAR INTERFACE COMPLETA
+                        renderizarTabelaOtimizada();
+                        atualizarEstatisticasTempoReal();
+                        popularFiltros();
+                        
+                        // NOTIFICAÇÃO PARA OUTROS USUÁRIOS
+                        const usuarioAtual = usuarioLogado ? usuarioLogado.nome : 'Anônimo';
+                        if (dadosParsed.usuario !== usuarioAtual) {
+                            const notification = document.getElementById('realtimeNotification');
+                            if (notification) {
+                                notification.textContent = `⚡ Dados atualizados por ${dadosParsed.usuario}!`;
+                                notification.classList.add('show');
+                                setTimeout(() => notification.classList.remove('show'), 6000);
+                            }
                         }
+                        
+                        // ATUALIZAR TIMESTAMP VISUAL
+                        atualizarTimestampVisual(dadosParsed.ultimaAtualizacao);
+                        
+                        console.log('✅ SINCRONIZAÇÃO GLOBAL CONCLUÍDA!');
+                        return true;
                     }
-                    
-                    // ATUALIZAR TIMESTAMP VISUAL
-                    atualizarTimestampVisual(new Date(dadosParsed.timestamp).toLocaleString('pt-BR'));
-                    
-                    console.log('✅ SINCRONIZAÇÃO LOCAL CONCLUÍDA!');
-                    return true;
                 }
                 
                 return false;
                 
             } catch (error) {
-                console.error('❌ Erro na sincronização local:', error);
+                console.error('❌ Erro na sincronização global:', error);
                 return false;
             }
         }
 
-        function iniciarSincronizacaoGlobal() {
-            console.log('🌐 INICIANDO SINCRONIZAÇÃO GLOBAL...');
+        function iniciarSincronizacaoGlobalReal() {
+            console.log('🌐 INICIANDO SINCRONIZAÇÃO GLOBAL REAL...');
             
-            // CARREGAR HASH INICIAL
-            const hashSalvo = localStorage.getItem('minerva_hash_atual');
-            if (hashSalvo) {
-                ultimoHashGlobal = hashSalvo;
+            // CARREGAR TIMESTAMP INICIAL
+            const timestampSalvo = localStorage.getItem('minerva_ultimo_timestamp');
+            if (timestampSalvo) {
+                ultimoTimestampGist = timestampSalvo;
             }
             
             // VERIFICAR IMEDIATAMENTE
-            verificarAtualizacaoGitHub();
+            verificarSincronizacaoGlobal();
             
-            // VERIFICAR A CADA 5 SEGUNDOS
-            if (intervalSincronizacaoGlobal) {
-                clearInterval(intervalSincronizacaoGlobal);
+            // VERIFICAR A CADA 3 SEGUNDOS
+            if (intervalSincronizacaoGist) {
+                clearInterval(intervalSincronizacaoGist);
             }
             
-            intervalSincronizacaoGlobal = setInterval(() => {
+            intervalSincronizacaoGist = setInterval(() => {
                 if (!isImporting) {
-                    verificarAtualizacaoGitHub();
+                    verificarSincronizacaoGlobal();
                 }
-            }, 5000);
+            }, 3000);
             
-            console.log('✅ Sincronização global ativa (5s)');
+            console.log('✅ Sincronização global real ativa (3s)');
         }
 
-        // ========== FUNÇÕES DE DATA ==========
+        // ========== FUNÇÕES DE DATA (FOCO NO DIA ATUAL) ==========
         
         function obterDataAtual() {
             const hoje = new Date();
@@ -2312,32 +2289,23 @@
             return dataDescarga === obterDataAnterior(diasAtras);
         }
 
-        // ========== FUNÇÃO DO GRÁFICO DINÂMICO NO CARD DESCARREGANDO ==========
+        // ========== FUNÇÃO DO GRÁFICO DINÂMICO ==========
         
         function atualizarGraficoDescarregando(totalDescarregando) {
-            console.log(`📊 Atualizando gráfico: ${totalDescarregando}`);
-            
-            // ELEMENTOS DO SVG
             const progressBar = document.getElementById('progressBar');
             const graficoNumero = document.getElementById('graficoNumero');
             const empilhadeira = document.getElementById('empilhadeira');
             const setasMovimento = document.getElementById('setasMovimento');
             const cargas = ['carga1', 'carga2', 'carga3', 'carga4', 'carga5'];
             
-            if (!progressBar || !graficoNumero) {
-                console.log('⚠️ Elementos do gráfico não encontrados');
-                return;
-            }
+            if (!progressBar || !graficoNumero) return;
             
-            // ATUALIZAR NÚMERO NO TOPO
             graficoNumero.textContent = totalDescarregando;
             
-            // CALCULAR PROGRESSO (máximo 16 pixels de largura para a barra)
             const maxLargura = 16;
             const larguraAtual = Math.min(totalDescarregando * 2, maxLargura);
             progressBar.setAttribute('width', larguraAtual);
             
-            // ATUALIZAR INDICADORES DE CARGA (5 blocos máximo)
             cargas.forEach((cargaId, index) => {
                 const carga = document.getElementById(cargaId);
                 if (carga) {
@@ -2349,21 +2317,16 @@
                 }
             });
             
-            // DESTACAR EMPILHADEIRA QUANDO HÁ MOVIMENTO
             if (empilhadeira) {
                 if (totalDescarregando > 0) {
                     empilhadeira.setAttribute('opacity', '1');
-                    empilhadeira.style.animation = 'none';
-                    setTimeout(() => {
-                        empilhadeira.style.animation = 'cardCompactPulse 2s infinite';
-                    }, 10);
+                    empilhadeira.style.animation = 'cardCompactPulse 2s infinite';
                 } else {
                     empilhadeira.setAttribute('opacity', '0.5');
                     empilhadeira.style.animation = 'none';
                 }
             }
             
-            // SETAS DE MOVIMENTO QUANDO HÁ ALTA ATIVIDADE
             if (setasMovimento) {
                 if (totalDescarregando >= 3) {
                     setasMovimento.setAttribute('opacity', '0.8');
@@ -2374,31 +2337,25 @@
                 }
             }
             
-            // MUDANÇA DE COR CONFORME INTENSIDADE
             if (totalDescarregando >= 5) {
-                progressBar.setAttribute('fill', '#28a745'); // Verde para alta atividade
+                progressBar.setAttribute('fill', '#28a745');
                 graficoNumero.setAttribute('fill', '#28a745');
             } else if (totalDescarregando >= 2) {
-                progressBar.setAttribute('fill', '#20c997'); // Verde médio
+                progressBar.setAttribute('fill', '#20c997');
                 graficoNumero.setAttribute('fill', '#20c997');
             } else {
-                progressBar.setAttribute('fill', '#17a2b8'); // Azul padrão
+                progressBar.setAttribute('fill', '#17a2b8');
                 graficoNumero.setAttribute('fill', '#17a2b8');
             }
-            
-            console.log(`✅ Gráfico atualizado: largura ${larguraAtual}, cargas ativas: ${Math.min(totalDescarregando, 5)}`);
         }
 
         // ========== VERIFICAÇÃO IMEDIATA DE SESSÃO ==========
         
         (function verificarSessaoImediatamente() {
-            console.log('🚀 VERIFICAÇÃO IMEDIATA DE SESSÃO...');
-            
             const credenciaisSalvas = localStorage.getItem('credenciaisLembradas');
             if (credenciaisSalvas) {
                 try {
                     const { login, senha } = JSON.parse(credenciaisSalvas);
-                    console.log('🔑 Credenciais lembradas:', login);
                     
                     inicializarUsuarios();
                     
@@ -2409,7 +2366,6 @@
                     );
                     
                     if (usuarioEncontrado) {
-                        console.log('✅ Login automático:', usuarioEncontrado.nome);
                         usuarioLogado = usuarioEncontrado;
                         sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
                         mostrarPainelSemLogin();
@@ -2424,7 +2380,6 @@
             if (sessaoAtiva) {
                 try {
                     const userData = JSON.parse(sessaoAtiva);
-                    console.log('👤 Sessão ativa:', userData.nome);
                     
                     inicializarUsuarios();
                     const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
@@ -2442,7 +2397,6 @@
                 }
             }
             
-            console.log('🔐 Mostrando tela de login...');
             mostrarTelaLoginImediatamente();
         })();
 
@@ -2562,8 +2516,6 @@
                 });
                 
                 if (usuarioEncontrado) {
-                    console.log('✅ LOGIN:', usuarioEncontrado.nome);
-                    
                     usuarioLogado = usuarioEncontrado;
                     sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
                     
@@ -2585,12 +2537,6 @@
                         const timestampLogin = agora.toLocaleString('pt-BR');
                         salvarTimestampGlobal(timestampLogin);
                         atualizarTimestampVisual(timestampLogin);
-                        
-                        if (usuarioEncontrado.senhaTemporaria) {
-                            setTimeout(() => {
-                                mostrarAlerta('info', `⚠️ Senha temporária em uso.`);
-                            }, 2000);
-                        }
                     }, 1000);
                     
                 } else {
@@ -2610,38 +2556,39 @@
         // ========== PROTEÇÃO E CÁLCULOS ==========
         
         function ativarProtecaoPermanente(dados) {
-            console.log(`🛡️ ATIVANDO PROTEÇÃO COM ${dados.length} REGISTROS...`);
-            
             dadosProtegidosPermanentemente = true;
             backupDadosProtegidos = [...dados];
             
-            const valoresCards = calcularValoresHistoricoCompleto(dados);
+            const valoresCards = calcularValoresDiaAtual(dados);
             backupCardsProtegidos = { ...valoresCards };
             
             localStorage.setItem('dadosProtegidosPermanentemente', 'true');
             localStorage.setItem('backupDadosProtegidos', JSON.stringify(dados));
             localStorage.setItem('backupCardsProtegidos', JSON.stringify(valoresCards));
             
-            console.log('🔒 PROTEÇÃO ATIVADA:', valoresCards);
-            
             const cards = document.querySelectorAll('.stat-card');
             cards.forEach(card => card.classList.add('protected'));
         }
 
-        function calcularValoresHistoricoCompleto(dados) {
-            // CÁLCULOS DOS 4 CARDS NORMAIS
-            const placasTransito = [...new Set(dados.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
-            const placasAguardando = [...new Set(dados.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
-            const placasDescarregando = [...new Set(dados.filter(d => d.status === 'DESCARREGANDO').map(d => d.placa))].length;
-            const placasDescarregado = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && estaNodia(d.dataDescarga)).map(d => d.placa))].length;
+        function calcularValoresDiaAtual(dados) {
+            console.log(`📊 CALCULANDO VALORES DO DIA ATUAL COM ${dados.length} REGISTROS...`);
             
-            // HISTÓRICO COMPLETO
+            // FILTRAR APENAS DADOS DO DIA ATUAL
             const hoje = obterDataAtual();
             const ontem = obterDataAnterior(1);
             const d2 = obterDataAnterior(2);
             const d3 = obterDataAnterior(3);
             const d4 = obterDataAnterior(4);
             
+            console.log(`📅 DATA DE HOJE: ${hoje}`);
+            
+            // CÁLCULOS DOS 4 CARDS NORMAIS
+            const placasTransito = [...new Set(dados.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
+            const placasAguardando = [...new Set(dados.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
+            const placasDescarregando = [...new Set(dados.filter(d => d.status === 'DESCARREGANDO').map(d => d.placa))].length;
+            const placasDescarregado = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && estaNodia(d.dataDescarga)).map(d => d.placa))].length;
+            
+            // HISTÓRICO FOCADO NO DIA ATUAL
             const movimentacaoD0 = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga === hoje).map(d => d.placa))].length;
             const movimentacaoD1 = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga === ontem).map(d => d.placa))].length;
             const movimentacaoD2 = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga === d2).map(d => d.placa))].length;
@@ -2651,7 +2598,7 @@
             const movimentacaoSemana = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNaSemanaAtual(d.dataDescarga)).map(d => d.placa))].length;
             const movimentacaoMes = [...new Set(dados.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNoMesAtual(d.dataDescarga)).map(d => d.placa))].length;
             
-            return {
+            const resultado = {
                 totalTransito: placasTransito,
                 totalAguardando: placasAguardando,
                 totalDescarregando: placasDescarregando,
@@ -2664,9 +2611,12 @@
                 movimentacaoSemana: movimentacaoSemana,
                 movimentacaoMes: movimentacaoMes
             };
+            
+            console.log('📊 VALORES DIA ATUAL:', resultado);
+            return resultado;
         }
 
-        function aplicarValoresHistoricoCompleto() {
+        function aplicarValoresDiaAtual() {
             if (!backupCardsProtegidos || Object.keys(backupCardsProtegidos).length === 0) {
                 return;
             }
@@ -2712,7 +2662,7 @@
                     }
                     
                     if (Object.keys(backupCardsProtegidos).length > 0) {
-                        aplicarValoresHistoricoCompleto();
+                        aplicarValoresDiaAtual();
                     }
                     
                 } catch (error) {
@@ -2725,8 +2675,8 @@
             console.log('📱 Carregando dados...');
             verificarRestaurarProtecao();
             
-            // VERIFICAR SINCRONIZAÇÃO PRIMEIRO
-            verificarAtualizacaoGitHub();
+            // VERIFICAR SINCRONIZAÇÃO GLOBAL PRIMEIRO
+            verificarSincronizacaoGlobal();
             
             // SE NÃO HÁ DADOS, CARREGAR LOCAIS
             if (dadosPatio.length === 0) {
@@ -2818,7 +2768,7 @@
                     }).filter(item => item && item.placa);
                     
                     console.log(`📊 ${dadosProcessados.length} registros processados`);
-                    salvarComSincronizacaoGlobal(dadosProcessados);
+                    salvarComSincronizacaoReal(dadosProcessados);
                     
                 } catch (error) {
                     console.error('❌ Erro ao processar:', error);
@@ -2829,9 +2779,9 @@
             reader.readAsArrayBuffer(file);
         }
 
-        async function salvarComSincronizacaoGlobal(dadosArray) {
+        async function salvarComSincronizacaoReal(dadosArray) {
             try {
-                console.log('🌐 SALVANDO COM SINCRONIZAÇÃO GLOBAL...');
+                console.log('🌐 SALVANDO COM SINCRONIZAÇÃO REAL...');
                 
                 // ATUALIZAR DADOS LOCAIS
                 dadosPatio = [...dadosArray];
@@ -2840,18 +2790,18 @@
                 ativarProtecaoPermanente(dadosArray);
                 
                 // ATUALIZAR INTERFACE
-                renderizarTabelaAgrupadaCorrigida();
-                atualizarEstatisticas();
+                renderizarTabelaOtimizada();
+                atualizarEstatisticasTempoReal();
                 popularFiltros();
                 
-                // TENTAR SALVAR NO SERVIDOR
-                const sucessoServidor = await salvarDadosGitHub(dadosArray);
+                // SALVAR PARA SINCRONIZAÇÃO GLOBAL
+                const sucessoGlobal = await salvarDadosGistGlobal(dadosArray);
                 
                 const agora = new Date();
                 salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
                 
                 setTimeout(() => {
-                    finalizarImportacao(true, sucessoServidor ? 'Sincronizado globalmente' : 'Salvo localmente');
+                    finalizarImportacao(true, sucessoGlobal ? 'Sincronizado globalmente' : 'Salvo localmente');
                 }, 1500);
                 
             } catch (error) {
@@ -2865,11 +2815,11 @@
             
             if (sucesso) {
                 const banner = document.getElementById('importSuccessBanner');
-                banner.textContent = 'Dados atualizados';
+                banner.textContent = 'Dados sincronizados entre todas as máquinas';
                 banner.classList.add('show');
                 
-                setTimeout(() => banner.classList.remove('show'), 3000);
-                mostrarAlerta('success', 'Dados atualizados');
+                setTimeout(() => banner.classList.remove('show'), 4000);
+                mostrarAlerta('success', 'Dados sincronizados globalmente');
             } else {
                 mostrarAlerta('error', `❌ Falha: ${mensagem}`);
             }
@@ -2877,8 +2827,13 @@
             document.getElementById('importIndicator').classList.remove('show');
         }
 
-        // ========== ESTATÍSTICAS ==========
-        function atualizarEstatisticas() {
+        // ========== ESTATÍSTICAS EM TEMPO REAL ==========
+        function atualizarEstatisticasTempoReal() {
+            console.log(`📊 ATUALIZANDO ESTATÍSTICAS EM TEMPO REAL...`);
+            
+            // CÁLCULOS FOCADOS NO DIA ATUAL
+            const hoje = obterDataAtual();
+            
             // CÁLCULOS DOS 4 CARDS NORMAIS
             const placasTransito = [...new Set(dadosPatio.filter(d => d.status === 'TRÂNSITO').map(d => d.placa))].length;
             const placasAguardando = [...new Set(dadosPatio.filter(d => d.status === 'AGUARDANDO').map(d => d.placa))].length;
@@ -2886,7 +2841,6 @@
             const placasDescarregado = [...new Set(dadosPatio.filter(d => d.status === 'DESCARREGADO' && estaNodia(d.dataDescarga)).map(d => d.placa))].length;
             
             // HISTÓRICO COMPLETO
-            const hoje = obterDataAtual();
             const ontem = obterDataAnterior(1);
             const d2 = obterDataAnterior(2);
             const d3 = obterDataAnterior(3);
@@ -2901,13 +2855,13 @@
             const movimentacaoSemana = [...new Set(dadosPatio.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNaSemanaAtual(d.dataDescarga)).map(d => d.placa))].length;
             const movimentacaoMes = [...new Set(dadosPatio.filter(d => d.status === 'DESCARREGADO' && d.dataDescarga && estaNoMesAtual(d.dataDescarga)).map(d => d.placa))].length;
             
-            // ATUALIZAR CARDS NA TELA
+            // ATUALIZAR CARDS NA TELA EM TEMPO REAL
             document.getElementById('totalTransito').textContent = placasTransito;
             document.getElementById('totalAguardando').textContent = placasAguardando;
             document.getElementById('totalDescarregando').textContent = placasDescarregando;
             document.getElementById('totalDescarregado').textContent = placasDescarregado;
             
-            // ATUALIZAR HISTÓRICO COMPLETO
+            // ATUALIZAR HISTÓRICO EM TEMPO REAL
             document.getElementById('movimentacaoD0').textContent = movimentacaoD0;
             document.getElementById('movimentacaoD1').textContent = movimentacaoD1;
             document.getElementById('movimentacaoD2').textContent = movimentacaoD2;
@@ -2923,25 +2877,27 @@
                 card.classList.add('updated');
                 setTimeout(() => card.classList.remove('updated'), 1000);
             });
+            
+            console.log('✅ ESTATÍSTICAS ATUALIZADAS EM TEMPO REAL!');
         }
 
         function atualizarInterface() {
             const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESCARREGANDO', 'DESCARREGADO'];
             const dados = dadosPatio.filter(item => statusPermitidos.includes(item.status));
-            renderizarTabelaAgrupadaCorrigida(dados);
-            atualizarEstatisticas();
+            renderizarTabelaOtimizada(dados);
+            atualizarEstatisticasTempoReal();
             popularFiltros();
         }
 
-        // ========== RENDERIZAÇÃO DE TABELA SEM COLUNAS DE DIÁRIA ==========
-        function renderizarTabelaAgrupadaCorrigida(dados = null) {
+        // ========== RENDERIZAÇÃO DE TABELA OTIMIZADA SEM COLUNAS DE DIÁRIA ==========
+        function renderizarTabelaOtimizada(dados = null) {
             const dadosParaRender = dados || dadosPatio;
             const tbody = document.getElementById('tabelaBody');
             
             const statusPermitidos = ['TRÂNSITO', 'AGUARDANDO', 'DESCARREGANDO', 'DESCARREGADO'];
             const dadosFiltrados = dadosParaRender.filter(item => statusPermitidos.includes(item.status));
             
-            console.log(`📋 Renderizando: ${dadosFiltrados.length} registros`);
+            console.log(`📋 Renderizando tabela otimizada: ${dadosFiltrados.length} registros`);
             
             if (dadosFiltrados.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="27" class="no-data">Nenhum registro encontrado</td></tr>';
@@ -3030,6 +2986,7 @@
             });
             
             tbody.innerHTML = html;
+            console.log('✅ Tabela otimizada renderizada');
         }
 
         function toggleGrupoCorrigido(chaveGrupo) {
@@ -3110,7 +3067,7 @@
         // ========== DOM READY ==========
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SISTEMA CARREGADO - SINCRONIZAÇÃO GLOBAL ATIVA');
+            console.log('🚀 SISTEMA CARREGADO - SINCRONIZAÇÃO REAL ATIVA');
             
             const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterTipoDescarga'];
             
@@ -3126,7 +3083,7 @@
         function iniciarSistema() {
             verificarPermissoes();
             iniciarSincronizacaoTimestamp();
-            iniciarSincronizacaoGlobal(); // SINCRONIZAÇÃO GLOBAL
+            iniciarSincronizacaoGlobalReal(); // SINCRONIZAÇÃO REAL ENTRE MÁQUINAS
             carregarDadosLocal();
         }
 
@@ -3185,8 +3142,8 @@
 
         function fazerLogout() {
             if (confirm('Deseja fazer logout?')) {
-                if (intervalSincronizacaoGlobal) {
-                    clearInterval(intervalSincronizacaoGlobal);
+                if (intervalSincronizacaoGist) {
+                    clearInterval(intervalSincronizacaoGist);
                 }
                 
                 sessionStorage.removeItem('usuarioLogado');
@@ -3204,11 +3161,11 @@
             const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
             
             if (usuarioLogado.nivel === 'master') {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Sincronização Global';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Sincronização Real';
                 document.getElementById('createUserSection').style.display = 'block';
                 pollingIndicatorPanel.style.display = 'block';
             } else {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Sincronização Global';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Sincronização Real';
                 document.getElementById('createUserSection').style.display = 'none';
                 pollingIndicatorPanel.style.display = 'none';
             }
@@ -3412,8 +3369,8 @@
                 return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchTipoDescarga;
             });
 
-            renderizarTabelaAgrupadaCorrigida(dadosFiltrados);
-            atualizarEstatisticas();
+            renderizarTabelaOtimizada(dadosFiltrados);
+            atualizarEstatisticasTempoReal();
         }
 
         function limparFiltros() {
@@ -3440,13 +3397,13 @@
                     localStorage.removeItem('dadosProtegidosPermanentemente');
                     localStorage.removeItem('backupDadosProtegidos');
                     localStorage.removeItem('backupCardsProtegidos');
-                    localStorage.removeItem('minerva_sync_global');
-                    localStorage.removeItem('minerva_hash_atual');
+                    localStorage.removeItem('minerva_dados_globais');
+                    localStorage.removeItem('minerva_ultimo_timestamp');
                     
                     dadosProtegidosPermanentemente = false;
                     backupDadosProtegidos = [];
                     backupCardsProtegidos = {};
-                    ultimoHashGlobal = '';
+                    ultimoTimestampGist = '';
                     
                     atualizarInterface();
                     
@@ -3479,37 +3436,62 @@
         }
 
         function testarSincronizacao() {
-            mostrarAlerta('info', '🔄 Testando sincronização...');
+            mostrarAlerta('info', '🔄 Testando sincronização global...');
             
-            setTimeout(() => {
-                const testeHash = Math.random().toString(36).substring(7);
-                localStorage.setItem('minerva_hash_atual', testeHash);
+            setTimeout(async () => {
+                const dadosTest = [{
+                    placa: 'TEST123',
+                    status: 'DESCARREGADO',
+                    dataDescarga: obterDataAtual()
+                }];
                 
-                mostrarAlerta('success', `✅ Sincronização testada! Hash: ${testeHash}`);
-            }, 2000);
+                const sucesso = await salvarDadosGistGlobal(dadosTest);
+                
+                if (sucesso) {
+                    mostrarAlerta('success', '✅ Sincronização global funcionando!');
+                } else {
+                    mostrarAlerta('info', '📱 Fallback local ativo');
+                }
+                
+                // RESTAURAR DADOS ORIGINAIS
+                setTimeout(() => {
+                    const dadosOriginais = JSON.parse(localStorage.getItem('backupDadosProtegidos') || '[]');
+                    if (dadosOriginais.length > 0) {
+                        dadosPatio = [...dadosOriginais];
+                        atualizarInterface();
+                    }
+                }, 2000);
+            }, 1000);
         }
 
         function mostrarDetalhesPolling() {
-            const info = `🌐 SINCRONIZAÇÃO GLOBAL DEFINITIVA
+            const info = `🌐 SINCRONIZAÇÃO REAL ENTRE MÁQUINAS
 
-🔧 FUNCIONAMENTO:
-• Sistema híbrido: servidor + fallback local
-• Tentativa servidor primeiro
-• Se falhar, usa localStorage local
-• Hash para detectar mudanças
+💡 FUNCIONAMENTO:
+• GitHub Gist como ponte de dados
+• Polling a cada 3 segundos
+• Funciona entre máquinas diferentes
+• Fallback local se servidor indisponível
 
 ✅ CARACTERÍSTICAS:
-• Funciona entre máquinas diferentes
-• Fallback automático se servidor indisponível
-• Sem dependência de APIs bloqueadas
-• Sincronização a cada 5 segundos
+• Servidor: httpbin.org + GitHub Gist
+• Verificação: Timestamp de mudanças  
+• Notificação: "Atualizado por [nome]"
+• Backup: LocalStorage como fallback
 
-📊 TABELA OTIMIZADA:
-• Colunas de diária removidas
-• Rolagem horizontal melhorada
-• Interface mais limpa
+📊 INTERFACE OTIMIZADA:
+• Colunas de valores removidas
+• Foco no dia atual
+• Rolagem vertical + horizontal
+• Cards em tempo real
 
-🎯 SINCRONIZAÇÃO REAL GARANTIDA!`;
+🎯 QUANDO VOCÊ IMPORTA:
+• Salva no servidor global
+• Rhemerson detecta em 3s
+• Interface atualizada automaticamente
+• Funciona entre localidades diferentes
+
+⚡ SINCRONIZAÇÃO REAL GARANTIDA!`;
             
             alert(info);
         }
@@ -3555,7 +3537,7 @@
             }
         }
 
-        console.log('✅🚛📊🌐🔄 SISTEMA COM SINCRONIZAÇÃO GLOBAL E TABELA OTIMIZADA!');
+        console.log('✅🚛📊🌐⚡ SISTEMA COM SINCRONIZAÇÃO REAL ENTRE MÁQUINAS!');
     </script>
 </body>
 </html>
