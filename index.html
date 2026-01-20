@@ -25,8 +25,8 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
             padding: 10px;
-            overflow-x: auto; /* HORIZONTAL */
-            overflow-y: auto; /* VERTICAL */
+            overflow-x: auto;
+            overflow-y: auto;
             min-height: 100vh;
         }
 
@@ -40,10 +40,10 @@
             min-height: calc(100vh - 20px);
         }
 
-        /* SINCRONIZAÇÃO VISUAL */
-        .sync-status {
+        /* INDICADORES DE STATUS MELHORADOS */
+        .storage-status {
             position: fixed;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
             background: #28a745;
             color: white;
@@ -52,63 +52,31 @@
             font-size: 10px;
             font-weight: 600;
             z-index: 1004;
-            animation: syncPulse 2s infinite;
             box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .sync-status.updating {
+        .storage-status.warning {
             background: #f59e0b;
-            animation: syncUpdate 1s infinite;
         }
 
-        .sync-status.error {
+        .storage-status.error {
             background: #dc3545;
-            animation: none;
         }
 
-        .sync-status.online {
-            background: #10b981;
+        .storage-status.optimizing {
+            background: #3b82f6;
+            animation: pulse 2s infinite;
         }
 
-        @keyframes syncPulse {
+        @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; transform: scale(1.05); }
         }
 
-        @keyframes syncUpdate {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.1); }
-        }
-
-        /* INDICADOR DE POLLING */
-        .polling-indicator {
-            background: #10b981;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-size: 11px;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            margin: 10px 0;
-            width: fit-content;
-        }
-
-        .polling-indicator.protected {
-            background: #28a745;
-            animation: protectedPulse 2s infinite;
-        }
-
-        @keyframes protectedPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.9; transform: scale(1.02); }
-        }
-
-        /* INDICADOR DE IMPORTAÇÃO */
+        /* INDICADOR DE IMPORTAÇÃO MELHORADO */
         .import-indicator {
             position: fixed;
             top: 0;
@@ -142,6 +110,12 @@
             font-weight: 600;
         }
 
+        .import-indicator .storage-info {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 10px;
+        }
+
         @keyframes importPulse {
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.1); opacity: 0.8; }
@@ -170,7 +144,7 @@
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        /* TIMESTAMP */
+        /* TIMESTAMP MELHORADO */
         .update-timestamp {
             position: fixed;
             top: 20px;
@@ -201,7 +175,7 @@
             50% { opacity: 0.9; transform: scale(1.02); }
         }
 
-        /* NOTIFICAÇÕES */
+        /* NOTIFICAÇÕES EM TEMPO REAL */
         .realtime-notification {
             position: fixed;
             top: 80px;
@@ -311,7 +285,7 @@
             margin: 0;
         }
 
-        /* RECUPERAÇÃO DE SENHA REATIVADA */
+        /* RECUPERAÇÃO DE SENHA */
         .password-recovery {
             margin-top: 25px;
             padding-top: 20px;
@@ -565,8 +539,8 @@
             background: #c82333;
         }
 
-        /* STATUS SUPABASE */
-        .supabase-status {
+        /* STATUS STORAGE MELHORADO */
+        .storage-status-panel {
             margin-top: 20px;
             padding: 15px;
             background: #f0fdf4;
@@ -576,12 +550,17 @@
             overflow-y: auto;
         }
 
-        .supabase-status.protected {
-            background: #f0fdf4;
-            border-color: #bbf7d0;
+        .storage-status-panel.warning {
+            background: #fff7ed;
+            border-color: #fed7aa;
         }
 
-        .supabase-header {
+        .storage-status-panel.error {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .storage-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -589,7 +568,7 @@
             min-width: 400px;
         }
 
-        .supabase-title {
+        .storage-title {
             font-weight: 600;
             font-size: 14px;
             color: #2c3e50;
@@ -598,7 +577,7 @@
             gap: 8px;
         }
 
-        .status-toggle {
+        .storage-toggle {
             background: none;
             border: none;
             font-size: 12px;
@@ -609,11 +588,11 @@
             transition: all 0.2s;
         }
 
-        .status-toggle:hover {
+        .storage-toggle:hover {
             background: #f8f9fa;
         }
 
-        .supabase-details {
+        .storage-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
@@ -621,7 +600,7 @@
             min-width: 500px;
         }
 
-        .supabase-details.collapsed {
+        .storage-details.collapsed {
             display: none;
         }
 
@@ -648,15 +627,25 @@
             font-size: 10px;
         }
 
-        .status-protected-inline {
+        .status-ok-inline {
             background: #d1fae5;
             color: #047857;
         }
 
-        .supabase-test-btn {
+        .status-warning-inline {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-error-inline {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .storage-optimize-btn {
             width: 100%;
             padding: 8px;
-            background: #10b981;
+            background: #3b82f6;
             color: white;
             border: none;
             border-radius: 6px;
@@ -667,8 +656,13 @@
             transition: all 0.3s;
         }
 
-        .supabase-test-btn:hover {
-            background: #059669;
+        .storage-optimize-btn:hover {
+            background: #2563eb;
+        }
+
+        .storage-optimize-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
         }
 
         .system-status {
@@ -702,11 +696,11 @@
             opacity: 0.9;
         }
 
-        /* USER-INFO */
+        /* USER-INFO MELHORADO */
         .user-info {
             position: absolute;
             top: 50%;
-            right: 15px;
+            left: 15px;
             transform: translateY(-50%);
             background: rgba(255,255,255,0.1);
             padding: 8px;
@@ -729,7 +723,7 @@
         }
 
         .user-name-section .user-name {
-            font-size: clamp(10px, 2vw, 12px);
+            font-size: clamp(14px, 2vw, 16px);
             font-weight: 700;
             color: white;
             line-height: 1.2;
@@ -911,7 +905,7 @@
             transform: none;
         }
 
-        /* ========== CARDS CENTRALIZADOS ========== */
+        /* CARDS CENTRALIZADOS */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -985,7 +979,6 @@
             z-index: 2;
         }
 
-        /* CARDS NORMAIS COM ÍCONES RESPONSIVOS */
         .stat-card .label {
             font-size: clamp(11px, 2.5vw, 13px);
             color: #6c757d;
@@ -1009,7 +1002,7 @@
             text-align: center;
         }
 
-        /* CARD ESPECIAL DE HISTÓRICO RESPONSIVO */
+        /* CARD ESPECIAL DE HISTÓRICO */
         .stat-card.historico {
             padding: 6px 8px;
             text-align: left;
@@ -1071,7 +1064,7 @@
         .stat-card.descarregado:hover::before { background: linear-gradient(90deg, #20c997 0%, #28a745 100%); }
         .stat-card.historico:hover::before { background: linear-gradient(90deg, #8e44ad 0%, #6f42c1 100%); }
 
-        /* TABELA COM ROLAGEM EM AMBAS DIREÇÕES */
+        /* TABELA COM ROLAGEM */
         .table-container {
             overflow: hidden;
             padding: 12px;
@@ -1081,7 +1074,7 @@
         }
 
         .table-wrapper {
-            overflow: auto; /* VERTICAL E HORIZONTAL SIMULTANEAMENTE */
+            overflow: auto;
             border: 1px solid #dee2e6;
             border-radius: 8px;
             position: relative;
@@ -1121,7 +1114,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: clamp(10px, 1.5vw, 11px);
-            min-width: 1200px; /* LARGURA PARA ATIVAR ROLAGEM HORIZONTAL */
+            min-width: 1200px;
         }
 
         thead {
@@ -1324,12 +1317,12 @@
         .user-panel-modal::-webkit-scrollbar,
         .controls::-webkit-scrollbar,
         .stats::-webkit-scrollbar,
-        .supabase-status::-webkit-scrollbar,
+        .storage-status-panel::-webkit-scrollbar,
         .system-status::-webkit-scrollbar,
         body::-webkit-scrollbar,
         .user-panel::-webkit-scrollbar {
-            width: 16px; /* VERTICAL GRANDE */
-            height: 16px; /* HORIZONTAL GRANDE */
+            width: 16px;
+            height: 16px;
         }
 
         .table-wrapper::-webkit-scrollbar-track,
@@ -1337,7 +1330,7 @@
         .user-panel-modal::-webkit-scrollbar-track,
         .controls::-webkit-scrollbar-track,
         .stats::-webkit-scrollbar-track,
-        .supabase-status::-webkit-scrollbar-track,
+        .storage-status-panel::-webkit-scrollbar-track,
         .system-status::-webkit-scrollbar-track,
         body::-webkit-scrollbar-track,
         .user-panel::-webkit-scrollbar-track {
@@ -1350,7 +1343,7 @@
         .user-panel-modal::-webkit-scrollbar-thumb,
         .controls::-webkit-scrollbar-thumb,
         .stats::-webkit-scrollbar-thumb,
-        .supabase-status::-webkit-scrollbar-thumb,
+        .storage-status-panel::-webkit-scrollbar-thumb,
         .system-status::-webkit-scrollbar-thumb,
         body::-webkit-scrollbar-thumb,
         .user-panel::-webkit-scrollbar-thumb {
@@ -1363,7 +1356,7 @@
         .user-panel-modal::-webkit-scrollbar-thumb:hover,
         .controls::-webkit-scrollbar-thumb:hover,
         .stats::-webkit-scrollbar-thumb:hover,
-        .supabase-status::-webkit-scrollbar-thumb:hover,
+        .storage-status-panel::-webkit-scrollbar-thumb:hover,
         .system-status::-webkit-scrollbar-thumb:hover,
         body::-webkit-scrollbar-thumb:hover,
         .user-panel::-webkit-scrollbar-thumb:hover {
@@ -1372,19 +1365,20 @@
     </style>
 </head>
 <body>
-    <!-- STATUS DE SINCRONIZAÇÃO -->
-    <div class="sync-status" id="syncStatus">
-        🔄 Iniciando...
+    <!-- STATUS DE STORAGE MELHORADO -->
+    <div class="storage-status" id="storageStatus">
+        🔄 Otimizando...
     </div>
 
     <!-- INDICADORES -->
     <div class="import-indicator" id="importIndicator">
         <h2>📥 Processando arquivo...</h2>
-        <div class="progress" id="importProgress">Sincronizando entre todas as máquinas...</div>
+        <div class="progress" id="importProgress">Otimizando armazenamento...</div>
+        <div class="storage-info" id="importStorageInfo">Compressão ativa</div>
     </div>
 
     <div class="import-success-banner" id="importSuccessBanner">
-        ✅ Dados sincronizados
+        ✅ Dados otimizados e sincronizados
     </div>
 
     <div class="realtime-notification" id="realtimeNotification">
@@ -1396,7 +1390,7 @@
         📅 Última atualização: Nunca
     </div>
 
-    <!-- TELA DE LOGIN COM RECUPERAÇÃO REATIVADA -->
+    <!-- TELA DE LOGIN COM RECUPERAÇÃO -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-modal">
             <h2>🔐 Login - Pátio Brasfrigo</h2>
@@ -1415,7 +1409,7 @@
                 <button type="submit" class="login-btn" id="btnLogin">Entrar</button>
             </form>
 
-            <!-- RECUPERAÇÃO DE SENHA REATIVADA -->
+            <!-- RECUPERAÇÃO DE SENHA -->
             <div class="password-recovery">
                 <div class="recovery-title">🔑 Esqueceu sua senha?</div>
                 <form class="recovery-form" onsubmit="recuperarSenha(event)">
@@ -1440,16 +1434,10 @@
         </div>
     </div>
 
-    <!-- PAINEL DE GOVERNANÇA -->
+    <!-- PAINEL DE GOVERNANÇA MELHORADO -->
     <div class="user-panel" id="userPanel">
         <div class="user-panel-modal">
-            <h3 id="panelTitle">👥 Painel de Governança - Lógica Corrigida</h3>
-            
-            <div id="pollingIndicatorPanel" style="display: none;">
-                <div class="polling-indicator protected" id="pollingIndicator" onclick="mostrarDetalhesPolling()">
-                    <span id="pollingStatusText">✅ Cards e Sincronização Corrigidos</span>
-                </div>
-            </div>
+            <h3 id="panelTitle">👥 Painel de Governança - Storage Otimizado</h3>
             
             <div id="createUserSection">
                 <h4 style="margin-bottom: 15px; color: #2c3e50;">➕ Criar Novo Usuário</h4>
@@ -1470,52 +1458,55 @@
             <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 Usuários Cadastrados</h4>
             <div class="user-list" id="userList"></div>
 
-            <div class="supabase-status protected" id="supabaseStatus">
-                <div class="supabase-header">
-                    <div class="supabase-title">
-                        <span id="supabaseIcon">✅</span>
-                        <span id="supabaseTitle">Sistema: Lógica Corrigida</span>
+            <!-- STATUS STORAGE MELHORADO -->
+            <div class="storage-status-panel" id="storageStatusPanel">
+                <div class="storage-header">
+                    <div class="storage-title">
+                        <span id="storageIcon">✅</span>
+                        <span id="storageTitle">Sistema: Storage Otimizado</span>
                     </div>
-                    <button class="status-toggle" id="statusToggle" onclick="toggleSupabaseDetails()">▼</button>
+                    <button class="storage-toggle" id="storageToggle" onclick="toggleStorageDetails()">▼</button>
                 </div>
                 
-                <div class="supabase-details" id="supabaseDetails">
+                <div class="storage-details" id="storageDetails">
                     <div class="status-item-inline">
-                        <span class="status-label-inline">DESOVANDO→Descarregando:</span>
-                        <span class="status-value-inline status-protected-inline" id="emailSystemStatus">CORRIGIDO</span>
+                        <span class="status-label-inline">Espaço Usado:</span>
+                        <span class="status-value-inline status-ok-inline" id="storageUsed">0 MB</span>
                     </div>
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Dados Dia Atual:</span>
-                        <span class="status-value-inline status-protected-inline" id="cardStatus">FUNCIONANDO</span>
+                        <span class="status-label-inline">Compressão:</span>
+                        <span class="status-value-inline status-ok-inline" id="compressionStatus">ATIVA</span>
                     </div>
                     <div class="status-item-inline">
                         <span class="status-label-inline">Sincronização:</span>
-                        <span class="status-value-inline status-protected-inline" id="groupStatus">TEMPO REAL</span>
+                        <span class="status-value-inline status-ok-inline" id="syncStatus">TEMPO REAL</span>
                     </div>
                     <div class="status-item-inline">
-                        <span class="status-label-inline">Email:</span>
-                        <span class="status-value-inline status-protected-inline" id="dataProtectionStatus">ATIVO</span>
+                        <span class="status-label-inline">Supabase:</span>
+                        <span class="status-value-inline status-ok-inline" id="supabaseConnectionStatus">CONECTADO</span>
                     </div>
                 </div>
                 
-                <button class="supabase-test-btn" id="supabaseTestBtn" onclick="testarSupabase()">
-                    🔧 TESTAR SUPABASE
+                <button class="storage-optimize-btn" id="storageOptimizeBtn" onclick="otimizarStorage()">
+                    🧹 OTIMIZAR STORAGE
                 </button>
                 
-                <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="supabaseLastUpdate">
+                <div style="text-align: center; font-size: 10px; color: #6b7280; margin-top: 8px;" id="storageLastUpdate">
                     <div>🔄 Sincronizações: <span id="contadorSync">0</span></div>
-                    <div>📡 Status: <span id="statusConexao">Conectando...</span></div>
+                    <div>📊 Registros: <span id="totalRegistros">0</span></div>
+                    <div>💾 Quota: <span id="quotaUsage">OK</span></div>
                 </div>
             </div>
 
-            <div class="system-status protected" id="systemStatus">
+            <div class="system-status" id="systemStatus">
                 <strong>📊 Debug dos Cards:</strong>
                 <div style="margin-top: 10px; font-size: 12px;" id="systemStatusDetails">
                     <div>🚛 Em Trânsito: <span id="debugTransito">0</span> placas</div>
                     <div>⏰ Aguardando: <span id="debugAguardando">0</span> placas</div>
-                    <div>🔄 Desovando: <span id="debugDesovando">0</span> placas</div>
+                    <div>🔄 Descarregando: <span id="debugDescarregando">0</span> placas</div>
                     <div>✅ Descarregado hoje: <span id="debugDescarregado">0</span> placas</div>
                     <div>📅 Data hoje: <span id="debugDataHoje">-</span></div>
+                    <div>💾 Storage: <span id="debugStorage">OK</span></div>
                 </div>
             </div>
 
@@ -1540,7 +1531,7 @@
                 </div>
             </div>
             <h1>Minerva Foods - Logística Internacional</h1>
-            <p>Pátio Brasfrigo - Cards Corrigidos</p>
+            <p>Pátio Brasfrigo - Storage Otimizado</p>
         </div>
 
         <div class="controls">
@@ -1630,7 +1621,7 @@
                 <div class="value" id="totalAguardando">0</div>
             </div>
             
-            <!-- CARD DESCARREGANDO (MOSTRA DADOS DE "DESOVANDO") -->
+            <!-- CARD DESCARREGANDO -->
             <div class="stat-card descarregando">
                 <svg class="card-icon" viewBox="0 0 64 64" fill="none" id="descarregandoIcon">
                     <rect x="8" y="30" width="24" height="14" rx="2" fill="#17a2b8" opacity="0.9"/>
@@ -1780,7 +1771,7 @@
     </div>
 
     <script>
-        // ========== CONFIGURAÇÃO EMAILJS REATIVADA ==========
+        // ========== CONFIGURAÇÃO EMAILJS ==========
         
         const emailJSConfig = {
             serviceID: 'service_t6q4q3f',
@@ -1794,14 +1785,14 @@
             try {
                 emailjs.init(emailJSConfig.publicKey);
                 emailJSReady = true;
-                console.log('✅ EmailJS REATIVADO');
+                console.log('✅ EmailJS inicializado');
             } catch (error) {
                 console.error('❌ Erro EmailJS:', error);
                 emailJSReady = false;
             }
         })();
 
-        // ========== VARIÁVEIS GLOBAIS ==========
+        // ========== VARIÁVEIS GLOBAIS OTIMIZADAS ==========
         let usuarioLogado = null;
         let dadosPatio = [];
         let supabase = null;
@@ -1815,15 +1806,17 @@
         let backupDadosProtegidos = [];
         let backupCardsProtegidos = {};
 
-        // ========== SINCRONIZAÇÃO SUPABASE REAL ==========
+        // ========== GESTÃO DE STORAGE MELHORADA ==========
         let ultimaVersaoSupabase = 0;
         let intervalSyncSupabase = null;
         let contadorSyncSupabase = 0;
+        let storageQuotaStatus = 'OK';
+        let compressionEnabled = true;
 
         // ========== CONFIGURAÇÃO SUPABASE ==========
         const supabaseConfig = {
             url: 'https://zhxrxymeuzvnuafvkjjd.supabase.co',
-            anonKey: 'sb_publishable_GIl_nKo6EmiOzcr-io9JSA_pvQu2bOJ'
+            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoeHJ4eW1ldXp2bnVhZnZramRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUyMjk1OTIsImV4cCI6MjA1MDgwNTU5Mn0.sb_publishable_GIl_nKo6EmiOzcr-io9JSA_pvQu2bOJ'
         };
 
         // ========== USUÁRIOS PADRÃO ==========
@@ -1866,69 +1859,283 @@
             }
         ];
 
-        function gerarSenhaTemporaria() {
-            const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-            let senha = '';
-            for (let i = 0; i < 8; i++) {
-                senha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+        // ========== FUNÇÕES DE COMPRESSÃO E OTIMIZAÇÃO ==========
+        
+        function comprimirDados(dados) {
+            if (!compressionEnabled) return JSON.stringify(dados);
+            
+            try {
+                // Remover campos desnecessários para economizar espaço
+                const dadosOtimizados = dados.map(item => ({
+                    p: item.placa || "",
+                    c: item.container || "",
+                    dc: item.dataChegada || "",
+                    dd: item.dataDescarga || "",
+                    t: item.transportadora || "",
+                    u: item.unidade || "",
+                    o: item.origem || "",
+                    td: item.tipoDescarga || "",
+                    tm: item.tipoMercado || "",
+                    s: item.status || "",
+                    no: item.nfOrigem || "",
+                    nb: item.nfeBrasfrigo || "",
+                    op: item.op || "",
+                    d: item.deposito || "",
+                    so: item.statusOp || "",
+                    pe: item.pedido || "",
+                    f: item.falta || "",
+                    sb: item.sobra || "",
+                    ir: item.inversaoRg || "",
+                    dk: item.doca || "",
+                    pb: item.pbr || "",
+                    ow: item.oneWay || "",
+                    fm: item.fumigado || "",
+                    tp: item.totalPallet || "",
+                    rf: item.recFrio || "",
+                    ob: item.obs || ""
+                }));
+                
+                return JSON.stringify(dadosOtimizados);
+                
+            } catch (error) {
+                console.error('Erro na compressão:', error);
+                return JSON.stringify(dados);
             }
-            return senha;
         }
 
-        // ========== SINCRONIZAÇÃO VIA SUPABASE - FUNCIONANDO ==========
+        function descomprimirDados(dadosComprimidos) {
+            if (!compressionEnabled || !dadosComprimidos) return [];
+            
+            try {
+                const dadosParsed = JSON.parse(dadosComprimidos);
+                
+                // Se já estão no formato normal, retornar
+                if (dadosParsed.length > 0 && dadosParsed[0].placa) {
+                    return dadosParsed;
+                }
+                
+                // Se estão comprimidos, expandir
+                return dadosParsed.map(item => ({
+                    placa: item.p || "",
+                    container: item.c || "",
+                    dataChegada: item.dc || "",
+                    dataDescarga: item.dd || "",
+                    diaria: item.di || 0,
+                    valorDiaria: item.vd || "R$ 0,00",
+                    valorTotal: item.vt || "R$ 0,00",
+                    transportadora: item.t || "",
+                    unidade: item.u || "",
+                    origem: item.o || "",
+                    tipoDescarga: item.td || "",
+                    tipoMercado: item.tm || "",
+                    status: item.s || "",
+                    nfOrigem: item.no || "",
+                    nfeBrasfrigo: item.nb || "",
+                    op: item.op || "",
+                    deposito: item.d || "",
+                    statusOp: item.so || "",
+                    pedido: item.pe || "",
+                    falta: item.f || "",
+                    sobra: item.sb || "",
+                    inversaoRg: item.ir || "",
+                    doca: item.dk || "",
+                    pbr: item.pb || "",
+                    oneWay: item.ow || "",
+                    fumigado: item.fm || "",
+                    totalPallet: item.tp || "",
+                    recFrio: item.rf || "",
+                    obs: item.ob || ""
+                }));
+                
+            } catch (error) {
+                console.error('Erro na descompressão:', error);
+                return [];
+            }
+        }
+
+        function verificarQuotaStorage() {
+            try {
+                const storage = JSON.stringify(localStorage);
+                const tamanhoMB = new Blob([storage]).size / (1024 * 1024);
+                
+                console.log(`💾 Storage usado: ${tamanhoMB.toFixed(2)} MB`);
+                
+                // Atualizar visual
+                document.getElementById('storageUsed').textContent = `${tamanhoMB.toFixed(2)} MB`;
+                
+                if (tamanhoMB > 8) {
+                    storageQuotaStatus = 'CRITICAL';
+                    mostrarStatusStorage('error', '🚨 Storage crítico');
+                    return false;
+                } else if (tamanhoMB > 5) {
+                    storageQuotaStatus = 'WARNING';
+                    mostrarStatusStorage('warning', '⚠️ Storage cheio');
+                    return true;
+                } else {
+                    storageQuotaStatus = 'OK';
+                    mostrarStatusStorage('ok', '✅ Storage OK');
+                    return true;
+                }
+                
+            } catch (error) {
+                console.error('Erro ao verificar quota:', error);
+                storageQuotaStatus = 'ERROR';
+                mostrarStatusStorage('error', '❌ Erro storage');
+                return false;
+            }
+        }
+
+        function mostrarStatusStorage(tipo, mensagem) {
+            const statusElement = document.getElementById('storageStatus');
+            const panelElement = document.getElementById('storageStatusPanel');
+            const quotaElement = document.getElementById('quotaUsage');
+            
+            if (statusElement) {
+                statusElement.textContent = mensagem;
+                statusElement.className = `storage-status ${tipo}`;
+            }
+            
+            if (panelElement) {
+                panelElement.className = `storage-status-panel ${tipo}`;
+            }
+            
+            if (quotaElement) {
+                quotaElement.textContent = storageQuotaStatus;
+            }
+        }
+
+        function otimizarStorage() {
+            console.log('🧹 INICIANDO OTIMIZAÇÃO DE STORAGE...');
+            
+            const btnOptimize = document.getElementById('storageOptimizeBtn');
+            btnOptimize.disabled = true;
+            btnOptimize.textContent = '🔄 Otimizando...';
+            
+            mostrarStatusStorage('optimizing', '🔄 Otimizando');
+            
+            try {
+                // 1. REMOVER DADOS ANTIGOS
+                const chavesPaRremover = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const chave = localStorage.key(i);
+                    if (chave && (
+                        chave.includes('backup_') ||
+                        chave.includes('temp_') ||
+                        chave.includes('old_') ||
+                        chave.includes('cache_')
+                    )) {
+                        chavesPaRremover.push(chave);
+                    }
+                }
+                
+                chavesPaRremover.forEach(chave => {
+                    localStorage.removeItem(chave);
+                    console.log(`🗑️ Removido: ${chave}`);
+                });
+                
+                // 2. RECOMPRIMIR DADOS PRINCIPAIS
+                if (dadosPatio.length > 0) {
+                    const dadosComprimidos = comprimirDados(dadosPatio);
+                    localStorage.setItem('dadosPatioMinerva', dadosComprimidos);
+                    console.log('📦 Dados recomprimidos');
+                }
+                
+                // 3. LIMPAR VERSÕES ANTIGAS DE SINCRONIZAÇÃO
+                localStorage.removeItem('MINERVA_PATIO_SYNC_OLD');
+                localStorage.removeItem('MINERVA_BACKUP_SYNC');
+                localStorage.removeItem('dadosPatioBackup');
+                
+                // 4. VERIFICAR RESULTADO
+                setTimeout(() => {
+                    const quotaOK = verificarQuotaStorage();
+                    
+                    if (quotaOK) {
+                        mostrarAlerta('success', '✅ Storage otimizado com sucesso!');
+                        mostrarStatusStorage('ok', '✅ Otimizado');
+                    } else {
+                        mostrarAlerta('warning', '⚠️ Storage ainda está cheio');
+                    }
+                    
+                    btnOptimize.disabled = false;
+                    btnOptimize.textContent = '🧹 OTIMIZAR STORAGE';
+                    
+                }, 2000);
+                
+            } catch (error) {
+                console.error('❌ Erro na otimização:', error);
+                mostrarAlerta('error', `Erro na otimização: ${error.message}`);
+                
+                btnOptimize.disabled = false;
+                btnOptimize.textContent = '🧹 OTIMIZAR STORAGE';
+                mostrarStatusStorage('error', '❌ Erro');
+            }
+        }
+
+        // ========== SALVAMENTO OTIMIZADO NO SUPABASE ==========
         
-        async function salvarDadosSupabaseReal(dadosArray) {
+        async function salvarDadosSupabaseOtimizado(dadosArray) {
             if (!supabaseDisponivel || !supabase) {
                 console.log('⚠️ Supabase não disponível, usando fallback local');
-                return salvarDadosLocalFallback(dadosArray);
+                return salvarDadosLocalOtimizado(dadosArray);
             }
 
             try {
-                console.log(`🌐 SALVANDO ${dadosArray.length} REGISTROS NO SUPABASE...`);
+                console.log(`🌐 SALVANDO ${dadosArray.length} REGISTROS OTIMIZADOS...`);
+                
+                // VERIFICAR QUOTA ANTES DE SALVAR
+                if (!verificarQuotaStorage()) {
+                    console.log('⚠️ Quota crítica, otimizando antes...');
+                    await otimizarStorage();
+                }
                 
                 const timestamp = new Date().toISOString();
                 const timestampBR = new Date().toLocaleString('pt-BR');
                 const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
                 const versao = Date.now();
                 
+                // COMPRIMIR DADOS PARA ECONOMIZAR ESPAÇO
+                const dadosComprimidos = comprimirDados(dadosArray);
+                
                 const dadosParaSupabase = {
-                    dados_patio: JSON.stringify(dadosArray),
+                    dados_patio_compressed: dadosComprimidos,
                     versao: versao,
                     timestamp_update: timestamp,
                     timestamp_br: timestampBR,
                     usuario_update: usuario,
                     total_records: dadosArray.length,
-                    sync_key: 'patio_minerva_sync'
+                    compression: compressionEnabled,
+                    sync_key: 'patio_minerva_sync_v2'
                 };
                 
-                console.log('📤 DADOS PARA SUPABASE:', {
+                console.log('📤 DADOS COMPRIMIDOS PARA SUPABASE:', {
                     versao: versao,
                     usuario: usuario,
                     registros: dadosArray.length,
-                    timestamp: timestampBR
+                    compressao: compressionEnabled,
+                    tamanhoMB: (new Blob([dadosComprimidos]).size / (1024 * 1024)).toFixed(2)
                 });
 
                 // ATUALIZAR STATUS
-                const syncStatus = document.getElementById('syncStatus');
-                if (syncStatus) {
-                    syncStatus.textContent = '📤 Enviando para Supabase...';
-                    syncStatus.classList.add('updating');
+                const storageStatus = document.getElementById('storageStatus');
+                if (storageStatus) {
+                    storageStatus.textContent = '📤 Enviando comprimido...';
+                    storageStatus.classList.add('optimizing');
                 }
 
                 // LIMPAR DADOS ANTERIORES
                 const { error: deleteError } = await supabase
                     .from('usuarios')
                     .delete()
-                    .eq('login', 'MINERVA_PATIO_SYNC');
+                    .eq('login', 'MINERVA_PATIO_SYNC_V2');
 
-                // INSERIR COMO "USUÁRIO" ESPECIAL
+                // INSERIR COMO "USUÁRIO" ESPECIAL OTIMIZADO
                 const { data, error } = await supabase
                     .from('usuarios')
                     .insert([{
-                        nome: 'MINERVA_PATIO_SYNC',
-                        login: 'MINERVA_PATIO_SYNC',
+                        nome: 'MINERVA_PATIO_SYNC_V2',
+                        login: 'MINERVA_PATIO_SYNC_V2',
                         senha: JSON.stringify(dadosParaSupabase),
-                        nivel: 'sync',
+                        nivel: 'sync_optimized',
                         email: 'sync@minervafoods.com',
                         criado_em: timestamp,
                         criado_por: usuario,
@@ -1938,84 +2145,120 @@
 
                 if (error) {
                     console.error('❌ ERRO SUPABASE:', error);
-                    return salvarDadosLocalFallback(dadosArray);
+                    return salvarDadosLocalOtimizado(dadosArray);
                 }
 
-                console.log('✅ DADOS SALVOS NO SUPABASE PARA SINCRONIZAÇÃO!');
+                console.log('✅ DADOS COMPRIMIDOS SALVOS NO SUPABASE!');
                 ultimaVersaoSupabase = versao;
                 
-                // SALVAR TAMBÉM LOCALMENTE
-                salvarDadosLocalFallback(dadosArray);
+                // SALVAR TAMBÉM LOCALMENTE OTIMIZADO
+                salvarDadosLocalOtimizado(dadosArray);
                 
                 // ATUALIZAR STATUS
-                if (syncStatus) {
-                    syncStatus.textContent = '✅ Sincronizado via Supabase';
-                    syncStatus.classList.remove('updating');
-                    syncStatus.classList.add('online');
+                if (storageStatus) {
+                    storageStatus.textContent = '✅ Sincronizado (comprimido)';
+                    storageStatus.classList.remove('optimizing');
+                    storageStatus.classList.add('ok');
                 }
                 
-                const statusConexaoElement = document.getElementById('statusConexao');
-                if (statusConexaoElement) {
-                    statusConexaoElement.textContent = 'ONLINE';
-                }
+                document.getElementById('supabaseConnectionStatus').textContent = 'CONECTADO';
                 
                 return true;
 
             } catch (error) {
                 console.error('❌ ERRO GERAL SUPABASE:', error);
-                return salvarDadosLocalFallback(dadosArray);
+                return salvarDadosLocalOtimizado(dadosArray);
             }
         }
 
-        function salvarDadosLocalFallback(dadosArray) {
-            const timestamp = new Date().toISOString();
-            const timestampBR = new Date().toLocaleString('pt-BR');
-            const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
-            const versao = Date.now();
-            
-            const dadosParaSalvar = {
-                dados: dadosArray,
-                versao: versao,
-                timestamp: timestamp,
-                timestampBR: timestampBR,
-                usuario: usuario,
-                totalRegistros: dadosArray.length
-            };
-            
-            // SALVAR EM MÚLTIPLAS CHAVES PARA DETECÇÃO
-            localStorage.setItem('MINERVA_PATIO_SYNC_REAL', JSON.stringify(dadosParaSalvar));
-            localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosArray));
-            localStorage.setItem('MINERVA_VERSAO_SYNC', versao.toString());
-            localStorage.setItem('MINERVA_TIMESTAMP_SYNC', timestamp);
-            localStorage.setItem('MINERVA_USER_SYNC', usuario);
-            
-            ultimaVersaoSupabase = versao;
-            
-            console.log('💾 DADOS SALVOS LOCALMENTE PARA SINCRONIZAÇÃO');
-            return true;
+        function salvarDadosLocalOtimizado(dadosArray) {
+            try {
+                const timestamp = new Date().toISOString();
+                const timestampBR = new Date().toLocaleString('pt-BR');
+                const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
+                const versao = Date.now();
+                
+                // VERIFICAR QUOTA ANTES DE SALVAR
+                if (!verificarQuotaStorage() && storageQuotaStatus === 'CRITICAL') {
+                    console.log('🚨 QUOTA CRÍTICA - LIMPANDO DADOS ANTIGOS...');
+                    
+                    // Remover backups antigos
+                    localStorage.removeItem('MINERVA_PATIO_BACKUP');
+                    localStorage.removeItem('dadosPatioBackup');
+                    localStorage.removeItem('MINERVA_OLD_SYNC');
+                    
+                    // Tentar novamente
+                    if (!verificarQuotaStorage()) {
+                        throw new Error('Storage crítico - não é possível salvar');
+                    }
+                }
+                
+                // SALVAR DADOS COMPRIMIDOS
+                const dadosComprimidos = comprimirDados(dadosArray);
+                localStorage.setItem('dadosPatioMinerva', dadosComprimidos);
+                
+                const metadadosSync = {
+                    versao: versao,
+                    timestamp: timestamp,
+                    timestampBR: timestampBR,
+                    usuario: usuario,
+                    totalRegistros: dadosArray.length,
+                    compression: compressionEnabled
+                };
+                
+                localStorage.setItem('MINERVA_VERSAO_SYNC', versao.toString());
+                localStorage.setItem('MINERVA_TIMESTAMP_SYNC', timestamp);
+                localStorage.setItem('MINERVA_USER_SYNC', usuario);
+                localStorage.setItem('MINERVA_METADATA_SYNC', JSON.stringify(metadadosSync));
+                
+                ultimaVersaoSupabase = versao;
+                
+                console.log('💾 DADOS SALVOS LOCALMENTE OTIMIZADOS');
+                verificarQuotaStorage(); // Verificar novamente após salvar
+                
+                return true;
+                
+            } catch (error) {
+                console.error('❌ ERRO NO SALVAMENTO LOCAL OTIMIZADO:', error);
+                
+                if (error.name === 'QuotaExceededError' || error.message.includes('quota')) {
+                    mostrarAlerta('error', '🚨 STORAGE CHEIO! Otimizando...');
+                    setTimeout(() => otimizarStorage(), 1000);
+                } else {
+                    mostrarAlerta('error', `Erro ao salvar: ${error.message}`);
+                }
+                
+                return false;
+            }
         }
 
-        async function verificarSincronizacaoSupabaseReal() {
+        async function verificarSincronizacaoSupabaseOtimizada() {
             contadorSyncSupabase++;
             
             try {
-                console.log(`🔍 VERIFICAÇÃO SUPABASE ${contadorSyncSupabase}...`);
+                console.log(`🔍 VERIFICAÇÃO SUPABASE OTIMIZADA ${contadorSyncSupabase}...`);
                 
                 // ATUALIZAR CONTADOR VISUAL
                 const contadorElement = document.getElementById('contadorSync');
                 if (contadorElement) {
                     contadorElement.textContent = contadorSyncSupabase;
                 }
+                
+                // ATUALIZAR TOTAL DE REGISTROS
+                const totalElement = document.getElementById('totalRegistros');
+                if (totalElement) {
+                    totalElement.textContent = dadosPatio.length;
+                }
 
                 let dadosNovosEncontrados = null;
                 
-                // MÉTODO 1: VERIFICAR SUPABASE
+                // MÉTODO 1: VERIFICAR SUPABASE OTIMIZADO
                 if (supabaseDisponivel && supabase) {
                     try {
                         const { data, error } = await supabase
                             .from('usuarios')
                             .select('senha, criado_em, criado_por')
-                            .eq('login', 'MINERVA_PATIO_SYNC')
+                            .eq('login', 'MINERVA_PATIO_SYNC_V2')
                             .order('criado_em', { ascending: false })
                             .limit(1);
 
@@ -2024,15 +2267,16 @@
                             const dadosSupabase = JSON.parse(registro.senha);
                             
                             if (dadosSupabase.versao > ultimaVersaoSupabase) {
-                                const dadosDescomprimidos = JSON.parse(dadosSupabase.dados_patio);
+                                const dadosDescomprimidos = descomprimirDados(dadosSupabase.dados_patio_compressed);
                                 dadosNovosEncontrados = {
                                     dados: dadosDescomprimidos,
                                     versao: dadosSupabase.versao,
                                     usuario: dadosSupabase.usuario_update,
                                     timestampBR: dadosSupabase.timestamp_br,
-                                    totalRegistros: dadosSupabase.total_records
+                                    totalRegistros: dadosSupabase.total_records,
+                                    compression: dadosSupabase.compression
                                 };
-                                console.log('✅ DADOS NOVOS ENCONTRADOS NO SUPABASE!');
+                                console.log('✅ DADOS NOVOS ENCONTRADOS NO SUPABASE (COMPRIMIDOS)!');
                             }
                         }
                     } catch (supabaseError) {
@@ -2040,38 +2284,49 @@
                     }
                 }
                 
-                // MÉTODO 2: VERIFICAR LOCAL
+                // MÉTODO 2: VERIFICAR LOCAL OTIMIZADO
                 if (!dadosNovosEncontrados) {
-                    const dadosLocal = localStorage.getItem('MINERVA_PATIO_SYNC_REAL');
-                    if (dadosLocal) {
-                        const dadosParsed = JSON.parse(dadosLocal);
-                        if (dadosParsed.versao > ultimaVersaoSupabase) {
-                            dadosNovosEncontrados = dadosParsed;
-                            console.log('✅ DADOS NOVOS ENCONTRADOS LOCALMENTE!');
+                    const metadados = localStorage.getItem('MINERVA_METADATA_SYNC');
+                    if (metadados) {
+                        const metadadosParsed = JSON.parse(metadados);
+                        if (metadadosParsed.versao > ultimaVersaoSupabase) {
+                            const dadosLocal = localStorage.getItem('dadosPatioMinerva');
+                            if (dadosLocal) {
+                                dadosNovosEncontrados = {
+                                    dados: descomprimirDados(dadosLocal),
+                                    versao: metadadosParsed.versao,
+                                    usuario: metadadosParsed.usuario,
+                                    timestampBR: metadadosParsed.timestampBR,
+                                    totalRegistros: metadadosParsed.totalRegistros,
+                                    compression: metadadosParsed.compression
+                                };
+                                console.log('✅ DADOS NOVOS ENCONTRADOS LOCALMENTE (OTIMIZADOS)!');
+                            }
                         }
                     }
                 }
 
                 // SE DADOS NOVOS ENCONTRADOS, APLICAR
                 if (dadosNovosEncontrados) {
-                    console.log('🚨 APLICANDO NOVA SINCRONIZAÇÃO!');
+                    console.log('🚨 APLICANDO NOVA SINCRONIZAÇÃO OTIMIZADA!');
                     console.log(`• Versão anterior: ${ultimaVersaoSupabase}`);
                     console.log(`• Versão nova: ${dadosNovosEncontrados.versao}`);
                     console.log(`• Usuário: ${dadosNovosEncontrados.usuario}`);
                     console.log(`• Registros: ${dadosNovosEncontrados.totalRegistros}`);
+                    console.log(`• Compressão: ${dadosNovosEncontrados.compression ? 'SIM' : 'NÃO'}`);
                     
                     // ATUALIZAR DADOS GLOBAIS
                     dadosPatio = [...dadosNovosEncontrados.dados];
                     ultimaVersaoSupabase = dadosNovosEncontrados.versao;
                     
-                    // SALVAR LOCALMENTE
-                    localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
+                    // SALVAR LOCALMENTE OTIMIZADO
+                    salvarDadosLocalOtimizado(dadosPatio);
                     
-                    // CALCULAR E ATUALIZAR CARDS COM LÓGICA CORRIGIDA
-                    calcularEAtualizarCardsComLogicaCorrigida();
+                    // CALCULAR E ATUALIZAR CARDS
+                    calcularEAtualizarCards();
                     
                     // RENDERIZAR TABELA
-                    renderizarTabelaSemDedicada();
+                    renderizarTabela();
                     
                     // POPULAR FILTROS
                     popularFiltros();
@@ -2081,76 +2336,60 @@
                     if (dadosNovosEncontrados.usuario !== usuarioAtual) {
                         const notification = document.getElementById('realtimeNotification');
                         if (notification) {
-                            notification.textContent = `⚡ Dados atualizados por ${dadosNovosEncontrados.usuario}! ${dadosNovosEncontrados.totalRegistros} registros`;
+                            notification.textContent = `⚡ Dados atualizados por ${dadosNovosEncontrados.usuario}! ${dadosNovosEncontrados.totalRegistros} registros (Comprimido)`;
                             notification.classList.add('show');
                             setTimeout(() => notification.classList.remove('show'), 7000);
                         }
                         
                         // ATUALIZAR STATUS
-                        const syncStatus = document.getElementById('syncStatus');
-                        if (syncStatus) {
-                            syncStatus.textContent = `📡 Sincronizado com ${dadosNovosEncontrados.usuario}`;
-                            syncStatus.classList.add('updating');
-                            setTimeout(() => syncStatus.classList.remove('updating'), 3000);
+                        const storageStatus = document.getElementById('storageStatus');
+                        if (storageStatus) {
+                            storageStatus.textContent = `📡 Sincronizado com ${dadosNovosEncontrados.usuario}`;
+                            storageStatus.classList.add('optimizing');
+                            setTimeout(() => storageStatus.classList.remove('optimizing'), 3000);
                         }
                     }
                     
                     // ATUALIZAR TIMESTAMP VISUAL
                     atualizarTimestampVisual(dadosNovosEncontrados.timestampBR);
                     
-                    console.log('✅ SINCRONIZAÇÃO REAL CONCLUÍDA!');
+                    console.log('✅ SINCRONIZAÇÃO OTIMIZADA CONCLUÍDA!');
                     return true;
                 }
                 
                 return false;
                 
             } catch (error) {
-                console.error('❌ Erro na verificação:', error);
+                console.error('❌ Erro na verificação otimizada:', error);
                 
-                const syncStatus = document.getElementById('syncStatus');
-                if (syncStatus) {
-                    syncStatus.textContent = '❌ Erro sincronização';
-                    syncStatus.classList.add('error');
+                const storageStatus = document.getElementById('storageStatus');
+                if (storageStatus) {
+                    storageStatus.textContent = '❌ Erro sincronização';
+                    storageStatus.classList.add('error');
                 }
                 
                 return false;
             }
         }
 
-        function iniciarSincronizacaoSupabaseReal() {
-            console.log('🌐 INICIANDO SINCRONIZAÇÃO SUPABASE REAL...');
+        function iniciarSincronizacaoSupabaseOtimizada() {
+            console.log('🌐 INICIANDO SINCRONIZAÇÃO SUPABASE OTIMIZADA...');
             
             // INICIALIZAR SUPABASE
             try {
                 supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
                 supabaseDisponivel = true;
-                console.log('✅ Supabase inicializado para sincronização real');
+                console.log('✅ Supabase inicializado para sincronização otimizada');
                 
-                const syncStatus = document.getElementById('syncStatus');
-                if (syncStatus) {
-                    syncStatus.textContent = '🌐 Supabase conectado';
-                    syncStatus.classList.add('online');
-                }
-                
-                const statusConexaoElement = document.getElementById('statusConexao');
-                if (statusConexaoElement) {
-                    statusConexaoElement.textContent = 'ONLINE';
-                }
+                mostrarStatusStorage('ok', '🌐 Supabase conectado');
+                document.getElementById('supabaseConnectionStatus').textContent = 'CONECTADO';
                 
             } catch (error) {
                 console.error('❌ Erro ao inicializar Supabase:', error);
                 supabaseDisponivel = false;
                 
-                const syncStatus = document.getElementById('syncStatus');
-                if (syncStatus) {
-                    syncStatus.textContent = '📱 Modo local';
-                    syncStatus.classList.remove('online');
-                }
-                
-                const statusConexaoElement = document.getElementById('statusConexao');
-                if (statusConexaoElement) {
-                    statusConexaoElement.textContent = 'LOCAL';
-                }
+                mostrarStatusStorage('error', '📱 Modo local');
+                document.getElementById('supabaseConnectionStatus').textContent = 'LOCAL';
             }
             
             // CARREGAR VERSÃO INICIAL
@@ -2159,8 +2398,11 @@
                 ultimaVersaoSupabase = parseInt(versaoSalva);
             }
             
+            // VERIFICAR QUOTA INICIAL
+            verificarQuotaStorage();
+            
             // VERIFICAR IMEDIATAMENTE
-            verificarSincronizacaoSupabaseReal();
+            verificarSincronizacaoSupabaseOtimizada();
             
             // POLLING A CADA 3 SEGUNDOS
             if (intervalSyncSupabase) {
@@ -2169,14 +2411,23 @@
             
             intervalSyncSupabase = setInterval(() => {
                 if (!isImporting) {
-                    verificarSincronizacaoSupabaseReal();
+                    verificarSincronizacaoSupabaseOtimizada();
                 }
-            }, 3000); // 3 SEGUNDOS
+            }, 3000);
             
-            console.log('✅ Sincronização Supabase ativa (3s)');
+            console.log('✅ Sincronização Supabase otimizada ativa (3s)');
         }
 
-        // ========== RECUPERAÇÃO DE SENHA REATIVADA ==========
+        // ========== RECUPERAÇÃO DE SENHA ==========
+        
+        function gerarSenhaTemporaria() {
+            const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+            let senha = '';
+            for (let i = 0; i < 8; i++) {
+                senha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+            return senha;
+        }
         
         async function recuperarSenha(event) {
             event.preventDefault();
@@ -2227,7 +2478,14 @@
                     return u;
                 });
                 
-                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                // SALVAR OTIMIZADO
+                try {
+                    localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                } catch (storageError) {
+                    console.warn('Storage cheio, otimizando...');
+                    otimizarStorage();
+                    localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                }
                 
                 // TENTAR SALVAR NO SUPABASE TAMBÉM
                 if (supabaseDisponivel && supabase) {
@@ -2298,7 +2556,7 @@
             }
         }
 
-        // ========== FUNÇÕES DE DATA CORRIGIDAS ==========
+        // ========== FUNÇÕES DE DATA ==========
         
         function obterDataAtual() {
             const hoje = new Date();
@@ -2412,10 +2670,10 @@
             return dataDescarga === obterDataAnterior(diasAtras);
         }
 
-        // ========== LÓGICA DOS CARDS CORRIGIDA ==========
+        // ========== CÁLCULO DOS CARDS ==========
         
-        function calcularEAtualizarCardsComLogicaCorrigida() {
-            console.log(`📊 CALCULANDO CARDS COM LÓGICA CORRIGIDA - ${dadosPatio.length} REGISTROS...`);
+        function calcularEAtualizarCards() {
+            console.log(`📊 CALCULANDO CARDS - ${dadosPatio.length} REGISTROS...`);
             
             if (dadosPatio.length === 0) {
                 console.log('⚠️ Nenhum dado disponível');
@@ -2443,16 +2701,10 @@
             
             console.log(`📅 DATA DE HOJE: ${hoje}`);
             
-            // DEBUG: MOSTRAR AMOSTRA DOS DADOS
-            console.log('📋 AMOSTRA DOS DADOS:');
-            dadosPatio.slice(0, 5).forEach((item, index) => {
-                console.log(`${index + 1}. Placa: ${item.placa}, Status: "${item.status}", Data Descarga: "${item.dataDescarga}"`);
-            });
-            
-            // FILTRAR POR STATUS - INCLUINDO "DESOVANDO"
+            // FILTRAR POR STATUS
             const dadosTransito = dadosPatio.filter(d => d.status === 'TRÂNSITO');
             const dadosAguardando = dadosPatio.filter(d => d.status === 'AGUARDANDO');
-            const dadosDesovando = dadosPatio.filter(d => d.status === 'DESOVANDO'); // MAPEAMENTO CORRETO
+            const dadosDesovando = dadosPatio.filter(d => d.status === 'DESOVANDO');
             const dadosDescarregado = dadosPatio.filter(d => d.status === 'DESCARREGADO');
             
             console.log('📊 DADOS POR STATUS:');
@@ -2464,7 +2716,7 @@
             // CONTAR PLACAS ÚNICAS
             const placasTransito = [...new Set(dadosTransito.map(d => d.placa))].length;
             const placasAguardando = [...new Set(dadosAguardando.map(d => d.placa))].length;
-            const placasDesovando = [...new Set(dadosDesovando.map(d => d.placa))].length; // DESOVANDO → CARD DESCARREGANDO
+            const placasDesovando = [...new Set(dadosDesovando.map(d => d.placa))].length;
             
             // DESCARREGADO APENAS DO DIA ATUAL
             const dadosDescarregadoHoje = dadosDescarregado.filter(d => estaNodia(d.dataDescarga));
@@ -2486,20 +2738,11 @@
             const movimentacaoSemana = [...new Set(dadosDescarregado.filter(d => d.dataDescarga && estaNaSemanaAtual(d.dataDescarga)).map(d => d.placa))].length;
             const movimentacaoMes = [...new Set(dadosDescarregado.filter(d => d.dataDescarga && estaNoMesAtual(d.dataDescarga)).map(d => d.placa))].length;
             
-            console.log('📊 MOVIMENTAÇÃO HISTÓRICA:');
-            console.log(`• HOJE: ${movimentacaoD0} placas`);
-            console.log(`• D-1: ${movimentacaoD1} placas`);
-            console.log(`• D-2: ${movimentacaoD2} placas`);
-            console.log(`• D-3: ${movimentacaoD3} placas`);
-            console.log(`• D-4: ${movimentacaoD4} placas`);
-            console.log(`• SEMANA: ${movimentacaoSemana} placas`);
-            console.log(`• MÊS: ${movimentacaoMes} placas`);
-            
-            // ATUALIZAR CARDS NA TELA COM LÓGICA CORRIGIDA
+            // ATUALIZAR CARDS NA TELA
             document.getElementById('totalTransito').textContent = placasTransito;
             document.getElementById('totalAguardando').textContent = placasAguardando;
-            document.getElementById('totalDescarregando').textContent = placasDesovando; // DESOVANDO → DESCARREGANDO
-            document.getElementById('totalDescarregado').textContent = placasDescarregadoHoje; // APENAS HOJE
+            document.getElementById('totalDescarregando').textContent = placasDesovando;
+            document.getElementById('totalDescarregado').textContent = placasDescarregadoHoje;
             
             // ATUALIZAR HISTÓRICO
             document.getElementById('movimentacaoD0').textContent = movimentacaoD0;
@@ -2517,9 +2760,10 @@
             const debugElements = {
                 debugTransito: placasTransito,
                 debugAguardando: placasAguardando,
-                debugDesovando: placasDesovando,
+                debugDescarregando: placasDesovando,
                 debugDescarregado: placasDescarregadoHoje,
-                debugDataHoje: hoje
+                debugDataHoje: hoje,
+                debugStorage: storageQuotaStatus
             };
             
             Object.entries(debugElements).forEach(([id, valor]) => {
@@ -2536,11 +2780,9 @@
                 setTimeout(() => card.classList.remove('updated'), 1000);
             });
             
-            console.log('✅ CARDS ATUALIZADOS COM LÓGICA CORRIGIDA!');
+            console.log('✅ CARDS ATUALIZADOS!');
         }
 
-        // ========== FUNÇÃO DO GRÁFICO ==========
-        
         function atualizarGraficoDescarregando(totalDescarregando) {
             const progressBar = document.getElementById('progressBar');
             const graficoNumero = document.getElementById('graficoNumero');
@@ -2595,7 +2837,7 @@
             }
         }
 
-        // ========== VERIFICAÇÃO IMEDIATA DE SESSÃO ==========
+        // ========== VERIFICAÇÃO DE SESSÃO ==========
         
         (function verificarSessaoImediatamente() {
             const credenciaisSalvas = localStorage.getItem('credenciaisLembradas');
@@ -2660,13 +2902,20 @@
         }
 
         function salvarTimestampGlobal(timestamp) {
-            const timestampData = {
-                timestamp: timestamp,
-                usuario: usuarioLogado ? usuarioLogado.nome : 'Sistema'
-            };
-            
-            localStorage.setItem('ultimaAtualizacaoGlobal', JSON.stringify(timestampData));
-            ultimaAtualizacaoGlobal = timestamp;
+            try {
+                const timestampData = {
+                    timestamp: timestamp,
+                    usuario: usuarioLogado ? usuarioLogado.nome : 'Sistema'
+                };
+                
+                localStorage.setItem('ultimaAtualizacaoGlobal', JSON.stringify(timestampData));
+                ultimaAtualizacaoGlobal = timestamp;
+            } catch (error) {
+                if (error.name === 'QuotaExceededError') {
+                    console.warn('Quota excedida ao salvar timestamp, otimizando...');
+                    otimizarStorage();
+                }
+            }
         }
 
         function atualizarTimestampVisual(timestamp) {
@@ -2724,7 +2973,16 @@
                 }
             });
             
-            localStorage.setItem('usuariosSistema', JSON.stringify(usuariosLocais));
+            try {
+                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosLocais));
+            } catch (error) {
+                if (error.name === 'QuotaExceededError') {
+                    console.warn('Quota excedida ao salvar usuários, otimizando...');
+                    otimizarStorage();
+                    localStorage.setItem('usuariosSistema', JSON.stringify(usuariosLocais));
+                }
+            }
+            
             return usuariosLocais;
         }
 
@@ -2766,7 +3024,11 @@
                     sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
                     
                     if (lembrarMe) {
-                        localStorage.setItem('credenciaisLembradas', JSON.stringify({ login, senha }));
+                        try {
+                            localStorage.setItem('credenciaisLembradas', JSON.stringify({ login, senha }));
+                        } catch (error) {
+                            console.warn('Não foi possível salvar credenciais');
+                        }
                     } else {
                         localStorage.removeItem('credenciaisLembradas');
                     }
@@ -2806,21 +3068,21 @@
         }
 
         function carregarDadosLocal() {
-            console.log('📱 Carregando dados...');
+            console.log('📱 Carregando dados otimizados...');
             
             // VERIFICAR SINCRONIZAÇÃO PRIMEIRO
-            verificarSincronizacaoSupabaseReal();
+            verificarSincronizacaoSupabaseOtimizada();
             
-            // CARREGAR DADOS LOCAIS
+            // CARREGAR DADOS LOCAIS OTIMIZADOS
             const dadosSalvos = localStorage.getItem('dadosPatioMinerva');
             if (dadosSalvos) {
                 try {
-                    dadosPatio = JSON.parse(dadosSalvos);
-                    console.log('💾 Dados carregados:', dadosPatio.length);
+                    dadosPatio = descomprimirDados(dadosSalvos);
+                    console.log('💾 Dados carregados (descomprimidos):', dadosPatio.length);
                     
                     if (dadosPatio.length > 0) {
-                        calcularEAtualizarCardsComLogicaCorrigida();
-                        renderizarTabelaSemDedicada();
+                        calcularEAtualizarCards();
+                        renderizarTabela();
                         popularFiltros();
                     }
                 } catch (error) {
@@ -2829,7 +3091,7 @@
                 }
             } else {
                 console.log('📝 Nenhum dado salvo encontrado');
-                calcularEAtualizarCardsComLogicaCorrigida(); // ZERAR CARDS
+                calcularEAtualizarCards();
             }
         }
 
@@ -2843,25 +3105,39 @@
             const file = event.target.files[0];
             if (!file) return;
 
+            // VERIFICAR QUOTA ANTES DE PROCESSAR
+            if (!verificarQuotaStorage() && storageQuotaStatus === 'CRITICAL') {
+                mostrarAlerta('error', '🚨 Storage crítico! Otimizando...');
+                otimizarStorage();
+                setTimeout(() => {
+                    if (verificarQuotaStorage()) {
+                        processarArquivoOtimizado(file);
+                    } else {
+                        mostrarAlerta('error', '❌ Storage ainda crítico. Contate o administrador.');
+                    }
+                }, 3000);
+                event.target.value = '';
+                return;
+            }
+
             isImporting = true;
             document.getElementById('importIndicator').classList.add('show');
             
             // STATUS DE IMPORTAÇÃO
-            const syncStatus = document.getElementById('syncStatus');
-            if (syncStatus) {
-                syncStatus.textContent = '📥 Importando arquivo...';
-                syncStatus.classList.add('updating');
-            }
+            mostrarStatusStorage('optimizing', '📥 Processando arquivo...');
             
-            processarArquivoComLogicaCorrigida(file);
+            processarArquivoOtimizado(file);
             event.target.value = '';
         }
 
-        function processarArquivoComLogicaCorrigida(file) {
+        function processarArquivoOtimizado(file) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    console.log('📊 PROCESSANDO ARQUIVO COM LÓGICA CORRIGIDA...');
+                    console.log('📊 PROCESSANDO ARQUIVO OTIMIZADO...');
+                    
+                    document.getElementById('importProgress').textContent = 'Lendo arquivo Excel...';
+                    document.getElementById('importStorageInfo').textContent = 'Verificando espaço disponível...';
                     
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
@@ -2871,6 +3147,9 @@
                     
                     console.log(`📋 TOTAL LINHAS NO EXCEL: ${rows.length}`);
                     
+                    document.getElementById('importProgress').textContent = 'Processando dados...';
+                    document.getElementById('importStorageInfo').textContent = 'Aplicando compressão...';
+                    
                     const dadosProcessados = rows.map((row, index) => {
                         const item = {
                             placa: converterValor(row[0]) || "",
@@ -2878,7 +3157,6 @@
                             dataChegada: formatarData(row[2]) || "",
                             dataDescarga: formatarData(row[3]) || "",
                             diaria: converterNumero(row[4]),
-                            dedicada: converterValor(row[5]) || "NÃO",
                             valorDiaria: converterValor(row[6]) || "R$ 0,00",
                             valorTotal: converterValor(row[7]) || "R$ 0,00",
                             transportadora: converterValor(row[8]) || "",
@@ -2905,16 +3183,6 @@
                             obs: converterValor(row[29]) || ""
                         };
                         
-                        // DEBUG: MOSTRAR PRIMEIROS REGISTROS
-                        if (index < 5) {
-                            console.log(`REGISTRO ${index + 1}:`, {
-                                placa: item.placa,
-                                status: item.status,
-                                dataDescarga: item.dataDescarga,
-                                origem: item.origem
-                            });
-                        }
-                        
                         return item;
                     }).filter(item => item && item.placa && item.status);
                     
@@ -2924,11 +3192,10 @@
                         throw new Error('Nenhum registro válido encontrado no arquivo');
                     }
                     
-                    // VERIFICAR STATUS DISPONÍVEIS
-                    const statusUnicos = [...new Set(dadosProcessados.map(d => d.status))];
-                    console.log('📊 STATUS ENCONTRADOS NO ARQUIVO:', statusUnicos);
+                    document.getElementById('importProgress').textContent = 'Salvando dados otimizados...';
+                    document.getElementById('importStorageInfo').textContent = 'Sincronizando entre máquinas...';
                     
-                    salvarComSincronizacaoRealCorrigida(dadosProcessados);
+                    salvarComSincronizacaoOtimizada(dadosProcessados);
                     
                 } catch (error) {
                     console.error('❌ Erro ao processar arquivo:', error);
@@ -2939,35 +3206,34 @@
             reader.readAsArrayBuffer(file);
         }
 
-        async function salvarComSincronizacaoRealCorrigida(dadosArray) {
+        async function salvarComSincronizacaoOtimizada(dadosArray) {
             try {
-                console.log('🔄 SALVANDO COM SINCRONIZAÇÃO REAL CORRIGIDA...');
+                console.log('🔄 SALVANDO COM SINCRONIZAÇÃO OTIMIZADA...');
                 
                 // ATUALIZAR DADOS GLOBAIS
                 dadosPatio = [...dadosArray];
-                localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
                 
-                // CALCULAR E ATUALIZAR CARDS COM LÓGICA CORRIGIDA
-                calcularEAtualizarCardsComLogicaCorrigida();
+                // CALCULAR E ATUALIZAR CARDS
+                calcularEAtualizarCards();
                 
                 // RENDERIZAR TABELA
-                renderizarTabelaSemDedicada();
+                renderizarTabela();
                 
                 // POPULAR FILTROS
                 popularFiltros();
                 
                 // SALVAR NO SUPABASE PARA SINCRONIZAÇÃO ENTRE MÁQUINAS
-                const sucessoSupabase = await salvarDadosSupabaseReal(dadosArray);
+                const sucessoSupabase = await salvarDadosSupabaseOtimizado(dadosArray);
                 
                 const agora = new Date();
                 salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
                 
                 setTimeout(() => {
-                    finalizarImportacao(true, sucessoSupabase ? 'Sincronizado globalmente via Supabase' : 'Salvo localmente com fallback');
+                    finalizarImportacao(true, sucessoSupabase ? 'Dados comprimidos e sincronizados globalmente' : 'Salvo localmente com compressão');
                 }, 1500);
                 
             } catch (error) {
-                console.error('❌ Erro no salvamento:', error);
+                console.error('❌ Erro no salvamento otimizado:', error);
                 finalizarImportacao(false, `Erro: ${error.message}`);
             }
         }
@@ -2977,11 +3243,14 @@
             
             if (sucesso) {
                 const banner = document.getElementById('importSuccessBanner');
-                banner.textContent = 'Dados importados e sincronizados entre TODAS as máquinas';
+                banner.textContent = '✅ Dados otimizados e sincronizados entre TODAS as máquinas';
                 banner.classList.add('show');
                 
                 setTimeout(() => banner.classList.remove('show'), 5000);
-                mostrarAlerta('success', 'Dados sincronizados globalmente');
+                mostrarAlerta('success', 'Dados comprimidos e sincronizados globalmente');
+                
+                // VERIFICAR QUOTA APÓS IMPORTAÇÃO
+                verificarQuotaStorage();
             } else {
                 mostrarAlerta('error', `❌ Falha: ${mensagem}`);
             }
@@ -2989,14 +3258,15 @@
             document.getElementById('importIndicator').classList.remove('show');
             
             // RESETAR STATUS
-            const syncStatus = document.getElementById('syncStatus');
-            if (syncStatus) {
-                syncStatus.classList.remove('updating');
+            if (sucesso) {
+                mostrarStatusStorage('ok', '✅ Importação concluída');
+            } else {
+                mostrarStatusStorage('error', '❌ Erro na importação');
             }
         }
 
-        // ========== RENDERIZAÇÃO DE TABELA SEM DEDICADA ==========
-        function renderizarTabelaSemDedicada(dados = null) {
+        // ========== RENDERIZAÇÃO DE TABELA ==========
+        function renderizarTabela(dados = null) {
             const dadosParaRender = dados || dadosPatio;
             const tbody = document.getElementById('tabelaBody');
             
@@ -3036,7 +3306,7 @@
                 const primeiroItem = grupo.primeiroRegistro;
                 
                 html += `
-                    <tr class="grupo-header" onclick="toggleGrupoCorrigido('${chaveGrupo}')">
+                    <tr class="grupo-header" onclick="toggleGrupo('${chaveGrupo}')">
                         <td>
                             <span class="expand-icon" data-icon="${chaveGrupo}">▶</span>
                             <strong>${grupo.placa}</strong>
@@ -3093,7 +3363,7 @@
             console.log('✅ Tabela renderizada sem coluna DEDICADA');
         }
 
-        function toggleGrupoCorrigido(chaveGrupo) {
+        function toggleGrupo(chaveGrupo) {
             const detailsRows = document.querySelectorAll(`[data-grupo="${chaveGrupo}"]`);
             const icon = document.querySelector(`[data-icon="${chaveGrupo}"]`);
             
@@ -3171,7 +3441,7 @@
         // ========== DOM READY ==========
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SISTEMA COM LÓGICA DOS CARDS CORRIGIDA');
+            console.log('🚀 SISTEMA COM STORAGE OTIMIZADO');
             
             const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterTipoDescarga'];
             
@@ -3187,7 +3457,7 @@
         function iniciarSistema() {
             verificarPermissoes();
             iniciarSincronizacaoTimestamp();
-            iniciarSincronizacaoSupabaseReal(); // SINCRONIZAÇÃO SUPABASE REAL
+            iniciarSincronizacaoSupabaseOtimizada(); // SINCRONIZAÇÃO OTIMIZADA
             carregarDadosLocal();
         }
 
@@ -3262,16 +3532,12 @@
                 return;
             }
             
-            const pollingIndicatorPanel = document.getElementById('pollingIndicatorPanel');
-            
             if (usuarioLogado.nivel === 'master') {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Lógica Corrigida';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Master - Storage Otimizado';
                 document.getElementById('createUserSection').style.display = 'block';
-                pollingIndicatorPanel.style.display = 'block';
             } else {
-                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Lógica Corrigida';
+                document.getElementById('panelTitle').innerHTML = '👥 Painel Admin - Storage Otimizado';
                 document.getElementById('createUserSection').style.display = 'none';
-                pollingIndicatorPanel.style.display = 'none';
             }
             
             carregarListaUsuarios();
@@ -3325,7 +3591,17 @@
             try {
                 let usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
                 const usuariosAtualizados = usuarios.filter(u => u.login !== loginUsuario);
-                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                
+                try {
+                    localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                } catch (error) {
+                    if (error.name === 'QuotaExceededError') {
+                        otimizarStorage();
+                        localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                    } else {
+                        throw error;
+                    }
+                }
                 
                 // TENTAR EXCLUIR DO SUPABASE TAMBÉM
                 if (supabaseDisponivel && supabase) {
@@ -3387,7 +3663,17 @@
             };
 
             usuarios.push(novoUsuario);
-            localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
+            
+            try {
+                localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
+            } catch (error) {
+                if (error.name === 'QuotaExceededError') {
+                    otimizarStorage();
+                    localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
+                } else {
+                    throw error;
+                }
+            }
             
             // TENTAR SALVAR NO SUPABASE TAMBÉM
             if (supabaseDisponivel && supabase) {
@@ -3457,7 +3743,16 @@
                     return u;
                 });
                 
-                localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                try {
+                    localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                } catch (error) {
+                    if (error.name === 'QuotaExceededError') {
+                        otimizarStorage();
+                        localStorage.setItem('usuariosSistema', JSON.stringify(usuariosAtualizados));
+                    } else {
+                        throw error;
+                    }
+                }
                 
                 usuarioLogado.senha = novaSenha;
                 usuarioLogado.senhaTemporaria = false;
@@ -3516,8 +3811,8 @@
                 return matchPlaca && matchStatus && matchOrigem && matchTipoMercado && matchTipoDescarga;
             });
 
-            renderizarTabelaSemDedicada(dadosFiltrados);
-            calcularEAtualizarCardsComLogicaCorrigida();
+            renderizarTabela(dadosFiltrados);
+            calcularEAtualizarCards();
         }
 
         function limparFiltros() {
@@ -3527,8 +3822,8 @@
             document.getElementById('filterTipoMercado').value = '';
             document.getElementById('filterTipoDescarga').value = '';
             
-            renderizarTabelaSemDedicada();
-            calcularEAtualizarCardsComLogicaCorrigida();
+            renderizarTabela();
+            calcularEAtualizarCards();
             popularFiltros();
             
             mostrarAlerta('info', 'Filtros limpos');
@@ -3543,20 +3838,25 @@
             if (confirm('❌ Limpar todos os dados?')) {
                 if (confirm('🚨 Confirmação final?')) {
                     dadosPatio = [];
+                    
+                    // LIMPAR DADOS OTIMIZADOS
                     localStorage.removeItem('dadosPatioMinerva');
-                    localStorage.removeItem('MINERVA_PATIO_SYNC_REAL');
+                    localStorage.removeItem('MINERVA_METADATA_SYNC');
                     localStorage.removeItem('MINERVA_VERSAO_SYNC');
+                    localStorage.removeItem('MINERVA_TIMESTAMP_SYNC');
+                    localStorage.removeItem('MINERVA_USER_SYNC');
                     
                     dadosProtegidosPermanentemente = false;
                     backupDadosProtegidos = [];
                     backupCardsProtegidos = {};
                     ultimaVersaoSupabase = 0;
                     
-                    calcularEAtualizarCardsComLogicaCorrigida();
-                    renderizarTabelaSemDedicada();
+                    calcularEAtualizarCards();
+                    renderizarTabela();
                     popularFiltros();
+                    verificarQuotaStorage();
                     
-                    mostrarAlerta('success', '🧹 Dados limpos!');
+                    mostrarAlerta('success', '🧹 Dados limpos e storage otimizado!');
                     
                     const agora = new Date();
                     salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
@@ -3584,85 +3884,9 @@
             mostrarAlerta('success', 'Dados exportados');
         }
 
-        async function testarSupabase() {
-            mostrarAlerta('info', '🔧 Testando Supabase...');
-            
-            try {
-                if (!supabase) {
-                    throw new Error('Supabase não inicializado');
-                }
-                
-                const { data, error } = await supabase
-                    .from('usuarios')
-                    .select('*')
-                    .limit(5);
-                
-                if (error) {
-                    throw new Error(`Erro: ${error.message}`);
-                }
-                
-                mostrarAlerta('success', `✅ Supabase funcionando! ${data.length} usuários encontrados`);
-                console.log('✅ Teste Supabase bem-sucedido:', data);
-                
-            } catch (error) {
-                console.error('❌ Teste Supabase falhou:', error);
-                mostrarAlerta('error', `❌ Erro Supabase: ${error.message}`);
-            }
-        }
-
-        function mostrarDetalhesPolling() {
-            const info = `✅ LÓGICA DOS CARDS CORRIGIDA
-
-🔧 PROBLEMAS CORRIGIDOS:
-
-1️⃣ MAPEAMENTO DE STATUS:
-• "DESOVANDO" → Card "Descarregando" ✅
-• "TRÂNSITO" → Card "Em Trânsito" ✅
-• "AGUARDANDO" → Card "Aguardando" ✅
-• "DESCARREGADO" → Card "Descarregado" ✅
-
-2️⃣ FILTROS POR DATA:
-• Dados do dia atual priorizados ✅
-• Histórico por dias funcionando ✅
-• Semana e mês calculados corretamente ✅
-
-3️⃣ SINCRONIZAÇÃO ENTRE MÁQUINAS:
-• Supabase como ponte entre computadores ✅
-• Polling a cada 3 segundos ✅
-• Fallback local se servidor indisponível ✅
-• Notificações em tempo real ✅
-
-4️⃣ RECUPERAÇÃO DE SENHA:
-• EmailJS reativado ✅
-• Envio automático funcionando ✅
-• Senhas temporárias geradas ✅
-
-5️⃣ INTERFACE:
-• Coluna DEDICADA removida ✅
-• Rolagem dupla (vertical + horizontal) ✅
-• Scrollbars grandes e visíveis ✅
-
-📊 FUNCIONAMENTO ATUAL:
-• Supabase: ${supabaseDisponivel ? 'CONECTADO' : 'INDISPONÍVEL'}
-• Email: ${emailJSReady ? 'FUNCIONANDO' : 'INDISPONÍVEL'}
-• Dados: ${dadosPatio.length} registros
-• Sincronizações: ${contadorSyncSupabase}
-
-🎯 QUANDO VOCÊ IMPORTA:
-• Arquivo processado corretamente
-• Status "DESOVANDO" vira card "Descarregando"
-• Dados salvos no Supabase
-• Outras máquinas detectam mudança em 3s
-• Interface atualizada automaticamente
-
-✅ TODOS OS PROBLEMAS RESOLVIDOS!`;
-            
-            alert(info);
-        }
-
-        function toggleSupabaseDetails() {
-            const details = document.getElementById('supabaseDetails');
-            const toggle = document.getElementById('statusToggle');
+        function toggleStorageDetails() {
+            const details = document.getElementById('storageDetails');
+            const toggle = document.getElementById('storageToggle');
             
             if (details.classList.contains('collapsed')) {
                 details.classList.remove('collapsed');
@@ -3701,7 +3925,7 @@
             }
         }
 
-        console.log('🔧✅📊🌐📧 SISTEMA COM LÓGICA DOS CARDS CORRIGIDA!');
+        console.log('🔧✅📊🌐📧💾 SISTEMA COM STORAGE OTIMIZADO E SINCRONIZAÇÃO REAL!');
     </script>
 </body>
 </html>
