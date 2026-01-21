@@ -2011,43 +2011,38 @@
                     status: 'active'
                 };
                 
-                // LIMPAR DADOS ANTERIORES
-                console.log('🧹 Limpando dados e notificações antigas...');
-                await supabase.from('usuarios').delete().eq('login', 'MINERVA_PATIO_SYNC');
-                await supabase.from('usuarios').delete().eq('login', 'MINERVA_NOTIFICATION');
-                
-                // INSERIR DADOS PRINCIPAIS
-                console.log('📝 Inserindo dados principais...');
+                // ATUALIZAR DADOS PRINCIPAIS (UPSERT)
+                console.log('📝 Atualizando dados principais...');
                 const { data: dataResult, error: dataError } = await supabase
                     .from('usuarios')
-                    .insert([{
-                        nome: 'MINERVA_PATIO_SYNC',
+                    .upsert([{
                         login: 'MINERVA_PATIO_SYNC',
+                        nome: 'MINERVA_PATIO_SYNC',
                         senha: JSON.stringify(dadosParaSupabase),
                         nivel: 'sync',
                         email: 'sync@minervafoods.com',
                         criado_em: timestamp,
                         criado_por: usuario,
                         ativo: true
-                    }])
+                    }], { onConflict: 'login' })
                     .select();
 
                 if (dataError) throw dataError;
 
-                // INSERIR NOTIFICAÇÃO EM TEMPO REAL
-                console.log('📡 Inserindo notificação em tempo real...');
+                // ATUALIZAR NOTIFICAÇÃO EM TEMPO REAL (UPSERT)
+                console.log('📡 Atualizando notificação em tempo real...');
                 const { data: notificationResult, error: notificationError } = await supabase
                     .from('usuarios')
-                    .insert([{
-                        nome: 'MINERVA_NOTIFICATION',
+                    .upsert([{
                         login: 'MINERVA_NOTIFICATION',
+                        nome: 'MINERVA_NOTIFICATION',
                         senha: JSON.stringify(notificacao),
                         nivel: 'notification',
                         email: 'notification@minervafoods.com',
                         criado_em: timestamp,
                         criado_por: usuario,
                         ativo: true
-                    }])
+                    }], { onConflict: 'login' })
                     .select();
 
                 if (notificationError) throw notificationError;
@@ -2074,7 +2069,6 @@
                     .from('usuarios')
                     .select('senha, criado_em, criado_por')
                     .eq('login', 'MINERVA_NOTIFICATION')
-                    .order('criado_em', { ascending: false })
                     .limit(1);
 
                 if (error || !data || data.length === 0) return false;
@@ -2171,7 +2165,6 @@
                     .from('usuarios')
                     .select('senha, criado_em, criado_por')
                     .eq('login', 'MINERVA_PATIO_SYNC')
-                    .order('criado_em', { ascending: false })
                     .limit(1);
 
                 if (error || !data || data.length === 0) return null;
@@ -2235,27 +2228,22 @@
                 // VERIFICAR NOTIFICAÇÕES EM TEMPO REAL PRIMEIRO
                 const notificacaoProcessada = await verificarNotificacoesTempoReal();
                 
-                // SE PROCESSOU NOTIFICAÇÃO, NÃO PRECISA FAZER VERIFICAÇÃO NORMAL
-                if (notificacaoProcessada) {
-                    return true;
-                }
-                
-                // VERIFICAÇÃO NORMAL DE DADOS
+                // VERIFICAÇÃO NORMAL DE DADOS (CASO A NOTIFICAÇÃO FALHE)
                 let dadosNovos = null;
                 
-                if (supabaseDisponivel && supabase) {
+                if (!notificacaoProcessada && supabaseDisponivel && supabase) {
                     try {
                         const { data, error } = await supabase
                             .from('usuarios')
                             .select('senha, criado_em, criado_por')
                             .eq('login', 'MINERVA_PATIO_SYNC')
-                            .order('criado_em', { ascending: false })
                             .limit(1);
 
                         if (!error && data && data.length > 0) {
                             const registro = data[0];
                             const dadosSupabase = JSON.parse(registro.senha);
                             
+                            // Verificar se a versão é maior OU se o ID da notificação é diferente (caso a versão seja igual mas os dados mudaram)
                             if (dadosSupabase.versao > ultimaVersaoSupabase) {
                                 const dadosDescomprimidos = JSON.parse(dadosSupabase.dados_patio);
                                 dadosNovos = {
