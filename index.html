@@ -1399,8 +1399,8 @@
                         <span class="sync-value sync-ok" id="syncStatusDetail">FUNCIONANDO</span>
                     </div>
                     <div class="sync-item">
-                        <span class="sync-label">Broadcast:</span>
-                        <span class="sync-value sync-ok" id="broadcastStatus">ATIVO</span>
+                        <span class="sync-label">Última Verificação:</span>
+                        <span class="sync-value sync-ok" id="lastCheckStatus">-</span>
                     </div>
                     <div class="sync-item">
                         <span class="sync-label">Email:</span>
@@ -1725,13 +1725,12 @@
         let backupDadosProtegidos = [];
         let backupCardsProtegidos = {};
 
-        // ========== SISTEMA DE SINCRONIZAÇÃO CORRIGIDO PARA DIFERENTES MÁQUINAS ==========
-        let ultimaVersaoSupabase = 0;
+        // ========== SISTEMA DE SINCRONIZAÇÃO VIA INTERNET CORRIGIDO ==========
+        let ultimoTimestampSupabase = '';
         let intervalSyncSupabase = null;
         let contadorSyncSupabase = 0;
         let importTimeoutId = null;
-        const SYNC_TABLE_NAME = 'minerva_patio_data';
-        let isCheckingSync = false;
+        let verificandoSync = false;
 
         // ========== CONFIGURAÇÃO SUPABASE ==========
         const supabaseConfig = {
@@ -1779,10 +1778,10 @@
             }
         ];
 
-        // ========== IMPORTAÇÃO COM SINCRONIZAÇÃO CORRIGIDA ==========
+        // ========== IMPORTAÇÃO COM SINCRONIZAÇÃO VIA INTERNET ==========
         
         function importarExcel(event) {
-            console.log('🚀 INICIANDO IMPORTAÇÃO COM SINCRONIZAÇÃO CORRIGIDA...');
+            console.log('🚀 INICIANDO IMPORTAÇÃO COM SINCRONIZAÇÃO VIA INTERNET...');
             
             if (!usuarioLogado || (usuarioLogado.nivel !== 'master' && usuarioLogado.nivel !== 'importador')) {
                 mostrarAlerta('error', '⚠️ Acesso negado!');
@@ -1833,11 +1832,6 @@
                 setTimeout(() => banner.classList.remove('show'), 4000);
                 
                 mostrarAlerta('success', 'Dados importados e sincronizados!');
-                
-                // FORÇAR SINCRONIZAÇÃO PARA TODAS AS MÁQUINAS
-                setTimeout(() => {
-                    criarSinalSincronizacao();
-                }, 1000);
                 
             } else {
                 mostrarAlerta('error', `❌ Erro na importação: ${mensagem}`);
@@ -1926,7 +1920,7 @@
 
         async function salvarDados(dadosArray) {
             try {
-                console.log('💾 SALVANDO DADOS COM SINCRONIZAÇÃO CORRIGIDA...');
+                console.log('💾 SALVANDO DADOS COM SINCRONIZAÇÃO VIA INTERNET...');
                 
                 dadosPatio = [...dadosArray];
                 calcularEAtualizarCards();
@@ -1934,13 +1928,11 @@
                 popularFiltros();
                 localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosArray));
                 
-                // SALVAR NO SUPABASE COM SINCRONIZAÇÃO CORRIGIDA
+                // SALVAR NO SUPABASE DE FORMA FORÇADA
                 if (supabaseDisponivel && supabase) {
                     try {
-                        const novaVersao = await salvarNoSupabaseCorrigido(dadosArray);
-                        ultimaVersaoSupabase = novaVersao;
-                        localStorage.setItem('versaoAtualMinerva', ultimaVersaoSupabase.toString());
-                        console.log('✅ Dados salvos com versão:', novaVersao);
+                        await salvarNoSupabaseForcado(dadosArray);
+                        console.log('✅ Dados salvos no Supabase via internet');
                     } catch (error) {
                         console.log('⚠️ Erro no Supabase:', error.message);
                     }
@@ -1952,7 +1944,7 @@
                 
                 setTimeout(() => fecharTelaImportacao(true), 1500);
                 
-                console.log('✅ SALVAMENTO CORRIGIDO CONCLUÍDO!');
+                console.log('✅ SALVAMENTO VIA INTERNET CONCLUÍDO!');
                 
             } catch (error) {
                 console.error('❌ Erro ao salvar dados:', error);
@@ -1960,320 +1952,233 @@
             }
         }
 
-        async function salvarNoSupabaseCorrigido(dadosArray) {
+        async function salvarNoSupabaseForcado(dadosArray) {
             try {
-                console.log('📤 SALVANDO NO SUPABASE COM SISTEMA CORRIGIDO...');
+                console.log('📤 SALVANDO NO SUPABASE COM FORÇA TOTAL...');
                 
-                const timestamp = new Date().toISOString();
-                const timestampBR = new Date().toLocaleString('pt-BR');
+                const agora = new Date();
+                const timestamp = agora.toISOString();
+                const timestampBR = agora.toLocaleString('pt-BR');
                 const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
-                const versao = Date.now();
+                const timestampUnico = Date.now();
                 
-                const payload = {
+                const dadosCompletos = {
                     dados_patio: JSON.stringify(dadosArray),
-                    versao: versao,
                     timestamp_update: timestamp,
                     timestamp_br: timestampBR,
+                    timestamp_unico: timestampUnico,
                     usuario_update: usuario,
                     total_records: dadosArray.length,
                     sync_key: 'patio_minerva_sync'
                 };
                 
-                // USAR UPSERT PARA GARANTIR SINCRONIZAÇÃO
-                const { error } = await supabase
+                // PRIMEIRO: DELETAR TODOS OS REGISTROS ANTIGOS
+                console.log('🧹 Limpando dados antigos...');
+                await supabase
                     .from('usuarios')
-                    .upsert([{
-                        nome: 'MINERVA_PATIO_SYNC',
-                        login: 'MINERVA_PATIO_SYNC',
-                        senha: JSON.stringify(payload),
-                        nivel: 'sync',
+                    .delete()
+                    .eq('nome', 'PATIO_DATA_SYNC');
+                
+                // AGUARDAR UM POUCO
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // SEGUNDO: INSERIR DADOS NOVOS
+                console.log('📝 Inserindo dados novos...');
+                const { data, error } = await supabase
+                    .from('usuarios')
+                    .insert([{
+                        nome: 'PATIO_DATA_SYNC',
+                        login: `PATIO_SYNC_${timestampUnico}`,
+                        senha: JSON.stringify(dadosCompletos),
+                        nivel: 'sync_data',
                         email: 'sync@minervafoods.com',
                         criado_em: timestamp,
                         criado_por: usuario,
                         ativo: true
-                    }], { 
-                        onConflict: 'login',
-                        ignoreDuplicates: false 
-                    });
+                    }])
+                    .select();
 
                 if (error) {
-                    console.error('❌ Erro no upsert:', error);
+                    console.error('❌ Erro ao inserir:', error);
                     throw error;
                 }
 
-                console.log('✅ DADOS SALVOS COM UPSERT!');
-                return versao;
+                console.log('✅ DADOS SALVOS COM FORÇA!');
+                console.log(`📊 Timestamp único: ${timestampUnico}, Registros: ${dadosArray.length}`);
+                
+                // SALVAR TIMESTAMP LOCALMENTE
+                ultimoTimestampSupabase = timestampUnico.toString();
+                localStorage.setItem('ultimoTimestampSync', ultimoTimestampSupabase);
+                
+                return timestampUnico;
                 
             } catch (error) {
-                console.error('❌ Erro no sistema corrigido:', error);
+                console.error('❌ Erro no salvamento forçado:', error);
                 throw error;
             }
         }
 
-        // ========== SISTEMA DE SINAL DE SINCRONIZAÇÃO ==========
+        // ========== VERIFICAÇÃO DE SINCRONIZAÇÃO VIA INTERNET ==========
         
-        async function criarSinalSincronizacao() {
-            if (!supabaseDisponivel || !supabase) return;
+        async function verificarSincronizacaoInternet() {
+            if (verificandoSync || isImporting) return;
             
-            try {
-                console.log('📡 CRIANDO SINAL DE SINCRONIZAÇÃO...');
-                
-                const sinalId = `sync_signal_${Date.now()}`;
-                const timestamp = new Date().toISOString();
-                const usuario = usuarioLogado ? usuarioLogado.nome : 'Sistema';
-                
-                const sinal = {
-                    signal_id: sinalId,
-                    signal_type: 'data_import',
-                    versao: ultimaVersaoSupabase,
-                    usuario: usuario,
-                    timestamp: timestamp,
-                    total_records: dadosPatio.length
-                };
-                
-                // INSERIR SINAL NA TABELA
-                const { error } = await supabase
-                    .from('usuarios')
-                    .insert([{
-                        nome: 'SYNC_SIGNAL',
-                        login: sinalId,
-                        senha: JSON.stringify(sinal),
-                        nivel: 'signal',
-                        email: 'signal@minervafoods.com',
-                        criado_em: timestamp,
-                        criado_por: usuario,
-                        ativo: true
-                    }]);
-                
-                if (error) throw error;
-                
-                console.log('✅ SINAL DE SINCRONIZAÇÃO CRIADO:', sinalId);
-                
-                // LIMPAR SINAIS ANTIGOS (MAIS DE 5 MINUTOS)
-                setTimeout(async () => {
-                    try {
-                        const cincoMinutosAtras = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-                        await supabase
-                            .from('usuarios')
-                            .delete()
-                            .eq('nome', 'SYNC_SIGNAL')
-                            .lt('criado_em', cincoMinutosAtras);
-                    } catch (e) {}
-                }, 2000);
-                
-            } catch (error) {
-                console.error('❌ Erro ao criar sinal:', error);
-            }
-        }
-
-        // ========== VERIFICAÇÃO DE SINCRONIZAÇÃO CORRIGIDA ==========
-        
-        async function verificarSincronizacao() {
-            if (isCheckingSync || isImporting) return;
-            
-            isCheckingSync = true;
+            verificandoSync = true;
             contadorSyncSupabase++;
             
             try {
                 document.getElementById('contadorSync').textContent = contadorSyncSupabase;
                 document.getElementById('totalRegistros').textContent = dadosPatio.length;
                 
-                if (!supabaseDisponivel || !supabase) return;
+                if (!supabaseDisponivel || !supabase) {
+                    document.getElementById('lastCheckStatus').textContent = 'SEM CONEXÃO';
+                    document.getElementById('lastCheckStatus').className = 'sync-value sync-error';
+                    return;
+                }
                 
-                // VERIFICAR SINAIS DE SINCRONIZAÇÃO PRIMEIRO
-                const sinalProcessado = await verificarSinaisSincronizacao();
-                if (sinalProcessado) return;
+                // BUSCAR DADOS MAIS RECENTES
+                console.log(`🔍 Verificando sincronização ${contadorSyncSupabase}...`);
                 
-                // VERIFICAÇÃO NORMAL DE DADOS
                 const { data, error } = await supabase
                     .from('usuarios')
-                    .select('senha, criado_em, criado_por')
-                    .eq('login', 'MINERVA_PATIO_SYNC')
+                    .select('login, senha, criado_em, criado_por')
+                    .eq('nome', 'PATIO_DATA_SYNC')
                     .order('criado_em', { ascending: false })
                     .limit(1);
 
-                if (!error && data && data.length > 0) {
-                    const dadosSupabase = JSON.parse(data[0].senha);
+                if (error) {
+                    console.log('⚠️ Erro ao verificar:', error.message);
+                    document.getElementById('lastCheckStatus').textContent = 'ERRO';
+                    document.getElementById('lastCheckStatus').className = 'sync-value sync-error';
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    console.log('📝 Nenhum dado encontrado no Supabase');
+                    document.getElementById('lastCheckStatus').textContent = 'VAZIO';
+                    document.getElementById('lastCheckStatus').className = 'sync-value sync-error';
+                    return;
+                }
+
+                const registro = data[0];
+                const dadosSupabase = JSON.parse(registro.senha);
+                const timestampSupabase = dadosSupabase.timestamp_unico.toString();
+                
+                console.log(`🔍 Timestamp Supabase: ${timestampSupabase}`);
+                console.log(`📱 Timestamp Local: ${ultimoTimestampSupabase}`);
+                
+                // VERIFICAR SE HÁ ATUALIZAÇÃO
+                if (timestampSupabase !== ultimoTimestampSupabase) {
+                    console.log('⚡ NOVA ATUALIZAÇÃO DETECTADA VIA INTERNET!');
                     
-                    if (dadosSupabase.versao > ultimaVersaoSupabase) {
-                        console.log('🔄 NOVA VERSÃO DETECTADA:', dadosSupabase.versao);
-                        await aplicarAtualizacao(dadosSupabase);
+                    const usuarioAtual = usuarioLogado ? usuarioLogado.nome : '';
+                    
+                    // SE FOR DE OUTRO USUÁRIO, APLICAR ATUALIZAÇÃO
+                    if (dadosSupabase.usuario_update !== usuarioAtual) {
+                        console.log(`📊 Aplicando dados de: ${dadosSupabase.usuario_update}`);
+                        await aplicarDadosDoSupabase(dadosSupabase);
+                        
+                        // NOTIFICAR USUÁRIO
+                        const notification = document.getElementById('syncNotification');
+                        notification.textContent = `⚡ ${dadosSupabase.usuario_update} atualizou os dados via internet! ${dadosSupabase.total_records} registros`;
+                        notification.classList.add('show');
+                        setTimeout(() => notification.classList.remove('show'), 6000);
+                        
+                        // SOM DE NOTIFICAÇÃO
+                        try {
+                            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaAkqU2erFbyUGL3dXQTEAAAAA');
+                            audio.volume = 0.8;
+                            audio.play().catch(() => {});
+                        } catch (e) {}
                     }
+                    
+                    // ATUALIZAR TIMESTAMP LOCAL
+                    ultimoTimestampSupabase = timestampSupabase;
+                    localStorage.setItem('ultimoTimestampSync', ultimoTimestampSupabase);
                 }
                 
-                // Marcar status
+                document.getElementById('lastCheckStatus').textContent = new Date().toLocaleTimeString('pt-BR');
+                document.getElementById('lastCheckStatus').className = 'sync-value sync-ok';
+                
+                // Marcar conexões como OK
                 document.getElementById('supabaseStatus').textContent = 'CONECTADO';
                 document.getElementById('supabaseStatus').className = 'sync-value sync-ok';
                 document.getElementById('syncStatusDetail').textContent = 'FUNCIONANDO';
                 document.getElementById('syncStatusDetail').className = 'sync-value sync-ok';
                 
             } catch (error) {
-                console.log('⚠️ Erro verificação:', error.message);
+                console.error('❌ Erro na verificação:', error);
+                document.getElementById('lastCheckStatus').textContent = 'ERRO';
+                document.getElementById('lastCheckStatus').className = 'sync-value sync-error';
                 document.getElementById('supabaseStatus').textContent = 'ERRO';
                 document.getElementById('supabaseStatus').className = 'sync-value sync-error';
             } finally {
-                isCheckingSync = false;
+                verificandoSync = false;
             }
         }
 
-        async function verificarSinaisSincronizacao() {
+        async function aplicarDadosDoSupabase(dadosSupabase) {
             try {
-                // BUSCAR SINAIS RECENTES
-                const { data, error } = await supabase
-                    .from('usuarios')
-                    .select('login, senha, criado_em')
-                    .eq('nome', 'SYNC_SIGNAL')
-                    .order('criado_em', { ascending: false })
-                    .limit(5);
-
-                if (error || !data || data.length === 0) return false;
-
-                const ultimoSinalProcessado = localStorage.getItem('ultimoSinalProcessado') || '';
-                
-                for (const registro of data) {
-                    const sinal = JSON.parse(registro.senha);
-                    
-                    // SE É UM SINAL NOVO E NÃO É DO PRÓPRIO USUÁRIO
-                    if (registro.login !== ultimoSinalProcessado) {
-                        const usuarioAtual = usuarioLogado ? usuarioLogado.nome : '';
-                        
-                        if (sinal.usuario !== usuarioAtual) {
-                            console.log('⚡ PROCESSANDO SINAL DE SINCRONIZAÇÃO:', registro.login);
-                            
-                            // MARCAR COMO PROCESSADO
-                            localStorage.setItem('ultimoSinalProcessado', registro.login);
-                            
-                            // BUSCAR E APLICAR DADOS ATUALIZADOS
-                            await buscarEAplicarDados(sinal);
-                            
-                            return true;
-                        }
-                    }
-                }
-                
-                return false;
-                
-            } catch (error) {
-                console.log('⚠️ Erro ao verificar sinais:', error);
-                return false;
-            }
-        }
-
-        async function buscarEAplicarDados(sinal) {
-            try {
-                console.log('📊 BUSCANDO DADOS ATUALIZADOS...');
-                
-                const { data, error } = await supabase
-                    .from('usuarios')
-                    .select('senha')
-                    .eq('login', 'MINERVA_PATIO_SYNC')
-                    .order('criado_em', { ascending: false })
-                    .limit(1);
-
-                if (!error && data && data.length > 0) {
-                    const dadosSupabase = JSON.parse(data[0].senha);
-                    await aplicarAtualizacao(dadosSupabase, sinal.usuario);
-                }
-                
-            } catch (error) {
-                console.error('❌ Erro ao buscar dados:', error);
-            }
-        }
-
-        async function aplicarAtualizacao(dadosSupabase, usuarioOrigem = null) {
-            try {
-                console.log('⚡ APLICANDO ATUALIZAÇÃO...');
+                console.log('⚡ APLICANDO DADOS DO SUPABASE...');
                 
                 const dadosDescomprimidos = JSON.parse(dadosSupabase.dados_patio);
                 
                 // ATUALIZAR DADOS GLOBAIS
                 dadosPatio = [...dadosDescomprimidos];
-                ultimaVersaoSupabase = dadosSupabase.versao;
                 
                 // SALVAR LOCALMENTE
-                localStorage.setItem('versaoAtualMinerva', ultimaVersaoSupabase.toString());
                 localStorage.setItem('dadosPatioMinerva', JSON.stringify(dadosPatio));
                 
-                // ATUALIZAR UI IMEDIATAMENTE
+                // ATUALIZAR INTERFACE IMEDIATAMENTE
                 calcularEAtualizarCards();
                 renderizarTabela();
                 popularFiltros();
                 
-                // NOTIFICAÇÃO VISUAL
-                const usuario = usuarioOrigem || dadosSupabase.usuario_update;
-                const notification = document.getElementById('syncNotification');
-                notification.textContent = `⚡ ${usuario} atualizou os dados! ${dadosSupabase.total_records} registros`;
-                notification.classList.add('show');
-                setTimeout(() => notification.classList.remove('show'), 5000);
+                // ATUALIZAR TIMESTAMP VISUAL
+                atualizarTimestampVisual(`${dadosSupabase.timestamp_br} (${dadosSupabase.usuario_update})`);
                 
-                // ATUALIZAR TIMESTAMP
-                atualizarTimestampVisual(`${dadosSupabase.timestamp_br} (${usuario})`);
-                
-                // SOM DE NOTIFICAÇÃO
-                try {
-                    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaAkqU2erFbyUGL3dXQTEAAAAA');
-                    audio.volume = 0.7;
-                    audio.play().catch(() => {});
-                } catch (e) {}
-                
-                console.log('✅ ATUALIZAÇÃO APLICADA COM SUCESSO!');
+                console.log('✅ DADOS APLICADOS COM SUCESSO!');
+                console.log(`📊 Total registros aplicados: ${dadosPatio.length}`);
                 
             } catch (error) {
-                console.error('❌ Erro ao aplicar atualização:', error);
+                console.error('❌ Erro ao aplicar dados:', error);
             }
         }
 
         function iniciarSincronizacao() {
-            console.log('🔄 INICIANDO SISTEMA DE SINCRONIZAÇÃO CORRIGIDO...');
+            console.log('🔄 INICIANDO SISTEMA DE SINCRONIZAÇÃO VIA INTERNET...');
             
             try {
                 supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
                 supabaseDisponivel = true;
-                console.log('✅ Supabase conectado');
-                
-                document.getElementById('supabaseStatus').textContent = 'CONECTADO';
-                document.getElementById('supabaseStatus').className = 'sync-value sync-ok';
-                document.getElementById('broadcastStatus').textContent = 'ATIVO';
-                document.getElementById('broadcastStatus').className = 'sync-value sync-ok';
+                console.log('✅ Supabase conectado para sincronização via internet');
                 
             } catch (error) {
                 console.error('❌ Erro ao conectar Supabase:', error);
                 supabaseDisponivel = false;
-                
-                document.getElementById('supabaseStatus').textContent = 'ERRO';
-                document.getElementById('supabaseStatus').className = 'sync-value sync-error';
-                document.getElementById('broadcastStatus').textContent = 'ERRO';
-                document.getElementById('broadcastStatus').className = 'sync-value sync-error';
+                return;
             }
             
-            // CARREGAR VERSÃO INICIAL
-            const versaoSalva = localStorage.getItem('versaoAtualMinerva');
-            if (versaoSalva) {
-                ultimaVersaoSupabase = parseInt(versaoSalva);
-                console.log('📊 Versão inicial:', ultimaVersaoSupabase);
+            // CARREGAR TIMESTAMP INICIAL
+            const timestampSalvo = localStorage.getItem('ultimoTimestampSync');
+            if (timestampSalvo) {
+                ultimoTimestampSupabase = timestampSalvo;
+                console.log('📊 Timestamp inicial carregado:', ultimoTimestampSupabase);
             }
             
-            // CARREGAR ÚLTIMO SINAL PROCESSADO
-            const ultimoSinal = localStorage.getItem('ultimoSinalProcessado');
-            if (ultimoSinal) {
-                console.log('📡 Último sinal processado:', ultimoSinal);
-            }
-            
-            // POLLING PARA VERIFICAÇÃO CONTÍNUA
+            // POLLING AGRESSIVO PARA SINCRONIZAÇÃO VIA INTERNET
             if (intervalSyncSupabase) {
                 clearInterval(intervalSyncSupabase);
             }
             
             intervalSyncSupabase = setInterval(() => {
-                if (!isImporting && !isCheckingSync) {
-                    verificarSincronizacao();
-                }
-            }, 1500); // VERIFICAR A CADA 1.5 SEGUNDOS
+                verificarSincronizacaoInternet();
+            }, 1000); // VERIFICAR A CADA 1 SEGUNDO
             
-            // VERIFICAR IMEDIATAMENTE
-            setTimeout(() => verificarSincronizacao(), 1000);
+            // PRIMEIRA VERIFICAÇÃO
+            setTimeout(() => verificarSincronizacaoInternet(), 2000);
             
-            console.log('✅ Sistema de sincronização corrigido iniciado');
+            console.log('✅ Sistema de sincronização via internet iniciado (1s)');
         }
 
         // ========== RECUPERAÇÃO DE SENHA ==========
@@ -2625,7 +2530,7 @@
                 setTimeout(() => card.classList.remove('updated'), 1000);
             });
             
-            console.log('✅ CARDS ATUALIZADOS COM SINCRONIZAÇÃO CORRIGIDA!');
+            console.log('✅ CARDS ATUALIZADOS VIA INTERNET!');
         }
 
         function atualizarGraficoDescarregando(totalDescarregando) {
@@ -2893,10 +2798,7 @@
         }
 
         function carregarDadosLocal() {
-            console.log('📱 Carregando dados e verificando sincronização...');
-            
-            // VERIFICAR SINCRONIZAÇÃO PRIMEIRO
-            setTimeout(() => verificarSincronizacao(), 500);
+            console.log('📱 Carregando dados e verificando internet...');
             
             const dadosSalvos = localStorage.getItem('dadosPatioMinerva');
             if (dadosSalvos) {
@@ -2917,6 +2819,9 @@
                 console.log('📝 Nenhum dado encontrado');
                 calcularEAtualizarCards();
             }
+            
+            // VERIFICAR SINCRONIZAÇÃO APÓS CARREGAR
+            setTimeout(() => verificarSincronizacaoInternet(), 1000);
         }
 
         // ========== RENDERIZAÇÃO DE TABELA ==========
@@ -3095,7 +3000,7 @@
         // ========== DOM READY ==========
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SISTEMA COM SINCRONIZAÇÃO CORRIGIDA PARA DIFERENTES MÁQUINAS');
+            console.log('🚀 SISTEMA COM SINCRONIZAÇÃO VIA INTERNET');
             
             const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterTipoDescarga'];
             
@@ -3111,7 +3016,7 @@
         function iniciarSistema() {
             verificarPermissoes();
             iniciarSincronizacaoTimestamp();
-            iniciarSincronizacao(); // SISTEMA CORRIGIDO
+            iniciarSincronizacao(); // SISTEMA VIA INTERNET
             carregarDadosLocal();
         }
 
@@ -3468,7 +3373,7 @@
                     dadosProtegidosPermanentemente = false;
                     backupDadosProtegidos = [];
                     backupCardsProtegidos = {};
-                    ultimaVersaoSupabase = 0;
+                    ultimoTimestampSupabase = '';
                     
                     calcularEAtualizarCards();
                     renderizarTabela();
@@ -3503,13 +3408,13 @@
         }
 
         function testarSincronizacao() {
-            mostrarAlerta('info', '🔧 Testando sincronização...');
+            mostrarAlerta('info', '🔧 Testando sincronização via internet...');
             
-            verificarSincronizacao().then(() => {
-                mostrarAlerta('success', '✅ Sincronização testada!');
-            }).catch(error => {
-                mostrarAlerta('error', '❌ Erro no teste!');
-            });
+            verificarSincronizacaoInternet();
+            
+            setTimeout(() => {
+                mostrarAlerta('success', '✅ Teste concluído!');
+            }, 2000);
         }
 
         function toggleSyncDetails() {
@@ -3553,7 +3458,7 @@
             }
         }
 
-        console.log('🔧✅📊🌐📧 SISTEMA COM SINCRONIZAÇÃO CORRIGIDA PARA DIFERENTES MÁQUINAS!');
+        console.log('🔧✅📊🌐📧 SISTEMA COM SINCRONIZAÇÃO VIA INTERNET CORRIGIDA!');
     </script>
 </body>
 </html>
