@@ -3350,7 +3350,8 @@
             }
         }
 
-        function criarUsuario(event) {
+        // ========== FUNÇÃO criarUsuario CORRIGIDA COM ASYNC/AWAIT ==========
+        async function criarUsuario(event) {
             event.preventDefault();
             
             if (!usuarioLogado || usuarioLogado.nivel !== 'master') {
@@ -3392,29 +3393,46 @@
                 ativo: true
             };
 
+            // SALVAR LOCALMENTE
             usuarios.push(novoUsuario);
             localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
             
-            // TENTAR SALVAR NO SUPABASE TAMBÉM
+            // SALVAR NO SUPABASE COM AWAIT
             if (supabaseDisponivel && supabase) {
                 try {
-                    supabase.from('usuarios').insert([{
-                        nome: novoUsuario.nome,
-                        login: novoUsuario.login,
-                        senha: novoUsuario.senha,
-                        nivel: novoUsuario.nivel,
-                        email: novoUsuario.email,
-                        criado_em: novoUsuario.criadoEm,
-                        criado_por: novoUsuario.criadoPor,
-                        ativo: novoUsuario.ativo
-                    }]);
+                    console.log('💾 Salvando no Supabase:', nome);
+                    
+                    const { data, error } = await supabase
+                        .from('usuarios')
+                        .insert([{
+                            nome: novoUsuario.nome,
+                            login: novoUsuario.login,
+                            senha: novoUsuario.senha,
+                            nivel: novoUsuario.nivel,
+                            email: novoUsuario.email,
+                            criado_em: novoUsuario.criadoEm,
+                            criado_por: novoUsuario.criadoPor,
+                            ativo: novoUsuario.ativo
+                        }])
+                        .select();
+                    
+                    if (error) {
+                        console.error('❌ Erro Supabase:', error);
+                        mostrarAlerta('warning', `⚠️ ${nome} criado localmente, mas erro no Supabase`);
+                    } else {
+                        console.log('✅ Sucesso Supabase:', data);
+                        mostrarAlerta('success', `✅ ${nome} criado e salvo no Supabase!`);
+                    }
+                    
                 } catch (error) {
-                    console.log('Não conseguiu salvar usuário no Supabase');
+                    console.error('❌ Erro geral:', error);
+                    mostrarAlerta('warning', `⚠️ ${nome} criado localmente apenas`);
                 }
+            } else {
+                mostrarAlerta('success', `✅ ${nome} criado localmente`);
             }
-            
-            mostrarAlerta('success', `✅ ${nome} criado!`);
 
+            // LIMPAR FORMULÁRIO
             document.getElementById('novoNome').value = '';
             document.getElementById('novoLogin').value = '';
             document.getElementById('novaSenha').value = '';
@@ -3640,7 +3658,7 @@
             }
         }
 
-        console.log('🔧✅📊🌐📧 SISTEMA CORRIGIDO PARA LOGIN E FILTRO DATA ATUAL!');
+        console.log('🔧✅📊🌐📧 SISTEMA COM FUNÇÃO criarUsuario CORRIGIDA!');
     </script>
 </body>
 </html>
