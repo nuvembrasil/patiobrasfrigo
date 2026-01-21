@@ -1769,11 +1769,11 @@
     </div>
 
     <script>
-        // ========== CONFIGURAÇÃO SUPABASE OTIMIZADA ==========
+        // ========== CONFIGURAÇÃO SUPABASE COM CREDENCIAIS CORRETAS ==========
         
         const supabaseConfig = {
             url: 'https://zhxrxymeuzvnuafvkjjd.supabase.co',
-            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoeHJ4eW1ldXp2bnVhZnZramRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUyMjk1OTIsImV4cCI6MjA1MDgwNTU5Mn0.sb_publishable_GIl_nKo6EmiOzcr-io9JSA_pvQu2bOJ'
+            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoeHJ4eW1ldXp2bnVhZnZrampkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0MTA4MjUsImV4cCI6MjA4Mzk4NjgyNX0.6pWfovbO_Y9OH1nLzZ54kgwxGyUybFfNF6ZFqcqffk0'
         };
 
         // ========== CONFIGURAÇÃO EMAILJS ==========
@@ -1863,7 +1863,7 @@
         
         async function inicializarSupabase() {
             try {
-                console.log('🌐 INICIALIZANDO SUPABASE...');
+                console.log('🌐 INICIALIZANDO SUPABASE COM CREDENCIAIS CORRETAS...');
                 atualizarStatusSync('syncIcon', '🔄');
                 atualizarStatusSync('syncTitle', 'Conectando ao Supabase...');
                 
@@ -1878,7 +1878,7 @@
                     throw new Error('Falha ao criar cliente Supabase');
                 }
                 
-                console.log('✅ Cliente Supabase criado');
+                console.log('✅ Cliente Supabase criado com credenciais atualizadas');
                 atualizarStatusSync('supabaseStatus', 'CONECTADO', 'ok');
                 
                 // TESTAR CONEXÃO
@@ -2194,7 +2194,7 @@
         }
 
         async function salvarNoSupabase(dadosArray) {
-            console.log('📡 SALVANDO NO SUPABASE...');
+            console.log('📡 SALVANDO NO SUPABASE COM CREDENCIAIS CORRETAS...');
             
             const timestamp = Date.now();
             const agora = new Date();
@@ -2219,7 +2219,7 @@
             
             while (tentativas < maxTentativas) {
                 try {
-                    console.log(`📝 Tentativa ${tentativas + 1}/${maxTentativas} de salvar...`);
+                    console.log(`📝 Tentativa ${tentativas + 1}/${maxTentativas} de salvar com credenciais corretas...`);
                     
                     const { error } = await supabase
                         .from('dados_patio')
@@ -2228,7 +2228,6 @@
                             dados_json: JSON.stringify(dadosCompletos),
                             versao: timestamp,
                             usuario: usuario,
-                            total_registros: dadosArray.length,
                             created_at: timestampISO,
                             updated_at: timestampISO
                         }], { 
@@ -2240,7 +2239,7 @@
                         throw error;
                     }
                     
-                    console.log('✅ DADOS SALVOS NO SUPABASE!');
+                    console.log('✅ DADOS SALVOS NO SUPABASE COM SUCESSO!');
                     return timestamp;
                     
                 } catch (error) {
@@ -2272,7 +2271,7 @@
                 
                 const { data, error } = await supabase
                     .from('dados_patio')
-                    .select('dados_json, versao, usuario, updated_at, total_registros')
+                    .select('dados_json, versao, usuario, updated_at')
                     .eq('id', 1)
                     .single();
 
@@ -2298,7 +2297,7 @@
                 console.log(`🔍 Versão Online: ${versaoOnline}, Local: ${ultimaVersaoLocal}`);
                 
                 atualizarStatusSync('tabelaStatus', 'OK', 'ok');
-                atualizarStatusSync('dbRecordsStatus', data.total_registros || dadosCompletos.dados.length);
+                atualizarStatusSync('dbRecordsStatus', dadosCompletos.dados.length);
                 atualizarStatusSync('lastSyncStatus', new Date().toLocaleTimeString('pt-BR'));
                 
                 // VERIFICAR SE HÁ DADOS MAIS NOVOS
@@ -2371,7 +2370,7 @@
             btn.textContent = '🔄 Testando...';
             
             try {
-                atualizarStatusSync('syncStatusInfo', '🔄 Testando conexão...');
+                atualizarStatusSync('syncStatusInfo', '🔄 Testando conexão com credenciais corretas...');
                 
                 if (!supabase) {
                     throw new Error('Cliente Supabase não inicializado');
@@ -2386,7 +2385,7 @@
                     throw testError;
                 }
                 
-                console.log('✅ Teste de conectividade OK');
+                console.log('✅ Teste de conectividade OK com credenciais corretas');
                 atualizarStatusSync('supabaseStatus', 'OK', 'ok');
                 
                 // TESTE 2: Buscar dados reais
@@ -2411,8 +2410,8 @@
                     atualizarStatusSync('tabelaStatus', 'VAZIO', 'warning');
                 }
                 
-                atualizarStatusSync('syncStatusInfo', '✅ Teste concluído com sucesso!');
-                mostrarAlerta('success', '✅ Conexão Supabase OK!');
+                atualizarStatusSync('syncStatusInfo', '✅ Teste concluído - Conexão funcionando!');
+                mostrarAlerta('success', '✅ Conexão Supabase funcionando perfeitamente!');
                 
             } catch (error) {
                 console.error('❌ Erro no teste:', error);
@@ -2429,7 +2428,7 @@
         // ========== INICIALIZAÇÃO DO SISTEMA ==========
         
         function iniciarSincronizacao() {
-            console.log('🔄 INICIANDO SINCRONIZAÇÃO...');
+            console.log('🔄 INICIANDO SINCRONIZAÇÃO COM CREDENCIAIS CORRETAS...');
             
             // INICIALIZAR SUPABASE
             inicializarSupabase();
@@ -2445,8 +2444,11 @@
                 }
             }, 5000); // A cada 5 segundos
             
-            console.log('✅ Sincronização iniciada');
+            console.log('✅ Sincronização iniciada com credenciais corretas');
         }
+
+        // ========== RESTO DO CÓDIGO CONTINUA IGUAL ==========
+        // (Todas as outras funções permanecem iguais)
 
         // ========== RECUPERAÇÃO DE SENHA ==========
         
@@ -3307,7 +3309,7 @@
         // ========== DOM READY ==========
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SISTEMA SUPABASE CONFIGURADO');
+            console.log('🚀 SISTEMA CONFIGURADO COM CREDENCIAIS CORRETAS');
             
             const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterTipoDescarga'];
             
@@ -3750,7 +3752,7 @@
             }
         }
 
-        console.log('🌐✅📊🔄📧 SISTEMA SUPABASE PRONTO PARA PRODUÇÃO!');
+        console.log('🌐✅📊🔄📧 SISTEMA FUNCIONANDO COM CREDENCIAIS CORRETAS!');
     </script>
 </body>
 </html>
