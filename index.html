@@ -207,6 +207,8 @@
             width: 90%;
             max-width: 400px;
             text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .login-modal h2 {
@@ -266,6 +268,60 @@
 
         .remember-me input {
             margin: 0;
+        }
+
+        /* SEÇÃO DE CADASTRO POR E-MAIL */
+        .register-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .register-title {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .register-input {
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .register-input:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+
+        .register-btn {
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .register-btn:hover {
+            background: #218838;
+        }
+
+        .register-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
         }
 
         /* RECUPERAÇÃO DE SENHA */
@@ -1378,7 +1434,7 @@
         📅 Última atualização: Nunca
     </div>
 
-    <!-- TELA DE LOGIN -->
+    <!-- TELA DE LOGIN COM CADASTRO -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-modal">
             <h2>🔐 Login - Pátio Brasfrigo</h2>
@@ -1396,6 +1452,18 @@
                 </div>
                 <button type="submit" class="login-btn" id="btnLogin">Entrar</button>
             </form>
+
+            <!-- SEÇÃO DE CADASTRO POR E-MAIL -->
+            <div class="register-section">
+                <div class="register-title">📝 Primeiro acesso? Cadastre-se</div>
+                <form class="register-form" onsubmit="cadastrarPorEmail(event)">
+                    <input type="text" id="cadastroNome" class="register-input" placeholder="👤 Nome completo" required>
+                    <input type="email" id="cadastroEmail" class="register-input" placeholder="📧 E-mail @minervafoods.com" required>
+                    <input type="password" id="cadastroSenha" class="register-input" placeholder="🔒 Criar senha (min. 6 caracteres)" required minlength="6">
+                    <input type="password" id="cadastroConfirmarSenha" class="register-input" placeholder="🔄 Confirmar senha" required minlength="6">
+                    <button type="submit" class="register-btn" id="btnCadastrar">Criar Conta</button>
+                </form>
+            </div>
 
             <!-- RECUPERAÇÃO DE SENHA -->
             <div class="password-recovery">
@@ -1859,6 +1927,113 @@
             }
         ];
 
+        // ========== NOVA FUNÇÃO DE CADASTRO POR E-MAIL ==========
+        
+        async function cadastrarPorEmail(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('cadastroNome').value.trim();
+            const email = document.getElementById('cadastroEmail').value.trim().toLowerCase();
+            const senha = document.getElementById('cadastroSenha').value.trim();
+            const confirmarSenha = document.getElementById('cadastroConfirmarSenha').value.trim();
+            const btnCadastrar = document.getElementById('btnCadastrar');
+            
+            // Validações
+            if (!nome || !email || !senha || !confirmarSenha) {
+                mostrarStatusLogin('error', '❌ Preencha todos os campos!');
+                return;
+            }
+            
+            if (!email.includes('@minervafoods.com')) {
+                mostrarStatusLogin('error', '❌ Use apenas e-mail @minervafoods.com');
+                return;
+            }
+            
+            if (senha !== confirmarSenha) {
+                mostrarStatusLogin('error', '❌ Senhas não coincidem!');
+                return;
+            }
+            
+            if (senha.length < 6) {
+                mostrarStatusLogin('error', '❌ Senha deve ter pelo menos 6 caracteres!');
+                return;
+            }
+            
+            btnCadastrar.disabled = true;
+            btnCadastrar.textContent = 'Criando...';
+            mostrarStatusLogin('info', 'Criando sua conta...');
+            
+            try {
+                // Carregar usuários existentes
+                const usuarios = inicializarUsuarios();
+                
+                // Verificar se já existe usuário com esse e-mail ou login
+                const emailExiste = usuarios.find(u => u.email.toLowerCase().trim() === email);
+                if (emailExiste) {
+                    throw new Error('E-mail já cadastrado no sistema!');
+                }
+                
+                // Gerar login baseado no e-mail
+                const login = email.split('@')[0].toLowerCase();
+                const loginExiste = usuarios.find(u => u.login.toLowerCase().trim() === login);
+                if (loginExiste) {
+                    throw new Error('Usuário com esse login já existe!');
+                }
+                
+                // Criar novo usuário com nível USER
+                const novoUsuario = {
+                    id: Date.now(),
+                    nome: nome,
+                    login: login,
+                    senha: senha,
+                    nivel: 'user', // SEMPRE USER para cadastro por e-mail
+                    email: email,
+                    criadoEm: new Date().toISOString(),
+                    criadoPor: 'Cadastro por E-mail',
+                    ativo: true,
+                    cadastroEmail: true
+                };
+                
+                console.log('📝 Criando usuário por e-mail:', novoUsuario.nome, '- Login:', novoUsuario.login);
+                
+                // Salvar no sistema
+                usuarios.push(novoUsuario);
+                localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
+                
+                // Fazer login automaticamente
+                usuarioLogado = novoUsuario;
+                sessionStorage.setItem('usuarioLogado', JSON.stringify(novoUsuario));
+                
+                mostrarStatusLogin('success', `✅ Conta criada! Bem-vindo(a), ${nome}!`);
+                
+                // Limpar formulário
+                document.getElementById('cadastroNome').value = '';
+                document.getElementById('cadastroEmail').value = '';
+                document.getElementById('cadastroSenha').value = '';
+                document.getElementById('cadastroConfirmarSenha').value = '';
+                
+                // Entrar no sistema após 2 segundos
+                setTimeout(() => {
+                    document.getElementById('loginOverlay').style.display = 'none';
+                    document.getElementById('mainContainer').style.display = 'block';
+                    iniciarSistema();
+                    
+                    const agora = new Date();
+                    salvarTimestampGlobal(agora.toLocaleString('pt-BR'));
+                    atualizarTimestampVisual(agora.toLocaleString('pt-BR'));
+                    
+                    console.log('✅ USUÁRIO CADASTRADO E LOGADO COM SUCESSO!');
+                }, 2000);
+                
+            } catch (error) {
+                console.error('❌ Erro no cadastro:', error);
+                mostrarStatusLogin('error', `❌ ${error.message}`);
+            } finally {
+                btnCadastrar.disabled = false;
+                btnCadastrar.textContent = 'Criar Conta';
+            }
+        }
+
         // ========== INICIALIZAÇÃO DO SUPABASE COM DIAGNÓSTICO ==========
         
         async function inicializarSupabase() {
@@ -1983,7 +2158,7 @@
             }
         }
 
-        // ========== AUTENTICAÇÃO HÍBRIDA DEFINITIVA - APLICADA ==========
+        // ========== AUTENTICAÇÃO HÍBRIDA DEFINITIVA - MANTIDA ==========
         
         async function autenticarUsuario(login, senha, lembrarMe = false) {
             const btnLogin = document.getElementById('btnLogin');
@@ -3352,7 +3527,7 @@
         // ========== DOM READY ==========
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SISTEMA CONFIGURADO COM AUTENTICAÇÃO HÍBRIDA');
+            console.log('🚀 SISTEMA CONFIGURADO COM CADASTRO POR E-MAIL');
             
             const filtros = ['searchPlaca', 'filterStatus', 'filterOrigem', 'filterTipoMercado', 'filterTipoDescarga'];
             
@@ -3511,7 +3686,9 @@
                 <div class="user-item">
                     <div>
                         <strong>${user.nome}</strong>
-                        <span style="color: #10b981; font-size: 10px;">✅ ATIVO</span><br>
+                        <span style="color: #10b981; font-size: 10px;">✅ ATIVO</span>
+                        ${user.cadastroEmail ? '<span style="color: #28a745; font-size: 10px;">📧 CADASTRO EMAIL</span>' : ''}
+                        <br>
                         <small style="color: #6c757d;"><strong>Login:</strong> ${user.login}</small><br>
                         <small style="color: #6c757d;"><strong>Email:</strong> ${user.email}</small>
                         ${user.senhaTemporaria ? '<br><small style="color: #f39c12;"><strong>📧 Senha temporária</strong></small>' : ''}
@@ -3795,7 +3972,7 @@
             }
         }
 
-        console.log('🔐✅🌐 AUTENTICAÇÃO HÍBRIDA DEFINITIVA APLICADA!');
+        console.log('🔐✅📝 SISTEMA COM CADASTRO POR E-MAIL IMPLEMENTADO!');
     </script>
 </body>
 </html>
